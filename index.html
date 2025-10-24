@@ -7,6 +7,15 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
+        /* --- ПОДКЛЮЧЕНИЕ ШРИФТА TT HOVES PRO TRIAL BOLD --- */
+        @font-face {
+            font-family: 'TT Hoves Pro Trial Bold';
+            src: url('https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/fonts/TT%20Hoves%20Pro%20Trial%20Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap; 
+        }
+
         /* --- ЦВЕТОВАЯ СХЕМА: ОБНОВЛЕННЫЙ СИНИЙ (Звездная рулетка) --- */
         :root {
             --color-blue-bg: #2d4aff; /* Глубокий синий фон */
@@ -46,7 +55,8 @@
         }
 
         h1 {
-            font-family: Arial Black, Gadget, sans-serif;
+            /* ИСПОЛЬЗУЕМ TT HOVES PRO TRIAL BOLD */
+            font-family: 'TT Hoves Pro Trial Bold', 'Arial Black', Gadget, sans-serif;
             color: var(--color-white); 
             font-size: 30px; 
             margin-bottom: 5px;
@@ -84,20 +94,18 @@
         /* --- СТИЛИ ЗВЕЗДНОЙ РУЛЕТКИ (Уменьшены на 15%) --- */
         .wheel-container {
             position: relative;
-            width: 272px; /* 320px * 0.85 = 272px */
-            height: 272px; /* 320px * 0.85 = 272px */
-            margin: 0 auto 42.5px; /* 50px * 0.85 = 42.5px */
-            transform: translateY(17px); /* 20px * 0.85 = 17px */
-            filter: drop-shadow(0 0 8.5px rgba(0, 0, 0, 0.4)); /* 10px * 0.85 = 8.5px */
+            width: 272px; 
+            height: 272px; 
+            margin: 0 auto 42.5px; 
+            transform: translateY(17px); 
+            filter: drop-shadow(0 0 8.5px rgba(0, 0, 0, 0.4)); 
         }
 
         .wheel {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            /* ИЗМЕНЕНИЕ: ГРАДИЕНТНЫЙ ФОН */
             background: linear-gradient(145deg, #3a5bff, #1a32a0); 
-            /* ИЗМЕНЕНИЕ: СВЕТЛАЯ РАМКА */
             border: 4.25px solid rgba(255, 255, 255, 0.1); 
             box-shadow: none;
             position: relative;
@@ -134,7 +142,7 @@
                 transparent 98%, transparent 100%
             );
             z-index: 1; 
-            filter: drop-shadow(0 0 4.25px rgba(0, 0, 0, 0.3)); /* 5px * 0.85 = 4.25px */
+            filter: drop-shadow(0 0 4.25px rgba(0, 0, 0, 0.3)); 
         }
 
         .sector {
@@ -148,9 +156,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 153px; /* 180px * 0.85 = 153px */
-            height: 153px; /* 180px * 0.85 = 153px */
-            /* ИЗМЕНЕНИЕ: ГРАДИЕНТНЫЙ ФОН ДЛЯ КНОПКИ */
+            width: 153px; 
+            height: 153px; 
             background: linear-gradient(145deg, #3a5bff, #1a32a0); 
             border-radius: 50%;
             display: flex;
@@ -158,9 +165,9 @@
             justify-content: center;
             align-items: center;
             color: var(--color-white); 
-            font-size: 32.3px; /* 38px * 0.85 = 32.3px */
+            font-size: 32.3px; 
             font-weight: bold;
-            box-shadow: 0 0 0 8.5px rgba(255, 255, 255, 0.3), inset 0 0 12.75px rgba(0, 0, 0, 0.5); /* 10px * 0.85 = 8.5px, 15px * 0.85 = 12.75px */
+            box-shadow: 0 0 0 8.5px rgba(255, 255, 255, 0.3), inset 0 0 12.75px rgba(0, 0, 0, 0.5); 
             cursor: pointer; 
             z-index: 5;
             transition: transform 0.1s;
@@ -172,35 +179,36 @@
         
         .center-text-go {
             color: var(--color-white); 
-            font-size: 40.8px; /* 48px * 0.85 = 40.8px */
-            font-family: Arial Black, Gadget, sans-serif;
-            text-shadow: 0 0 4.25px rgba(0, 0, 0, 0.5); /* 5px * 0.85 = 4.25px */
+            font-size: 40.8px; 
+            /* ИСПОЛЬЗУЕМ TT HOVES PRO TRIAL BOLD */
+            font-family: 'TT Hoves Pro Trial Bold', 'Arial Black', Gadget, sans-serif;
+            text-shadow: 0 0 4.25px rgba(0, 0, 0, 0.5); 
             margin-top: 0; 
         }
 
         /* --- УКАЗАТЕЛЬ (Уменьшен на 15%) --- */
         .pointer {
             position: absolute;
-            top: -12.75px; /* -15px * 0.85 = -12.75px */
+            top: -12.75px; 
             left: 50%;
             transform: translateX(-50%);
-            width: 21.25px; /* 25px * 0.85 = 21.25px */
-            height: 34px; /* 40px * 0.85 = 34px */
+            width: 21.25px; 
+            height: 34px; 
             background: linear-gradient(to bottom, var(--color-white), #B0C4DE); 
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            box-shadow: 0 4.25px 8.5px rgba(0, 0, 0, 0.3); /* 5px * 0.85 = 4.25px, 10px * 0.85 = 8.5px */
-            border: 2.55px solid var(--color-blue-bg); /* 3px * 0.85 = 2.55px */
+            box-shadow: 0 4.25px 8.5px rgba(0, 0, 0, 0.3); 
+            border: 2.55px solid var(--color-blue-bg); 
             z-index: 10;
         }
         
         .pointer::after {
             content: '';
             position: absolute;
-            top: 8.5px; /* 10px * 0.85 = 8.5px */
+            top: 8.5px; 
             left: 50%;
             transform: translateX(-50%);
-            width: 6.8px; /* 8px * 0.85 = 6.8px */
-            height: 6.8px; /* 8px * 0.85 = 6.8px */
+            width: 6.8px; 
+            height: 6.8px; 
             background: var(--color-blue-bg); 
             border-radius: 50%;
             opacity: 0.8;
@@ -466,7 +474,6 @@ function initTelegramApp() {
     } catch (e) {
         console.error("Ошибка инициализации Telegram WebApp. Запущено не в Telegram.", e);
     }
-    // drawWheel(); // Удалено
     if (errorText) errorText.style.display = 'none';
 }
 
