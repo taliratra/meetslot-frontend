@@ -237,7 +237,7 @@
             );
 
             
-            /* ИСПРАВЛЕННАЯ МАСКА: Теперь секторы видны от центральной кнопки до края */
+            /* ИСПРАВЛЕННАЯ МАСКА */
 
             mask-image: radial-gradient(
 
@@ -416,6 +416,84 @@
         }
 
 
+        /* --- СТИЛИ МОДАЛЬНОГО ОКНА (ВОССТАНОВЛЕНЫ И АДАПТИРОВАНЫ) --- */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 100; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8); 
+            text-align: center;
+        }
+
+        .modal-content {
+            background-color: var(--color-white); 
+            margin: 10% auto;
+            padding: 30px; 
+            border-radius: 15px;
+            width: 90%; 
+            max-width: 350px; /* Немного уменьшим для мобильного вида */
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+            position: relative;
+        }
+        
+        .modal-content h2 {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--color-black); 
+            margin-bottom: 5px;
+        }
+
+        .modal-content p {
+             color: var(--color-black); 
+             font-size: 16px;
+             line-height: 1.4;
+             margin: 15px 0 25px 0;
+        }
+
+        .modal-content button {
+            background: var(--color-blue-bg); /* Синяя кнопка */
+            color: var(--color-white); 
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 250px;
+            box-shadow: 0 4px 0 0 var(--color-blue-dark); /* Эффект 3D */
+            transition: all 0.1s ease;
+        }
+        
+        .modal-content button:active {
+            box-shadow: 0 1px 0 0 var(--color-blue-dark);
+            transform: translateY(3px);
+        }
+        
+        /* Иконка (Ракета или другой элемент, чтобы соответствовать стилю) */
+        .modal-icon {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+            /* Простой SVG-эквивалент ракеты для примера */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F44336' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-2.34-.84-4.2-2.7-5.04-5.04l5.04 5.04zm4.95-4.95l-5.04 5.04c2.34-.84 4.2-2.7 5.04-5.04zM12 4c-4.41 0-8 3.59-8 8s3.59 8 8 8 8-3.59 8-8-3.59-8-8-8zm-1 11.5v-7h2v7h-2z'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        @keyframes fadeIn {
+            from {opacity: 0; transform: scale(0.9);}
+            to {opacity: 1; transform: scale(1);}
+        }
 
     </style>
 
@@ -455,6 +533,16 @@
     
     <div style="height: 50px;"></div> 
 
+
+    <div id="resultModal" class="modal" onclick="closeModal(true)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-icon"></div>
+            <h2>ПОЗДРАВЛЯЕМ!</h2>
+            <p id="prizeText" style="font-weight: bold; font-size: 18px; margin-bottom: 5px;">[Текст приза здесь]</p>
+            <p>Для получения приза, пожалуйста, свяжитесь с нашим менеджером, написав в чат.</p>
+            <button onclick="handlePrizeClaim()">Получить приз</button>
+        </div>
+    </div>
 
 
 </div>
@@ -515,6 +603,12 @@ const spinButton = document.getElementById('spinButton');
 
 const errorText = document.getElementById('errorText');
 
+// Элементы модального окна восстановлены
+
+const resultModal = document.getElementById('resultModal'); 
+
+const prizeTextElement = document.getElementById('prizeText'); 
+
 
 
 let isSpinning = false;
@@ -562,71 +656,45 @@ function showAppMessage(message) {
 
 
 
-// ФУНКЦИЯ ОБНОВЛЕНА: Используем showPopup() с одной кнопкой и полным сообщением
+// ФУНКЦИЯ ВОССТАНОВЛЕНА ДЛЯ ПОКАЗА КАСТОМНОГО HTML-МОДАЛЬНОГО ОКНА
 
 function showModal(prize) {
 
-    if (!window.Telegram || !window.Telegram.WebApp) {
+    if (resultModal && prizeTextElement) {
 
-        console.log(`Вы выиграли: ${prize}! Для получения, напишите в чат: ${MANAGER_CHAT_LINK}`);
+        prizeTextElement.textContent = prize; 
 
-        closeModal(true); 
+        resultModal.style.display = 'flex'; 
 
-        return;
+        resultModal.style.alignItems = 'center';
+
+        resultModal.style.justifyContent = 'center';
 
     }
-
-    
-    const messageTitle = `Поздравляем! Вы выиграли: ${prize}!`;
-
-    // Текст сообщения теперь включает и приз, и инструкцию
-
-    const messageText = `Для получения этого приза, пожалуйста, напишите в наш чат: ${MANAGER_CHAT_LINK}`;
-
-    
-    window.Telegram.WebApp.showPopup({
-
-        title: messageTitle,
-
-        message: messageText,
-
-        buttons: [
-
-            // Оставляем только одну кнопку "Получить приз"
-
-            {id: 'chat', type: 'default', text: 'Получить приз'}
-
-        ]
-
-    }, (buttonId) => {
-
-        if (buttonId === 'chat') {
-
-            // Перенаправляем пользователя в чат
-
-            window.Telegram.WebApp.openTelegramLink(MANAGER_CHAT_LINK);
-
-            // Сброс рулетки и кнопки после перехода
-
-            closeModal(true); 
-
-        } else {
-
-            // Если по какой-то причине нажали другую кнопку (хотя она одна), все равно сбрасываем
-
-            closeModal(true);
-
-        }
-
-    });
 
 }
 
 
 
-// ФУНКЦИЯ УПРОЩЕНА: ТОЛЬКО СБРОС СОСТОЯНИЯ
+// ФУНКЦИЯ УПРАВЛЕНИЯ КНОПКОЙ "Получить приз"
+function handlePrizeClaim() {
+    if (window.Telegram && window.Telegram.WebApp) {
+        // 1. Открываем чат
+        window.Telegram.WebApp.openTelegramLink(MANAGER_CHAT_LINK);
+    } else {
+        // Если не в TG, просто переходим
+        window.location.href = MANAGER_CHAT_LINK;
+    }
+    // 2. Сбрасываем рулетку и закрываем модальное окно
+    closeModal(true); 
+}
 
+
+// ФУНКЦИЯ УПРОЩЕНА: ТОЛЬКО СБРОС СОСТОЯНИЯ
 function closeModal(shouldResetWheel) {
+    if (resultModal) {
+        resultModal.style.display = 'none'; // Скрываем модальное окно
+    }
 
     if (shouldResetWheel && wheel) {
 
@@ -996,11 +1064,9 @@ async function handleSpinClick() {
 
                 const prize = PRIZES[currentPrizeIndex];
 
-                showModal(prize); // Вызываем showPopup() с одной кнопкой
+                showModal(prize); // Показываем кастомное модальное окно
 
                 isSpinning = false;
-
-                // Сброс closeModal(true) теперь происходит только при нажатии кнопки в showPopup
 
             }, 5500); 
 
