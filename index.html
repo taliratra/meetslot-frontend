@@ -29,8 +29,12 @@
 
         /* Общие стили и шрифт */
         body {
-            /* ИЗМЕНЕНИЕ: Добавлен градиент на фон всего приложения */
-            background: linear-gradient(to bottom, var(--color-blue-bg), #1a32a0); 
+            /* ИЗМЕНЕНИЕ: Добавлен градиент и полупрозрачное лого на фон всего приложения */
+            background: 
+                url('https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/fonts/eqwq.png') no-repeat center center / 80% auto, /* Лого сверху, 80% размера, по центру */
+                linear-gradient(to bottom, var(--color-blue-bg), #1a32a0); /* Градиент снизу */
+            background-blend-mode: soft-light; /* Режим смешивания для полупрозрачности и интеграции */
+            
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
@@ -46,7 +50,6 @@
         .app-container {
             width: 100%;
             max-width: 400px;
-            /* ИЗМЕНЕНИЕ: Устанавливаем фон прозрачным, чтобы видеть градиент body */
             background: transparent; 
             padding: 20px 10px;
             margin-top: 0;
@@ -251,10 +254,10 @@
             text-align: center;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             animation: fadeIn 0.3s;
-            position: relative; /* ВАЖНО для позиционирования крестика */
+            position: relative; 
         }
         
-        /* НОВЫЙ СТИЛЬ: Крестик (Кнопка закрытия) */
+        /* Крестик (Кнопка закрытия) */
         .close-modal-btn {
             position: absolute;
             top: 10px;
@@ -300,15 +303,13 @@
             max-width: 250px;
             box-shadow: 0 4px 0 0 var(--color-blue-dark); 
             transition: all 0.1s ease;
-            margin-bottom: 15px; /* Уменьшаем отступ, так как нет второй кнопки */
+            margin-bottom: 15px; 
         }
         
         .modal-content button:active {
             box-shadow: 0 1px 0 0 var(--color-blue-dark);
             transform: translateY(3px);
         }
-        
-        /* УДАЛЕННЫЙ СТИЛЬ: .secondary-modal-link удален */
         
         /* Стили для эмодзи */
         .modal-emoji {
