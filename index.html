@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEET SLOT - Рулетка Призов</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-container">
+    <h1>Рулетка MeetSlot 🎁</h1>
+
+    <div class="wheel-container">
+        <div id="wheel" class="wheel">
+        </div>
+        <div class="pointer"></div>
+        <div class="center-button">СПИН</div>
+    </div>
+
+    <button id="spinButton" class="spin-button" onclick="handleSpinClick()">
+        Испытать Удачу!
+    </button>
+
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <h2>🎉 ПОЗДРАВЛЯЕМ! 🎉</h2>
+            <p id="prizeText">Вы выиграли: </p>
+            <button onclick="closeModal()">Закрыть</button>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
