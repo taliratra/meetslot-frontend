@@ -118,6 +118,7 @@
                 var(--color-blue-dark-segment) 36deg 72deg 
             );
             
+            /* Маска для отображения секторов */
             mask-image: radial-gradient(
                 circle at center, 
                 transparent 0%, transparent 60%,  
@@ -136,6 +137,31 @@
 
         .sector {
             display: none;
+        }
+
+        /* --- Стили для точек в секторах --- */
+        .dots-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            pointer-events: none; /* Точки не должны мешать клику на кнопку */
+            z-index: 2; /* Над секторами, но под центральной кнопкой */
+        }
+
+        .dot {
+            position: absolute;
+            width: 7px; /* Размер точки */
+            height: 7px; /* Размер точки */
+            background-color: #1a2d8d; /* Темно-синий цвет точек */
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0 0; /* Точки вращаются вокруг центра колеса */
+            transform: translate(-50%, -50%) rotate(var(--dot-rotation)) translateY(-70px); /* Радиус размещения */
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
         }
 
 
@@ -329,7 +355,8 @@
 
     <div class="wheel-container">
         <div id="wheel" class="wheel">
-            
+            <div class="dots-container">
+                <div class="dot" style="--dot-rotation: 18deg;"></div>   <div class="dot" style="--dot-rotation: 54deg;"></div>   <div class="dot" style="--dot-rotation: 90deg;"></div>   <div class="dot" style="--dot-rotation: 126deg;"></div>  <div class="dot" style="--dot-rotation: 162deg;"></div>  <div class="dot" style="--dot-rotation: 198deg;"></div>  <div class="dot" style="--dot-rotation: 234deg;"></div>  <div class="dot" style="--dot-rotation: 270deg;"></div>  <div class="dot" style="--dot-rotation: 306deg;"></div>  <div class="dot" style="--dot-rotation: 342deg;"></div>  </div>
 </div>
         <div class="pointer"></div> 
         <div id="spinButton" class="center-button">
@@ -450,7 +477,25 @@ function closeModal(shouldResetWheel) {
 
 function drawWheel() {
     if (!wheel) return;
-    wheel.innerHTML = ''; 
+    // Очищаем старые точки перед добавлением новых, если функция вызывается повторно
+    const dotsContainer = wheel.querySelector('.dots-container');
+    if (dotsContainer) {
+        dotsContainer.remove();
+    }
+
+    const newDotsContainer = document.createElement('div');
+    newDotsContainer.classList.add('dots-container');
+
+    for (let i = 0; i < NUM_SECTORS; i++) {
+        const dot = document.createElement('div');
+        dot.classList.add('dot');
+        // Вычисляем угол для размещения точки в середине каждого сектора
+        // Поворот на 18 градусов для первого сектора (36 / 2)
+        // Затем добавляем 36 градусов для каждого следующего сектора
+        dot.style.setProperty('--dot-rotation', `${(i * SECTOR_ANGLE) + (SECTOR_ANGLE / 2)}deg`);
+        newDotsContainer.appendChild(dot);
+    }
+    wheel.appendChild(newDotsContainer); // Добавляем контейнер с точками в колесо
 }
 
 function initTelegramApp() {
@@ -466,7 +511,7 @@ function initTelegramApp() {
     } catch (e) {
         console.error("Ошибка инициализации Telegram WebApp. Запущено не в Telegram.", e);
     }
-    drawWheel();
+    drawWheel(); // Вызываем drawWheel здесь
     if (errorText) errorText.style.display = 'none';
 }
 
@@ -618,10 +663,22 @@ async function handleSpinClick() {
     if (wheel) {
         wheel.style.transition = 'none';
         wheel.style.transform = 'rotate(0deg)'; 
-        
+        // Добавляем вращение для контейнера точек
+        const dotsContainer = wheel.querySelector('.dots-container');
+        if (dotsContainer) {
+            dotsContainer.style.transition = 'none';
+            dotsContainer.style.transform = 'rotate(0deg)';
+        }
+
         setTimeout(() => {
             wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
             wheel.style.transform = `rotate(${finalRotation}deg)`;
+            
+            // Также вращаем контейнер с точками
+            if (dotsContainer) {
+                dotsContainer.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                dotsContainer.style.transform = `rotate(${finalRotation}deg)`;
+            }
 
             // Ждем завершения анимации
             setTimeout(() => {
