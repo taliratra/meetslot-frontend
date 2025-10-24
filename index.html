@@ -1,1127 +1,572 @@
 <!DOCTYPE html>
-
 <html lang="ru">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Meet Рулетка</title>
-
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
     
-
     <style>
-
         /* --- ЦВЕТОВАЯ СХЕМА: ОБНОВЛЕННЫЙ СИНИЙ (Звездная рулетка) --- */
-
         :root {
-
             --color-blue-bg: #2d4aff; /* Глубокий синий фон */
-
             --color-blue-dark: #243bcc; /* Для контуров/теней */
-
             --color-blue-light-segment: #D5DAE6; /* Светлый синий/серый для сегментов звезды */
-
             --color-blue-dark-segment: #657df5; /* Темный синий для сегментов звезды */
-
             
-
             --color-white: #FFFFFF;
-
             --color-black: #000000; /* Добавлен для удобства */
-
         }
-
-
 
         /* Общие стили и шрифт */
-
         body {
-
             background: var(--color-blue-bg); 
-
             font-family: 'Arial', sans-serif;
-
             margin: 0;
-
             padding: 0;
-
             color: var(--color-white); 
-
             display: flex;
-
             justify-content: center;
-
             align-items: flex-start;
-
             min-height: 100vh;
-
             text-align: center;
-
             box-sizing: border-box;
-
         }
-
-
 
         .app-container {
-
             width: 100%;
-
             max-width: 400px;
-
             background: var(--color-blue-bg); 
-
             padding: 20px 10px;
-
             margin-top: 0;
-
             min-height: 100vh;
-
             display: flex;
-
             flex-direction: column;
-
             align-items: center;
-
         }
-
-
 
         h1 {
-
             font-family: Arial Black, Gadget, sans-serif;
-
             color: var(--color-white); 
-
             font-size: 30px; 
-
             margin-bottom: 5px;
-
             text-shadow: 0 4px 5px rgba(0, 0, 0, 0.2); 
-
             white-space: nowrap; 
-
         }
-
         
-
         .subtitle {
-
             font-size: 18px;
-
             color: var(--color-white);
-
             margin-bottom: 30px;
-
             font-weight: 500;
-
         }
-
-
-
 
 
         /* --- СТИЛЬ БЛОКА ОШИБКИ (УВЕДОМЛЕНИЕ О ТАЙМАУТЕ) --- */
-
         #errorText {
-
             display: none;
-
             color: var(--color-white); 
-
             background: rgba(0, 0, 0, 0.7); 
-
             border: none; 
-
             padding: 15px 20px;
-
             margin: 10px 0 40px 0;
-
             border-radius: 8px; 
-
             font-weight: bold;
-
             text-align: center;
-
+            /* line-height: 1.4; - оставлено для удобства чтения */
             line-height: 1.4;
-
             width: 90%; 
-
             box-sizing: border-box;
-
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); 
-
             font-size: 16px;
-
+            /* white-space: normal; - по умолчанию, позволяет <br> */
         }
-
-
-
 
 
         /* --- СТИЛИ ЗВЕЗДНОЙ РУЛЕТКИ --- */
-
         .wheel-container {
-
             position: relative;
-
             width: 320px; 
-
             height: 320px;
-
             margin: 0 auto 50px;
-
             transform: translateY(20px); 
-
             filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.4));
-
         }
-
-
 
         .wheel {
-
             width: 100%;
-
             height: 100%;
-
             border-radius: 50%;
-
             background: var(--color-blue-bg); 
-
             border: 5px solid rgba(0, 0, 0, 0.2); 
-
             box-shadow: none;
-
             position: relative;
-
             transition: transform 0s;
-
             overflow: hidden;
-
             box-sizing: border-box;
-
         }
-
         
-
         /* Псевдоэлемент для создания звездообразной формы */
-
         .wheel::before {
-
             content: '';
-
             position: absolute;
-
             top: 0;
-
             left: 0;
-
             width: 100%;
-
             height: 100%;
-
             border-radius: 50%;
-
             
-
             /* Создаем 5 полос */
-
             background: repeating-conic-gradient(
-
                 var(--color-blue-light-segment) 0deg 36deg, 
-
                 var(--color-blue-dark-segment) 36deg 72deg 
-
             );
-
             
-
-            /* Маска для придания форме звезды остроты и вырезания центра - ИСПРАВЛЕНО ЗДЕСЬ */
-
+            /* Маска для придания форме звезды остроты и вырезания центра */
             mask-image: radial-gradient(
-
                 circle at center, 
-
                 transparent 0%, transparent 70%, /* Внутренний радиус 70% */
-
-                black 70%, **black 98%**, /* Теперь звезды будут видны почти до края */
-
+                black 70%, black 98%, /* Теперь звезды будут видны почти до края */
                 transparent 98%, transparent 100% /* Очень тонкий прозрачный край */
-
             );
-
             -webkit-mask-image: radial-gradient(
-
                 circle at center, 
-
                 transparent 0%, transparent 70%, 
-
-                black 70%, **black 98%**, 
-
+                black 70%, black 98%, 
                 transparent 98%, transparent 100%
-
             );
-
             z-index: 1; 
-
             filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
-
         }
-
-
 
         .sector {
-
             display: none;
-
         }
-
-
-
 
 
         /* --- ЦЕНТРАЛЬНАЯ КНОПКА (ВРАЩАТЬ) --- */
-
         .center-button {
-
             position: absolute;
-
             top: 50%;
-
             left: 50%;
-
             transform: translate(-50%, -50%);
-
             width: 180px; 
-
             height: 180px; 
-
             background: var(--color-blue-bg); 
-
             border-radius: 50%;
-
             display: flex;
-
             flex-direction: column;
-
             justify-content: center;
-
             align-items: center;
-
             color: var(--color-white); 
-
             font-size: 38px;
-
             font-weight: bold;
-
             box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.3), inset 0 0 15px rgba(0, 0, 0, 0.5); 
-
             cursor: pointer; 
-
             z-index: 5;
-
             transition: transform 0.1s;
-
         }
-
-
 
         .center-button:active:not(:disabled) {
-
             transform: translate(-50%, -50%) scale(0.95);
-
         }
-
         
-
         .center-text-go {
-
             color: var(--color-white); 
-
             font-size: 48px; 
-
             font-family: Arial Black, Gadget, sans-serif;
-
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-
             margin-top: 0; 
-
         }
-
-
 
         /* --- УКАЗАТЕЛЬ --- */
-
         .pointer {
-
             position: absolute;
-
             top: -15px; 
-
             left: 50%;
-
             transform: translateX(-50%);
-
             width: 25px; 
-
             height: 40px; 
-
             background: linear-gradient(to bottom, var(--color-white), #B0C4DE); 
-
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-
             border: 3px solid var(--color-blue-bg); 
-
             z-index: 10;
-
         }
-
         
-
         .pointer::after {
-
             content: '';
-
             position: absolute;
-
             top: 10px;
-
             left: 50%;
-
             transform: translateX(-50%);
-
             width: 8px;
-
             height: 8px;
-
             background: var(--color-blue-bg); 
-
             border-radius: 50%;
-
             opacity: 0.8;
-
         }
-
-
-
 
 
         /* --- МОДАЛЬНОЕ ОКНО --- */
-
         .modal {
-
             display: none; 
-
             position: fixed;
-
             z-index: 100; 
-
             left: 0;
-
             top: 0;
-
             width: 100%;
-
             height: 100%;
-
             overflow: auto;
-
             background-color: rgba(0, 0, 0, 0.8); 
-
             text-align: center;
-
         }
-
-
 
         .modal-content {
-
             background-color: var(--color-white); 
-
             margin: 10% auto;
-
             padding: 30px; 
-
             border-radius: 15px;
-
             width: 90%; 
-
             max-width: 400px;
-
             text-align: center;
-
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-
             animation: fadeIn 0.3s;
-
         }
-
         
-
         .modal-content h2 {
-
             font-size: 36px;
-
             font-family: Arial Black, Gadget, sans-serif;
-
             color: var(--color-blue-bg); 
-
             margin-bottom: 5px;
-
             text-shadow: 2px 2px 0 var(--color-blue-dark); 
-
         }
-
         
-
         .modal-content p {
-
              color: var(--color-black); 
-
         }
-
-
 
         .modal-content button {
-
             background: var(--color-blue-bg); 
-
             color: var(--color-white); 
-
             border: none;
-
             padding: 15px 30px;
-
             font-size: 20px;
-
             font-weight: bold;
-
             border-radius: 10px;
-
             cursor: pointer;
-
             margin-top: 20px;
-
             box-shadow: 0 5px 0 0 var(--color-blue-dark); 
-
             transition: all 0.3s ease;
-
         }
-
         
-
         .center-button.disabled {
-
             opacity: 0.6;
-
             cursor: not-allowed;
-
             pointer-events: none;
-
         }
-
-
 
     </style>
-
 </head>
-
 <body>
-
 <div class="app-container">
-
     <h1>MEET РУЛЕТКА</h1>
-
     <p class="subtitle">Вращайте рулетку и выигрывайте призы каждый день!</p>
-
-
 
     <div id="errorText" style="display: none;"></div> 
 
-
-
     <div class="wheel-container">
-
         <div id="wheel" class="wheel">
-
             
-
 </div>
-
         <div class="pointer"></div> 
-
         <div id="spinButton" class="center-button">
-
             <span class="center-text-go">ВРАЩАТЬ</span>
-
         </div>
-
     </div>
-
     
-
     <div style="height: 50px;"></div> 
 
-
-
     <div id="resultModal" class="modal" onclick="closeModal(true)">
-
         <div class="modal-content" onclick="event.stopPropagation()">
-
             <h2>CONGRATULATION!</h2>
-
             <p>You've won a bonus!<br>Hurry up and use it!</p>
-
             <p id="prizeText" style="display:none;">Вы выиграли: </p>
-
             <button onclick="closeModal(true)">Click to continue</button>
-
             <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxwYXRoIGZpbGw9IiNGRkNBRCBEIiBkPSJNMTIgMmMtNC40MTggMC04IDMtOCA2czQgNiA4IDZzOC0zIDgtNnMtMy41ODItNi04LTYuMDAxem0wIDJjMi43NjEgMCA1IDIuMDIyIDUgNC41czIuNTEgNC41IDAgNC41YzAtLjQxNC0uMzM2LS43NS0uNzUtLjc1cy0uNzUuMzM2LS.3323236LS43NS.336-.75.75.68 1.15 0 1.247 2c-4.482 7.jgxNi0uOTMyIDIuNzYyLS45MzJ6bS01IDEyYzAgMi42NjcgMCA1IDAgNnMyLjIzOCAyIDUgMiAyLjU2Mi01LTItNnptMTQtMTIuMDAyYzAgNC40MTktMy41ODIgOC04IDhzLTggMy41ODEtOC04YzAtLjI3LjAyNi0uNTI5LjA0LS.78.014-.25.04-.497.07-.74em2LTIuOTk4YzAgMi43NjItMi41MTIgNS01IDUgMCAuMjM1LjAzMy40NTguMDY1LjcwNi0uNTUuMjY0LTEuMDY0LjQ1MS0xLjQ0Mi41NjctLjM3OC4xMTYtLjc1MS4wNDgtLjk5MS0uMjg2LS4yNC0uMzM0LS4xNDEtLjc3Mi4yNTItMS4wMjJjLjM5My0uMjUuODYyLS4xNTkgMS4xNTcuMTU5LjI5NS4zMTcuMjI3Ljc3My0uMTY2IDEuMDkyem0tNC45MDYgMTBjLjAxMi0uMDMgNC44ODUgNS45MDYgNi40NjQtLjM2NEMxNi42NDcgMTYuODQ0IDE1LjU2IDE0IDEyIDE0Yy0yLjc2MiAwLTUgMi4wMjItNSAzLjVzMi4yMzggMy41IDUgMy41eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtMS)” alt="Brain icon" class="brain-icon"/>
-
             <div style="font-size: 10px; color: white;">*Символ не является реальным изображением мозга.</div>
-
         </div>
-
     </div>
-
 </div>
 
-
-
 <script>
-
 // ВАЖНО: КОНФИГУРАЦИЯ И ЛОГИКА ОСТАЮТСЯ БЕЗ ИЗМЕНЕНИЙ
-
 // -----------------------------------------------------
 
-
-
 const PRIZES = [
-
     "6000 meet-бонусов", "5000 meet-бонусов", "4000 meet-бонусов", "3000 meet-бонусов",
-
     "2000 meet-бонусов", "1000 meet-бонусов", "Промокод на бесплатную доставку", 
-
     "Скидка 10%", "Скидка 15%", "SoleFresh к заказу"
-
 ];
-
 // Теперь сектора призов соответствуют не "полосам", а виртуальным 10 делениям
-
 // внутри 5 видимых широких полос. Логика API при этом остается прежней.
-
 const NUM_SECTORS = PRIZES.length; // = 10
-
 const SECTOR_ANGLE = 360 / NUM_SECTORS; // = 36 градусов
 
-
-
 // --- КОРРЕКТНЫЙ ПУБЛИЧНЫЙ URL ВАШЕГО БЭКЕНДА ---
-
 const API_BASE_URL = 'https://meetslot-api-backend-production.up.railway.app/api';
 
 
-
-
-
 // -----------------------------------------------------
-
 // 2. ИНИЦИАЛИЗАЦИЯ И ЭЛЕМЕНТЫ
-
 // -----------------------------------------------------
-
-
 
 const wheel = document.getElementById('wheel');
-
 const spinButton = document.getElementById('spinButton'); 
-
 const resultModal = document.getElementById('resultModal');
-
 const prizeText = document.getElementById('prizeText'); 
-
 const errorText = document.getElementById('errorText');
 
-
-
 let isSpinning = false;
-
 let currentPrizeIndex = null; 
 
-
-
 // -----------------------------------------------------
-
 // 3. ФУНКЦИИ UI / ВЗАИМОДЕЙСТВИЯ
-
 // -----------------------------------------------------
-
-
 
 function showAppMessage(message) {
-
     if (errorText) {
-
-        errorText.textContent = message;
-
+        // ИЗМЕНЕНИЕ: Используем innerHTML для обработки тега <br>
+        errorText.innerHTML = message;
         errorText.style.display = 'block';
-
         
-
-        if (!message.includes('крутили сегодня') && !message.includes('крутите завтра')) {
-
+        // ВАЖНО: УДАЛЕНО УСЛОВИЕ 'крутили сегодня' для более корректной работы
+        if (!message.includes('Попытки на сегодня закончились')) {
             setTimeout(() => {
-
                 errorText.style.display = 'none';
-
-                errorText.textContent = '';
-
+                errorText.innerHTML = '';
             }, 5000);
-
         }
-
     } else {
-
         console.error("ОШИБКА: Не могу показать сообщение, элемент #errorText отсутствует.");
-
     }
-
 }
-
-
 
 function showModal(prize) {
-
     if (resultModal && prizeText) {
-
         prizeText.textContent = `Вы выиграли: ${prize}`; 
-
         resultModal.style.display = 'flex'; 
-
         resultModal.style.alignItems = 'center';
-
         resultModal.style.justifyContent = 'center';
-
         
-
         if (window.Telegram && window.Telegram.WebApp) {
-
              window.Telegram.WebApp.showAlert(`Поздравляем! Вы выиграли: ${prize}!`);
-
         }
-
     }
-
 }
-
-
 
 function closeModal(shouldResetWheel) {
-
     if (resultModal) {
-
         resultModal.style.display = 'none';
-
     }
-
     
-
     if (shouldResetWheel && wheel) {
-
         wheel.style.transition = 'transform 0.5s ease-out';
-
         wheel.style.transform = `rotate(0deg)`;
-
         
-
         if (spinButton) {
-
             spinButton.classList.remove('disabled');
-
         }
-
     }
-
 }
-
-
 
 function drawWheel() {
-
     if (!wheel) return;
-
     wheel.innerHTML = ''; 
-
 }
-
-
 
 function initTelegramApp() {
-
     try {
-
         if (window.Telegram && window.Telegram.WebApp) {
-
             window.Telegram.WebApp.ready();
-
             const Button = window.Telegram.WebApp.MainButton;
-
             Button.setText("Закрыть мини-приложение");
-
             Button.onClick(() => window.Telegram.WebApp.close());
-
             Button.show();
-
         }
-
     } catch (e) {
-
         console.error("Ошибка инициализации Telegram WebApp. Запущено не в Telegram.", e);
-
     }
-
     drawWheel();
-
     if (errorText) errorText.style.display = 'none';
-
 }
 
 
-
-
-
 // -----------------------------------------------------
-
-// 4. ЛОГИКА API (ОСТАВЛЕНА БЕЗ ИЗМЕНЕНИЙ)
-
+// 4. ЛОГИКА API 
 // -----------------------------------------------------
-
-
 
 async function getSpinResultFromBackend() {
-
     console.log(`Запрос результата на бэкенд: ${API_BASE_URL}/spin_check`);
 
-
-
     if (!window.Telegram || !window.Telegram.WebApp || !window.Telegram.WebApp.initData) {
-
         showAppMessage("Ошибка: Запуск не в Telegram WebApp или данные пользователя недоступны.");
-
         return null;
-
     }
-
-
 
     const initData = window.Telegram.WebApp.initData;
-
     let userId = null;
 
-
-
     try {
-
         const urlParams = new URLSearchParams(initData);
-
         const userParam = urlParams.get('user');
-
         
-
         if (userParam) {
-
             const decodedUser = decodeURIComponent(userParam);
-
             const userData = JSON.parse(decodedUser);
-
             userId = userData.id; 
-
         }
-
     } catch(e) {
-
         console.error("Не удалось разобрать данные пользователя:", e);
-
         showAppMessage("Ошибка аутентификации пользователя.");
-
         return null;
-
     }
-
     
-
     if (!userId) {
-
         showAppMessage("Ошибка: ID пользователя не найден в данных Telegram.");
-
         return null;
-
     }
-
-
-
 
 
     try {
-
         const response = await fetch(`${API_BASE_URL}/spin_check`, {
-
             method: 'POST',
-
             headers: {
-
                 'Content-Type': 'application/json',
-
             },
-
             body: JSON.stringify({ user_id: userId })
-
         });
 
-
-
         if (!response.ok) {
-
             let errorData = {};
-
             try {
-
                 errorData = await response.json(); 
-
             } catch(e) {
-
                 console.error(`Сервер вернул не-JSON ответ (HTTP ${response.status}):`, await response.text());
-
                 showAppMessage(`Ошибка: Сервер вернул неожиданный ответ (HTTP ${response.status}).`);
-
                 return null;
-
             }
-
-
 
             if (response.status === 403) {
-
                 if (errorData && errorData.next_spin_timestamp) {
-
                     const nextSpinTimestamp = errorData.next_spin_timestamp;
-
                     const nextSpinDate = new Date(nextSpinTimestamp * 1000);
-
                     const timeRemaining = nextSpinDate - new Date();
-
                     
-
                     if (timeRemaining > 0) {
-
                         const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
-
                         const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-
-                        showAppMessage(`Попытки на сегодня закончились :( Возвращайтесь через ${hours} ч. ${minutes} м.`);
-
+                        // ИЗМЕНЕНИЕ: Вставлен тег <br> для переноса на новую строку
+                        showAppMessage(`Попытки на сегодня закончились :(<br>Возвращайтесь через ${hours} ч. ${minutes} м.`);
                         return null; 
-
                     }
-
                 }
-
             }
 
-
-
             showAppMessage(`Ошибка: ${errorData.message || 'Неизвестная ошибка сервера'}`);
-
             console.error(`API Error (${response.status}):`, errorData);
-
             return null;
-
         }
-
-
 
         const data = await response.json(); 
 
-
-
         if (typeof data.prize_index === 'number') {
-
             return data.prize_index; 
-
         } else {
-
             showAppMessage('Ошибка: Бэкенд вернул статус 200, но не вернул индекс приза.');
-
             return null;
-
         }
-
-
 
     } catch (e) {
-
         if (e.message.includes('Failed to fetch')) {
-
              showAppMessage("Ошибка подключения: Проверьте, запущен ли ваш бэкенд и корректен ли публичный URL.");
-
         } else {
-
              showAppMessage(`Критическая ошибка: ${e.message}. Проверьте консоль.`);
-
         }
-
         console.error("Критическая ошибка при выполнении запроса fetch:", e);
-
         return null;
-
     }
-
 }
 
-
-
 // -----------------------------------------------------
-
 // 5. ЛОГИКА РУЛЕТКИ
-
 // -----------------------------------------------------
-
-
 
 async function handleSpinClick() {
-
     
-
     if (isSpinning) return;
-
     isSpinning = true;
-
     if (spinButton) {
-
         spinButton.classList.add('disabled');
-
     }
-
     
-
     if (errorText) {
-
         errorText.style.display = 'none';
-
     }
-
-
 
     const winningIndex = await getSpinResultFromBackend();
 
-
-
     if (winningIndex === null) {
-
         isSpinning = false;
-
         
-
-        if (errorText && !errorText.textContent.includes('крутили сегодня')) {
-
-            spinButton.classList.remove('disabled');
-
-        } else if (spinButton) {
-
-            spinButton.classList.remove('disabled');
-
+        // ИСПРАВЛЕНИЕ: Проверяем, содержит ли сообщение ошибку тайм-аута, чтобы кнопка оставалась неактивной. 
+        // Используем innerHTML, так как теперь в сообщении есть тег <br>.
+        if (errorText) {
+            const isTimeoutMessage = errorText.innerHTML.includes('Попытки на сегодня закончились');
+            if (!isTimeoutMessage && spinButton) {
+                spinButton.classList.remove('disabled');
+            }
         }
-
         
-
         return;
-
     }
-
-
 
     currentPrizeIndex = winningIndex; 
 
-
-
     const baseRotations = 5; 
-
     const degreesToWin = (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE;
-
-
 
     const finalRotation = (baseRotations * 360) + degreesToWin;
 
-
-
     if (wheel) {
-
         wheel.style.transition = 'none';
-
         wheel.style.transform = 'rotate(0deg)'; 
-
         
-
         setTimeout(() => {
-
             wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
-
             wheel.style.transform = `rotate(${finalRotation}deg)`;
 
-
-
             setTimeout(() => {
-
                 const prize = PRIZES[currentPrizeIndex];
-
                 showModal(prize);
 
-
-
                 isSpinning = false;
-
             }, 5500); 
-
         }, 50); 
-
     } else {
-
         const prize = PRIZES[currentPrizeIndex];
-
         showModal(prize);
-
         isSpinning = false;
-
     }
-
 }
-
-
 
 // Привязка обработчика к кнопке (центральному кругу)
-
 if (spinButton) {
-
     spinButton.addEventListener('click', handleSpinClick);
-
 }
 
-
-
 // Запускаем инициализацию при загрузке
-
 window.onload = initTelegramApp;
-
 </script>
-
 </body>
-
 </html>
