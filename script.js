@@ -17,9 +17,9 @@ const PRIZES = [
 const NUM_SECTORS = PRIZES.length;
 const SECTOR_ANGLE = 360 / NUM_SECTORS; // 36 градусов на сектор
 
-// URL вашего бэкенд API на Railway (замените на реальный URL!)
-// Вы только что подтвердили, что этот URL используется:
-const API_BASE_URL = 'https://meetslot-api-backend-production.up.railway.app/api';
+// URL вашего бэкенд API на Railway
+// ИСПОЛЬЗУЕМ ВНУТРЕННИЙ HTTP-АДРЕС ДЛЯ ОБХОДА ПРОБЛЕМ SSL/TLS
+const API_BASE_URL = 'http://meetslot-api-backend.railway.internal/api';
 
 // -----------------------------------------------------
 // 2. ИНИЦИАЛИЗАЦИЯ И ЭЛЕМЕНТЫ
@@ -84,17 +84,32 @@ async function getSpinResultFromBackend() {
 
     // Получаем данные аутентификации Telegram
     const initData = window.Telegram.WebApp.initData;
+    
+    // Получаем ID пользователя из initData (для бэкенда)
+    const urlParams = new URLSearchParams(initData);
+    const userParam = urlParams.get('user');
+    let userId = null;
+    if (userParam) {
+        try {
+            const userData = JSON.parse(decodeURIComponent(userParam));
+            userId = userData.id;
+        } catch(e) {
+            console.error("Не удалось разобрать данные пользователя:", e);
+        }
+    }
+
 
     try {
-        const response = await fetch(`${API_BASE_URL}/check_and_spin`, {
+        // Запрос отправляется на внутренний HTTP-адрес
+        const response = await fetch(`${API_BASE_URL}/spin_check`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 // Отправляем initData в заголовке для аутентификации на бэкенде
-                'X-Telegram-Init-Data': initData
+                // 'X-Telegram-Init-Data': initData // Передача user_id в теле - более надежна
             },
-            // Тело запроса пустое, все данные в заголовке
-            body: JSON.stringify({})
+            // Тело запроса: отправляем ID пользователя
+            body: JSON.stringify({ user_id: userId })
         });
 
         // Если ответ не 200, значит, произошла ошибка или отказ
@@ -102,13 +117,24 @@ async function getSpinResultFromBackend() {
             const errorData = await response.json();
 
             // Если бэкенд вернул сообщение о таймере (403 Forbidden, например)
-            if (response.status === 403 && errorData.error_message) {
-                showAppMessage(errorData.error_message); // Покажет "Попробуйте через X часов..."
+            if (errorData.status === "cooldown") {
+                // Если бэкенд возвращает статус cooldown, показываем сообщение таймера
+                const nextSpinTimestamp = errorData.next_spin_timestamp;
+                const nextSpinDate = new Date(nextSpinTimestamp * 1000);
+                const timeRemaining = nextSpinDate - new Date();
+                
+                if (timeRemaining > 0) {
+                    const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                    showAppMessage(`Вы уже крутили сегодня! Попробуйте через ${hours} ч. ${minutes} м.`);
+                } else {
+                    showAppMessage("Произошла ошибка проверки таймера.");
+                }
                 return null;
             }
 
             // Общая ошибка бэкенда
-            showAppMessage(`Ошибка: ${errorData.error_message || 'Неизвестная ошибка сервера'}`);
+            showAppMessage(`Ошибка: ${errorData.message || 'Неизвестная ошибка сервера'}`);
             console.error('API Error:', errorData);
             return null;
         }
@@ -150,7 +176,11 @@ async function handleSpinClick() {
     if (winningIndex === null) {
         // Спин недоступен (пользователь уже крутил или произошла ошибка)
         isSpinning = false;
-        spinButton.disabled = false;
+        // Кнопка остается disabled, если пришел ответ о таймере.
+        // Если была другая ошибка, включаем кнопку обратно, чтобы пользователь мог повторить.
+        if (errorText.textContent.includes('Ошибка подключения') || errorText.textContent.includes('Неизвестная ошибка')) {
+             spinButton.disabled = false;
+        }
         return;
     }
 
@@ -195,6 +225,9 @@ function closeModal() {
     resultModal.style.display = 'none';
     // window.Telegram.WebApp.close(); // Можно закрывать приложение
 }
+
+// Привязка обработчика к кнопке
+spinButton.addEventListener('click', handleSpinClick);
 
 // Запускаем инициализацию при загрузке
 window.onload = initTelegramApp;
