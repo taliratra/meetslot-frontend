@@ -423,8 +423,9 @@ async function getSpinResultFromBackend() {
 
     const initData = window.Telegram.WebApp.initData;
     let userId = null;
+    let username = null; // Добавлена переменная для имени пользователя
 
-    // Парсинг user_id
+    // Парсинг user_id и username
     try {
         const urlParams = new URLSearchParams(initData);
         const userParam = urlParams.get('user');
@@ -433,6 +434,8 @@ async function getSpinResultFromBackend() {
             const decodedUser = decodeURIComponent(userParam);
             const userData = JSON.parse(decodedUser);
             userId = userData.id; 
+            // Имя пользователя может быть null, если оно не задано или скрыто
+            username = userData.username; 
         }
     } catch(e) {
         console.error("Не удалось разобрать данные пользователя:", e);
@@ -452,7 +455,10 @@ async function getSpinResultFromBackend() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ user_id: userId })
+            body: JSON.stringify({ 
+                user_id: userId, 
+                username: username // Отправляем имя пользователя
+            })
         });
 
         if (!response.ok) {
@@ -490,6 +496,10 @@ async function getSpinResultFromBackend() {
                         showAppMessage(`Вы уже крутили сегодня! Попробуйте через ${hours} ч. ${minutes} м.`);
                         return null; 
                     }
+                } else if (errorData && errorData.message) {
+                    // Это может быть сообщение о превышении 10 попыток для tlrtri
+                    showAppMessage(errorData.message);
+                    return null;
                 }
             }
 
@@ -552,7 +562,7 @@ async function handleSpinClick() {
         
         // ВАЖНОЕ: Если showAppMessage показал сообщение о таймауте, мы оставляем кнопку disabled.
         // Иначе (любая другая ошибка) - включаем кнопку обратно.
-        if (errorText && !errorText.textContent.includes('крутили сегодня')) {
+        if (errorText && (!errorText.textContent.includes('крутили сегодня') && !errorText.textContent.includes('попыток'))) {
              spinButton.disabled = false;
         }
         
