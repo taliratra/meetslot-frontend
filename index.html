@@ -121,10 +121,10 @@
                 var(--color-blue-dark-segment) 36deg 72deg  /* Темный сегмент (половина от 72) */
             );
             
-            /* Маска для придания форме звезды остроты и вырезания центра - КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
+            /* Маска для придания форме звезды остроты и вырезания центра - КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: 70% */
             mask-image: radial-gradient(
                 circle at center, 
-                transparent 0%, **transparent 70%**, /* УМЕНЬШЕНО ВНУТРЕННЕЕ ОТВЕРСТИЕ (было 45%) */
+                transparent 0%, **transparent 70%**, /* УМЕНЬШЕНО ВНУТРЕННЕЕ ОТВЕРСТИЕ */
                 black **70%**, black 100% 
             );
             -webkit-mask-image: radial-gradient(
@@ -148,8 +148,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: **100px**; /* УМЕНЬШЕНО (было 180px) */
-            height: **100px**; /* УМЕНЬШЕНО (было 180px) */
+            width: **180px**; /* ВОЗВРАЩЕНО К ОРИГИНАЛЬНОМУ РАЗМЕРУ */
+            height: **180px**; /* ВОЗВРАЩЕНО К ОРИГИНАЛЬНОМУ РАЗМЕРУ */
             background: var(--color-blue-bg); 
             border-radius: 50%;
             display: flex;
@@ -157,9 +157,9 @@
             justify-content: center;
             align-items: center;
             color: var(--color-white); 
-            font-size: **20px**; /* УМЕНЬШЕНО */
+            font-size: **38px**; /* ВОЗВРАЩЕНО К ОРИГИНАЛЬНОМУ РАЗМЕРУ */
             font-weight: bold;
-            box-shadow: 0 0 0 **5px** rgba(255, 255, 255, 0.3), inset 0 0 **8px** rgba(0, 0, 0, 0.5); /* УМЕНЬШЕНА ОБВОДКА */
+            box-shadow: 0 0 0 **10px** rgba(255, 255, 255, 0.3), inset 0 0 **15px** rgba(0, 0, 0, 0.5); /* ВОЗВРАЩЕНО К ОРИГИНАЛЬНОМУ РАЗМЕРУ */
             cursor: pointer; 
             z-index: 5;
             transition: transform 0.1s;
@@ -171,7 +171,7 @@
         
         .center-text-go {
             color: var(--color-white); 
-            font-size: **20px**; /* УМЕНЬШЕНО */
+            font-size: **38px**; /* ВОЗВРАЩЕНО К ОРИГИНАЛЬНОМУ РАЗМЕРУ */
             font-family: Arial Black, Gadget, sans-serif;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
             margin-top: 0; 
