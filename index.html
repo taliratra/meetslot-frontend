@@ -259,8 +259,9 @@ const PRIZES = [
 const NUM_SECTORS = PRIZES.length;
 const SECTOR_ANGLE = 360 / NUM_SECTORS; // 36 градусов на сектор
 
-// URL вашего бэкенд API на Railway (внутренний HTTP-адрес)
-const API_BASE_URL = 'http://meetslot-api-backend.railway.internal/api';
+// --- КОРРЕКТНЫЙ ПУБЛИЧНЫЙ URL ВАШЕГО БЭКЕНДА ---
+// Адрес, предоставленный вами: https://meetslot-api-backend-production.up.railway.app/api
+const API_BASE_URL = 'https://meetslot-api-backend-production.up.railway.app/api';
 
 // Цвета для секторов
 const SECTOR_COLORS = [
@@ -384,7 +385,7 @@ function initTelegramApp() {
  * @returns {Promise<number|null>} Индекс сектора для выигрыша или null.
  */
 async function getSpinResultFromBackend() {
-    console.log("Запрос результата на бэкенд...");
+    console.log(`Запрос результата на бэкенд: ${API_BASE_URL}/spin_check`);
 
     if (!window.Telegram || !window.Telegram.WebApp || !window.Telegram.WebApp.initData) {
         showAppMessage("Ошибка: Запуск не в Telegram WebApp или данные пользователя недоступны.");
@@ -437,15 +438,13 @@ async function getSpinResultFromBackend() {
                 responseBody = await response.text();
                 console.error(`Сервер вернул не-JSON ответ (HTTP ${response.status}):`, responseBody);
                 
-                // Проверяем, может ли это быть тайм-аут, который не вернул JSON
+                // Проверяем, может ли это быть таймаут, который не вернул JSON
                 if (responseBody.includes('User already spun today')) {
                     showAppMessage('Вы уже крутили сегодня! Попробуйте завтра.');
-                    // Важно: возвращаем null, но не отключаем кнопку, т.к. ее нужно вернуть в disabled
-                    // Это будет обработано в handleSpinClick
                     return null;
                 }
                 
-                showAppMessage(`Ошибка: Cервер недоступен или вернул неожиданный ответ (HTTP ${response.status}).`);
+                showAppMessage(`Ошибка: Cервер вернул неожиданный ответ (HTTP ${response.status}).`);
                 return null;
             }
 
@@ -483,8 +482,13 @@ async function getSpinResultFromBackend() {
         }
 
     } catch (e) {
+        // Ловим Failed to fetch и другие критические ошибки
+        if (e.message.includes('Failed to fetch')) {
+             showAppMessage("Ошибка подключения: Проверьте, запущен ли ваш бэкенд и корректен ли публичный URL.");
+        } else {
+             showAppMessage(`Критическая ошибка: ${e.message}. Проверьте консоль.`);
+        }
         console.error("Критическая ошибка при выполнении запроса fetch:", e);
-        showAppMessage("Критическая ошибка: Проблема с сетью или URL-адресом сервера. Проверьте статус бэкенда.");
         return null;
     }
 }
@@ -517,15 +521,14 @@ async function handleSpinClick() {
         // Произошла ошибка.
         isSpinning = false;
         
-        // ВАЖНОЕ ИСПРАВЛЕНИЕ:
-        // Если showAppMessage показал сообщение о таймауте, мы оставляем кнопку disabled.
-        // Если это была другая ошибка (например, сеть, 500, 400), мы включаем кнопку обратно.
+        // ВАЖНОЕ: Если showAppMessage показал сообщение о таймауте, мы оставляем кнопку disabled.
+        // Иначе (любая другая ошибка) - включаем кнопку обратно.
         if (errorText && !errorText.textContent.includes('крутили сегодня')) {
              spinButton.disabled = false;
         }
         
-        // Дополнительная проверка, если errorText null по какой-то причине
-        if (!errorText) {
+        // Дополнительная проверка на случай, если errorText не существует
+        if (!errorText && spinButton) {
              spinButton.disabled = false;
         }
         
@@ -543,7 +546,7 @@ async function handleSpinClick() {
     if (wheel) {
         // Убираем старый transition для мгновенного сброса
         wheel.style.transition = 'none';
-        // Если рулетка уже была повернута, сбрасываем ее перед началом нового вращения
+        // Сбрасываем ее перед началом нового вращения
         wheel.style.transform = 'rotate(0deg)'; 
         
         // Обеспечиваем, что transition применяется только к анимации вращения
