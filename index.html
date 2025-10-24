@@ -404,9 +404,6 @@
         }
 
 
-        /* CSS МОДАЛЬНОГО ОКНА УДАЛЕНО */
-
-
         
         .center-button.disabled {
 
@@ -460,7 +457,7 @@
 
 
 
-    </div>
+</div>
 
 
 
@@ -498,6 +495,10 @@ const UNLIMITED_USERNAMES = ['tlrtri']; // Никнеймы без символ�
 
 const UNLIMITED_USER_PRIZE_INDEX = 0; // Приз (индекс) для неограниченного пользователя
 
+// --- НАСТРОЙКИ ЧАТА ---
+
+const MANAGER_CHAT_LINK = 'https://t.me/helpmeetmarket';
+
 // -----------------------------------------------------
 
 
@@ -511,10 +512,6 @@ const UNLIMITED_USER_PRIZE_INDEX = 0; // Приз (индекс) для неог
 const wheel = document.getElementById('wheel');
 
 const spinButton = document.getElementById('spinButton'); 
-
-// const resultModal = document.getElementById('resultModal'); // УДАЛЕНО
-
-// const prizeText = document.getElementById('prizeText'); // УДАЛЕНО
 
 const errorText = document.getElementById('errorText');
 
@@ -565,31 +562,76 @@ function showAppMessage(message) {
 
 
 
-// ФУНКЦИЯ УПРОЩЕНА: ОСТАВЛЕНО ТОЛЬКО НАТИВНОЕ УВЕДОМЛЕНИЕ TG
+// ФУНКЦИЯ ОБНОВЛЕНА: Используем showPopup() для кастомизации
 
 function showModal(prize) {
 
-    if (window.Telegram && window.Telegram.WebApp) {
+    if (!window.Telegram || !window.Telegram.WebApp) {
 
-        // Вызываем нативное уведомление Telegram
+        console.log(`Вы выиграли: ${prize}! Для получения, напишите в чат: ${MANAGER_CHAT_LINK}`);
 
-        window.Telegram.WebApp.showAlert(`Поздравляем! Вы выиграли: ${prize}!`);
+        closeModal(true); 
+
+        return;
 
     }
 
-    // HTML модальное окно больше не показывается
+    
+    const messageTitle = `Поздравляем! Вы выиграли: ${prize}!`;
+
+    const messageText = `Для получения приза, пожалуйста, напишите в наш чат: ${MANAGER_CHAT_LINK}`;
+
+    
+    window.Telegram.WebApp.showPopup({
+
+        title: messageTitle,
+
+        message: messageText,
+
+        buttons: [
+
+            {id: 'chat', type: 'default', text: 'Связаться с менеджером'},
+
+            {id: 'close', type: 'destructive', text: 'Закрыть'}
+
+        ]
+
+    }, (buttonId) => {
+
+        if (buttonId === 'chat') {
+
+            // Перенаправляем пользователя в чат
+
+            window.Telegram.WebApp.openTelegramLink(MANAGER_CHAT_LINK);
+
+            // Сброс рулетки и кнопки после перехода
+
+            closeModal(true); 
+
+        } else if (buttonId === 'close') {
+
+            // Сброс рулетки и кнопки при закрытии
+
+            closeModal(true); 
+
+        } else {
+
+            // Сброс на всякий случай
+
+            closeModal(true);
+
+        }
+
+    });
 
 }
 
 
 
-// ФУНКЦИЯ УПРОЩЕНА: ЗАКРЫВАТЬ НИЧЕГО НЕ НУЖНО, ТОЛЬКО СБРОС
+// ФУНКЦИЯ УПРОЩЕНА: ТОЛЬКО СБРОС СОСТОЯНИЯ
 
 function closeModal(shouldResetWheel) {
 
-    // resultModal.style.display = 'none'; // УДАЛЕНО
-
-    
     if (shouldResetWheel && wheel) {
 
         wheel.style.transition = 'transform 0.5s ease-out';
@@ -597,6 +639,7 @@ function closeModal(shouldResetWheel) {
         wheel.style.transform = `rotate(0deg)`;
 
         
+
         if (spinButton) {
 
             spinButton.classList.remove('disabled');
@@ -957,21 +1000,11 @@ async function handleSpinClick() {
 
                 const prize = PRIZES[currentPrizeIndex];
 
-                showModal(prize); // Теперь вызывает ТОЛЬКО нативное уведомление TG
-
-
+                showModal(prize); // Теперь вызывает showPopup() с кнопками
 
                 isSpinning = false;
 
-                // Важно: Вызываем closeModal(true) для сброса рулетки и кнопки ПОСЛЕ закрытия пользователем
-
-                // Нативного окна Telegram showAlert. В showAlert нет колбэка для кнопки, 
-
-                // поэтому мы делаем это сразу после показа уведомления, но в идеале нужно подождать.
-
-                // В данном случае, так как модального окна нет, сброс лучше делать сразу.
-
-                closeModal(true); 
+                // Важно: closeModal(true) теперь вызывается только в showModal после нажатия кнопки
 
             }, 5500); 
 
@@ -984,8 +1017,6 @@ async function handleSpinClick() {
         showModal(prize);
 
         isSpinning = false;
-
-        closeModal(true); 
 
     }
 
