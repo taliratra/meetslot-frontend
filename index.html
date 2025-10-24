@@ -470,7 +470,7 @@
             max-width: 250px;
             box-shadow: 0 4px 0 0 var(--color-blue-dark); 
             transition: all 0.1s ease;
-            margin-bottom: 15px; /* Добавим отступ для вторичной кнопки */
+            margin-bottom: 15px; 
         }
         
         .modal-content button:active {
@@ -478,26 +478,26 @@
             transform: translateY(3px);
         }
         
-        /* СТИЛЬ ДЛЯ МЕНЕЕ ЗАМЕТНОЙ КНОПКИ */
+        /* СТИЛЬ ДЛЯ МЕНЕЕ ЗАМЕТНОЙ КНОПКИ (ОБНОВЛЕН) */
         .secondary-modal-link {
             display: block;
             background: none;
             border: none;
-            color: var(--color-blue-bg); /* Используем основной цвет, но без фона */
-            text-decoration: underline;
-            font-size: 14px;
+            color: #888888; /* Светло-серый цвет */
+            text-decoration: none; /* Убираем подчеркивание */
+            font-size: 15px; /* Немного меньше */
             font-weight: normal;
             cursor: pointer;
-            padding: 0;
+            padding: 5px 10px; /* Уменьшаем padding */
             margin: 10px auto 0;
-            width: 100%;
+            width: auto; /* Ширина по контенту */
             max-width: 250px;
-            transition: opacity 0.1s;
-            opacity: 0.7; /* Делаем её менее заметной */
+            transition: color 0.1s ease;
+            opacity: 1; /* Оставим полную видимость, но цвет сделает её менее заметной */
         }
         
         .secondary-modal-link:hover {
-            opacity: 1;
+            color: var(--color-black); /* Чуть темнее при наведении */
         }
         
         /* Иконка */
@@ -567,7 +567,7 @@
             <button onclick="handlePrizeClaim()">Получить приз</button>
             
             <button class="secondary-modal-link" onclick="closeModal(true)">
-                Продолжить использование приложения
+                Закрыть
             </button>
         </div>
     </div>
@@ -763,11 +763,9 @@ function initTelegramApp() {
             window.Telegram.WebApp.ready();
 
             const Button = window.Telegram.WebApp.MainButton;
-
+            // Установка текста главной кнопки Telegram WebApp
             Button.setText("Закрыть мини-приложение");
-
             Button.onClick(() => window.Telegram.WebApp.close());
-
             Button.show();
 
         }
