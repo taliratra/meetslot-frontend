@@ -217,17 +217,9 @@
 <div class="app-container">
     <h1>Рулетка MeetSlot 🎁</h1>
 
-    <!-- 
-        КРИТИЧЕСКИ ВАЖНОЕ ИСПРАВЛЕНИЕ: 
-        Добавлен элемент для вывода ошибок (таймаут, сбой API и т.д.) 
-    -->
     <div id="errorText"></div>
 
     <div class="wheel-container">
-        <!-- 
-            Сам элемент колеса. Содержимое генерируется в JS, 
-            но мы добавим его для корректного отображения 
-        -->
         <div id="wheel" class="wheel">
         </div>
         <div class="pointer"></div>
@@ -247,13 +239,9 @@
     </div>
 </div>
 
-<!-- 
-    Скрипт должен быть в конце, чтобы элементы DOM были загружены 
-    до того, как JS попытается их найти. 
--->
 <script>
 // -----------------------------------------------------
-// 1. КОНФИГУРАЦИЯ (Взято из script.js)
+// 1. КОНФИГУРАЦИЯ
 // -----------------------------------------------------
 
 const PRIZES = [
@@ -272,23 +260,7 @@ const NUM_SECTORS = PRIZES.length;
 const SECTOR_ANGLE = 360 / NUM_SECTORS; // 36 градусов на сектор
 
 // URL вашего бэкенд API на Railway (внутренний HTTP-адрес)
-// Примечание: Для работы в production на Railway может потребоваться 
-// заменить это на публичный домен, если вы не используете внутреннюю сеть.
 const API_BASE_URL = 'http://meetslot-api-backend.railway.internal/api';
-
-// -----------------------------------------------------
-// 2. ИНИЦИАЛИЗАЦИЯ И ЭЛЕМЕНТЫ (Взято из script.js)
-// -----------------------------------------------------
-
-// Теперь объявляем переменные, которые могут быть null
-const wheel = document.getElementById('wheel');
-const spinButton = document.getElementById('spinButton');
-const resultModal = document.getElementById('resultModal');
-const prizeText = document.getElementById('prizeText');
-const errorText = document.getElementById('errorText'); // <--- Теперь этот элемент существует!
-
-let isSpinning = false;
-let currentPrizeIndex = null; // Индекс, который мы сохраняем после проверки
 
 // Цвета для секторов
 const SECTOR_COLORS = [
@@ -296,65 +268,23 @@ const SECTOR_COLORS = [
     '#FFA07A', '#98FB98', '#ADD8E6', '#FF69B4', '#F4A460'
 ];
 
-/**
- * Генерирует и вставляет сектора в колесо рулетки.
- */
-function drawWheel() {
-    if (!wheel) return;
-    wheel.innerHTML = ''; // Очистка
-    
-    for (let i = 0; i < NUM_SECTORS; i++) {
-        const sector = document.createElement('div');
-        sector.className = 'sector';
-        sector.style.backgroundColor = SECTOR_COLORS[i % SECTOR_COLORS.length];
-        
-        // Математика для вращения и обрезки секторов
-        sector.style.transform = `rotate(${i * SECTOR_ANGLE}deg) skewY(${90 - SECTOR_ANGLE}deg)`;
-        
-        // Внутренний элемент для текста
-        const textContainer = document.createElement('div');
-        textContainer.className = 'sector-text';
-        
-        // Отменяем skew и вращаем текст, чтобы он был горизонтальным
-        // 90deg - это угол смещения текста внутри сектора
-        textContainer.style.transform = `skewY(-${90 - SECTOR_ANGLE}deg) rotate(90deg) translate(-50%, -50%)`;
-        textContainer.style.transformOrigin = '0 0';
-        
-        // Добавляем отступ для текста, чтобы он не сливался с центром
-        const textElement = document.createElement('span');
-        textElement.textContent = PRIZES[i];
-        
-        textContainer.appendChild(textElement);
-        sector.appendChild(textContainer);
-        wheel.appendChild(sector);
-    }
-}
-
 
 // -----------------------------------------------------
-// 3. ФУНКЦИИ ВЗАИМОДЕЙСТВИЯ С TELEGRAM (Взято из script.js)
+// 2. ИНИЦИАЛИЗАЦИЯ И ЭЛЕМЕНТЫ
 // -----------------------------------------------------
 
-/**
- * Инициализация и проверка статуса спина.
- * Вызывается при загрузке Mini App.
- */
-function initTelegramApp() {
-    try {
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            const Button = window.Telegram.WebApp.MainButton;
-            Button.setText("Закрыть рулетку");
-            Button.onClick(() => window.Telegram.WebApp.close());
-            Button.show();
-            console.log("Telegram WebApp инициализировано.");
-        }
-    } catch (e) {
-        console.error("Ошибка инициализации Telegram WebApp. Запущено не в Telegram.", e);
-    }
-    // Вызов отрисовки рулетки после инициализации
-    drawWheel();
-}
+const wheel = document.getElementById('wheel');
+const spinButton = document.getElementById('spinButton');
+const resultModal = document.getElementById('resultModal');
+const prizeText = document.getElementById('prizeText');
+const errorText = document.getElementById('errorText');
+
+let isSpinning = false;
+let currentPrizeIndex = null; 
+
+// -----------------------------------------------------
+// 3. ФУНКЦИИ UI / ВЗАИМОДЕЙСТВИЯ
+// -----------------------------------------------------
 
 /**
  * Показывает сообщение об ошибке (например, таймер или отказ сети)
@@ -373,6 +303,71 @@ function showAppMessage(message) {
     }
 }
 
+function showModal(prize) {
+    if (resultModal && prizeText) {
+        prizeText.textContent = `Вы выиграли: ${prize}`;
+        resultModal.style.display = 'block';
+    }
+}
+
+function closeModal() {
+    if (resultModal) {
+        resultModal.style.display = 'none';
+    }
+}
+
+/**
+ * Генерирует и вставляет сектора в колесо рулетки.
+ */
+function drawWheel() {
+    if (!wheel) return;
+    wheel.innerHTML = ''; // Очистка
+    
+    for (let i = 0; i < NUM_SECTORS; i++) {
+        const sector = document.createElement('div');
+        sector.className = 'sector';
+        sector.style.backgroundColor = SECTOR_COLORS[i % SECTOR_COLORS.length];
+        
+        sector.style.transform = `rotate(${i * SECTOR_ANGLE}deg) skewY(${90 - SECTOR_ANGLE}deg)`;
+        
+        const textContainer = document.createElement('div');
+        textContainer.className = 'sector-text';
+        
+        textContainer.style.transform = `skewY(-${90 - SECTOR_ANGLE}deg) rotate(90deg) translate(-50%, -50%)`;
+        textContainer.style.transformOrigin = '0 0';
+        
+        const textElement = document.createElement('span');
+        textElement.textContent = PRIZES[i];
+        
+        textContainer.appendChild(textElement);
+        sector.appendChild(textContainer);
+        wheel.appendChild(sector);
+    }
+}
+
+/**
+ * Инициализация Telegram WebApp
+ */
+function initTelegramApp() {
+    try {
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            const Button = window.Telegram.WebApp.MainButton;
+            Button.setText("Закрыть рулетку");
+            Button.onClick(() => window.Telegram.WebApp.close());
+            Button.show();
+            console.log("Telegram WebApp инициализировано.");
+        }
+    } catch (e) {
+        console.error("Ошибка инициализации Telegram WebApp. Запущено не в Telegram.", e);
+    }
+    drawWheel();
+}
+
+
+// -----------------------------------------------------
+// 4. ЛОГИКА API
+// -----------------------------------------------------
 
 /**
  * Отправляет запрос на бэкенд для проверки и получения результата.
@@ -389,19 +384,17 @@ async function getSpinResultFromBackend() {
     const initData = window.Telegram.WebApp.initData;
     let userId = null;
 
-    // ИСПРАВЛЕНИЕ: Более надежный способ парсинга user_id
+    // Парсинг user_id
     try {
         const urlParams = new URLSearchParams(initData);
         const userParam = urlParams.get('user');
         
         if (userParam) {
-            // Декодируем и парсим строку пользователя (это JSON)
             const decodedUser = decodeURIComponent(userParam);
             const userData = JSON.parse(decodedUser);
-            userId = userData.id; // Получаем ID пользователя
+            userId = userData.id; 
         }
     } catch(e) {
-        // Ловим ошибку парсинга, если initData нестандартная
         console.error("Не удалось разобрать данные пользователя:", e);
         showAppMessage("Ошибка аутентификации пользователя.");
         return null;
@@ -419,17 +412,24 @@ async function getSpinResultFromBackend() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            // Тело запроса: отправляем ID пользователя
             body: JSON.stringify({ user_id: userId })
         });
 
-        // Если ответ не 200, значит, произошла ошибка или отказ
+        // --- ИСПРАВЛЕННЫЙ БЛОК ОБРАБОТКИ ОШИБОК ---
         if (!response.ok) {
-            // Если бэкенд вернул 403 Forbidden (таймер)
+            let errorData = {};
+            // Читаем тело ответа ОДИН раз для обработки ошибок
+            try {
+                errorData = await response.json(); 
+            } catch(e) {
+                // Если не удалось прочитать JSON (напр., сервер вернул пустой текст или HTML)
+                console.error("Не удалось прочитать JSON ответа:", e);
+                showAppMessage(`Ошибка: Не удалось прочитать ответ сервера (HTTP ${response.status}).`);
+                return null;
+            }
+
+            // 1. Обработка 403 (Таймер)
             if (response.status === 403) {
-                const errorData = await response.json();
-                
-                // Проверяем наличие ключа next_spin_timestamp для отображения таймера
                 if (errorData && errorData.next_spin_timestamp) {
                     const nextSpinTimestamp = errorData.next_spin_timestamp;
                     const nextSpinDate = new Date(nextSpinTimestamp * 1000);
@@ -439,21 +439,22 @@ async function getSpinResultFromBackend() {
                         const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
                         const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
                         showAppMessage(`Вы уже крутили сегодня! Попробуйте через ${hours} ч. ${minutes} м.`);
-                        return null;
+                        return null; // Обязательный возврат после показа таймера
                     }
                 }
             }
 
-            // Общая ошибка бэкенда (например, 500)
-            const errorData = await response.json();
+            // 2. Общая ошибка бэкенда (500, 400 и т.д.)
             showAppMessage(`Ошибка: ${errorData.message || 'Неизвестная ошибка сервера'}`);
             console.error(`API Error (${response.status}):`, errorData);
             return null;
         }
+        // --- КОНЕЦ ИСПРАВЛЕННОГО БЛОКА ---
 
-        const data = await response.json();
 
-        // Ожидаем, что бэкенд вернет prize_index (200 OK)
+        // Если response.ok (статус 200), читаем выигрышный индекс
+        const data = await response.json(); 
+
         if (typeof data.prize_index === 'number') {
             return data.prize_index; // Индекс от 0 до 9
         } else {
@@ -462,7 +463,6 @@ async function getSpinResultFromBackend() {
         }
 
     } catch (e) {
-        // Ошибка сети или CORS (которой теперь не должно быть)
         console.error("Ошибка при выполнении запроса к API:", e);
         showAppMessage("Ошибка подключения к серверу. Попробуйте позже.");
         return null;
@@ -470,7 +470,7 @@ async function getSpinResultFromBackend() {
 }
 
 // -----------------------------------------------------
-// 4. ЛОГИКА РУЛЕТКИ (Взято из script.js)
+// 5. ЛОГИКА РУЛЕТКИ
 // -----------------------------------------------------
 
 /**
@@ -478,7 +478,7 @@ async function getSpinResultFromBackend() {
  */
 async function handleSpinClick() {
     if (!spinButton) {
-        console.error("ОШИБКА: Кнопка спина не найдена. Проверьте ID в HTML.");
+        console.error("ОШИБКА: Кнопка спина не найдена.");
         showAppMessage("Критическая ошибка: Кнопка запуска не найдена.");
         return;
     }
@@ -488,85 +488,51 @@ async function handleSpinClick() {
     spinButton.disabled = true;
     
     if (errorText) {
-        errorText.style.display = 'none'; // Скрываем предыдущие ошибки
+        errorText.style.display = 'none';
     }
 
-    // 1. Получаем результат (индекс выигрышного сектора) от бэкенда
     const winningIndex = await getSpinResultFromBackend();
 
     if (winningIndex === null) {
-        // Спин недоступен (пользователь уже крутил или произошла ошибка)
         isSpinning = false;
         
-        // Включаем кнопку обратно, только если это не ошибка таймера
+        // Включаем кнопку обратно, если это не ошибка таймера
         if (!errorText || !errorText.textContent.includes('Вы уже крутили')) {
              spinButton.disabled = false;
         }
         return;
     }
 
-    currentPrizeIndex = winningIndex; // Сохраняем индекс для последующей обработки
+    currentPrizeIndex = winningIndex; 
 
-    // 2. Вычисляем угол, на который нужно повернуть рулетку
-    const baseRotations = 5; // Минимум 5 полных оборотов
+    const baseRotations = 5; 
     // Угол сектора: 360 / 10 = 36 градусов.
     // Мы используем 0.5 для центрирования стрелки на секторе.
     const degreesToWin = (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE;
 
-    // Угол для вращения
     const finalRotation = (baseRotations * 360) + degreesToWin;
 
-    // 3. Применяем анимацию вращения
     if (wheel) {
         wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
         wheel.style.transform = `rotate(${finalRotation}deg)`;
 
-        // 4. Ждем завершения анимации
         setTimeout(() => {
-            // 5. Показываем результат
             const prize = PRIZES[currentPrizeIndex];
             showModal(prize);
 
-            // 6. Сбрасываем состояние
             isSpinning = false;
-            // Кнопка остается disabled, так как спин использован
-            // Если вы хотите дать возможность повторить спин, если это был cooldown,
-            // эту логику нужно будет пересмотреть.
-
-        }, 5500); // 5000 мс вращение + 500 мс запас
+        }, 5500); 
     } else {
-        // Если рулетка не найдена, просто показываем модальное окно сразу
         const prize = PRIZES[currentPrizeIndex];
         showModal(prize);
         isSpinning = false;
     }
 }
 
-// -----------------------------------------------------
-// 5. ФУНКЦИИ МОДАЛЬНОГО ОКНА (Взято из script.js)
-// -----------------------------------------------------
-
-function showModal(prize) {
-    if (resultModal && prizeText) {
-        prizeText.textContent = `Вы выиграли: ${prize}`;
-        resultModal.style.display = 'block';
-    }
-}
-
-function closeModal() {
-    if (resultModal) {
-        resultModal.style.display = 'none';
-    }
-    // Здесь можно вызвать window.Telegram.WebApp.close(); если нужно закрывать после приза
-}
-
-// Привязка обработчика к кнопке (только если она найдена!)
+// Привязка обработчика к кнопке
 if (spinButton) {
     spinButton.addEventListener('click', handleSpinClick);
-} else {
-    console.error("ОШИБКА: Кнопка спина не найдена, обработчик не привязан.");
 }
-
 
 // Запускаем инициализацию при загрузке
 window.onload = initTelegramApp;
