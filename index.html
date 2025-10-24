@@ -290,10 +290,15 @@
              margin: 15px 0 25px 0;
         }
         
-        /* Дополнительный стиль для параграфов в модальном окне, чтобы не сдвигать текст */
-        #welcomeModal .modal-content p {
-             margin: 5px 0 15px 0;
+        /* Дополнительный стиль для параграфов в модальном окне приветствия */
+        #welcomeModal .modal-content p:first-of-type {
+             margin-bottom: 5px;
         }
+        #welcomeModal .modal-content p:nth-of-type(2) {
+             margin-top: 0;
+             margin-bottom: 25px;
+        }
+
 
         .modal-content button {
             background: var(--color-blue-bg); 
@@ -358,9 +363,12 @@
     <div id="welcomeModal" class="modal" onclick="closeModal(true, 'welcomeModal')">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-modal-btn" onclick="closeModal(true, 'welcomeModal')">&times;</span> 
-            <span class="modal-emoji">👋</span> <h2>ПРИВЕТСТВУЕМ!</h2>
-            <p style="font-size: 16px; margin-bottom: 5px;">Добро пожаловать в Meet Рулетку!</p>
-            <p>Вращайте колесо, чтобы получить шанс выиграть Meet-бонусы или скидки. Удачи!</p>
+            <span class="modal-emoji">👋</span>
+            
+            <p style="font-size: 18px; font-weight: bold; margin-bottom: 5px; color: var(--color-black);">Добро пожаловать в Meet Рулетку!</p>
+            <p style="margin-top: 0; margin-bottom: 25px; color: var(--color-black);">
+                Вращайте колесо ежедневно, чтобы получить дополнительные скидки, промокоды, Meet-бонусы и другие ценные призы. Удачи!
+            </p>
             
             <button onclick="closeModal(true, 'welcomeModal')">
                 Начать игру!
@@ -494,7 +502,7 @@ function initTelegramApp() {
     }
     if (errorText) errorText.style.display = 'none';
     
-    // НОВАЯ ЛОГИКА: Показать приветственное сообщение при запуске
+    // Показать приветственное сообщение при запуске
     showModal(null, 'welcomeModal');
 }
 
