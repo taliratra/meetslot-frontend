@@ -45,7 +45,7 @@
             align-items: center;
         }
 
-        /* ЗАГОЛОВОК: Уменьшен размер и одна строка */
+        /* ИЗМЕНЕНИЕ ДЛЯ ЗАГОЛОВКА H1: Уменьшен размер и одна строка */
         h1 {
             font-family: Arial Black, Gadget, sans-serif;
             color: var(--color-white); 
@@ -105,7 +105,7 @@
             box-sizing: border-box;
         }
         
-        /* Псевдоэлемент для создания звездообразной формы */
+        /* Псевдоэлемент для создания звездообразной формы - ИЗМЕНЕНО */
         .wheel::before {
             content: '';
             position: absolute;
@@ -115,22 +115,23 @@
             height: 100%;
             border-radius: 50%;
             
-            /* 5 широких полос (10 сегментов призов) */
+            /* Создаем 5 полос (10 сегментов - 5 светлых, 5 темных) */
+            /* 360 градусов / 5 полос = 72 градуса на полосу */
             background: repeating-conic-gradient(
-                var(--color-blue-light-segment) 0deg 36deg, 
-                var(--color-blue-dark-segment) 36deg 72deg  
+                var(--color-blue-light-segment) 0deg 36deg, /* Светлый сегмент (половина от 72) */
+                var(--color-blue-dark-segment) 36deg 72deg  /* Темный сегмент (половина от 72) */
             );
             
-            /* Маска для придания форме звезды остроты и вырезания центра - МАКСИМАЛЬНО УМЕНЬШЕНОЕ ОТВЕРСТИЕ */
+            /* Маска для придания форме звезды остроты и вырезания центра - ИЗМЕНЕНО */
             mask-image: radial-gradient(
                 circle at center, 
-                transparent 0%, transparent 70%, /* ОТВЕРСТИЕ УМЕНЬШЕНО ДО 30% РАДИУСА КОЛЕСА */
-                black 70%, black 100% 
+                transparent 0%, transparent 45%, /* УМЕНЬШЕНО ВНУТРЕННЕЕ ОТВЕРСТИЕ */
+                black 45%, black 100% 
             );
             -webkit-mask-image: radial-gradient(
                 circle at center, 
-                transparent 0%, transparent 70%, 
-                black 70%, black 100%
+                transparent 0%, transparent 45%, 
+                black 45%, black 100%
             );
             z-index: 1; 
             filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
@@ -148,8 +149,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 100px; /* УМЕНЬШЕНО, чтобы соответствовать новому отверстию */
-            height: 100px; /* УМЕНЬШЕНО */
+            width: 180px; 
+            height: 180px; 
             background: var(--color-blue-bg); 
             border-radius: 50%;
             display: flex;
@@ -157,9 +158,9 @@
             justify-content: center;
             align-items: center;
             color: var(--color-white); 
-            font-size: 20px; /* УМЕНЬШЕННЫЙ ТЕКСТ */
+            font-size: 38px;
             font-weight: bold;
-            box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.3), inset 0 0 8px rgba(0, 0, 0, 0.5); 
+            box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.3), inset 0 0 15px rgba(0, 0, 0, 0.5); 
             cursor: pointer; 
             z-index: 5;
             transition: transform 0.1s;
@@ -171,7 +172,7 @@
         
         .center-text-go {
             color: var(--color-white); 
-            font-size: 20px; /* УМЕНЬШЕННЫЙ ТЕКСТ */
+            font-size: 38px;
             font-family: Arial Black, Gadget, sans-serif;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
             margin-top: 0; 
@@ -287,14 +288,14 @@
             <p>You've won a bonus!<br>Hurry up and use it!</p>
             <p id="prizeText" style="display:none;">Вы выиграли: </p>
             <button onclick="closeModal(true)">Click to continue</button>
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxwYXRoIGZpbGw9IiNGRkNBRCBEIiBkPSJNMTIgMmMtNC40MTggMC04IDMtOCA2czQgNiA4IDZzOC0zIDgtNnMtMy41ODItNi04LTYuMDAxem0wIDJjMi43NjEgMCA1IDIuMDIyIDUgNC41czIuNTEgNC41IDAgNC41YzAtLjQxNC0uMzM2LS43NS0uNzUtLjc1cy0uNzUuMzM2LS43NS43NS4zMzYgLjc1Ljc1LjY4IDEuMTUgMCAxLjI0NyAyYy00LjQ4MiA3Ljg2LTkuNjA2IDYuMDA4LTEzLjk5NiAzLjI2OS4xMDMtMi4zMjMuODcxLTIuOTY1Ljg4Ny0zLjAxNUE0LjkzIDQuOTMgMCAwIDAgNCA5Yy0yLjc2MiAwLTUtMi4wMjItNS00LjVzMi4yMzgtNC41IDUtNC41em0wIDJjLTQuNDE4IDAtOCAzLTYgNnMtNC40MTggNi0xIDZjMy40MTctMy44MTcgOC40OTktNC45OSA5LjY0Ny01Ljc0Mi44MjItMS4yNjcuNzU0LTMuMjYtLjU0Ni0zLjE0Ni4zNjktMS41MzguOTgyLTIuMTg3Ljk4Mi0yLjIyOCAwLS42LS4xNDUtLjYyMi0uMjQ4LS41NDYuNTI0LS43NCAxLjYwOC0uOTMyIDIuNzYyLS45MzJ6bS01IDEyYzAgMi42NjcgMCA1IDAgNnMyLjIzOCAyIDUgMiAyLjU2Mi01LTItNnptMTQtMTIuMDAyYzAgNC40MTktMy41ODIgOC04IDhzLTggMy41ODEtOC04YzAtLjI3LjAyNi0uNTI5LjA0LS43OC4wMTQtLjI1LjA0LS40OTcuMDctLjc0em0yLTIuOTk4YzAgMi43NjItMi41MTIgNS01IDUgMCAuMjM1LjAzMy40NTguMDY1LjcwNi0uNTUuMjY0LTEuMDY0LjQ1MS0xLjQ0Mi41NjctLjM3OC4xMTYtLjc1MS4wNDgtLjk5MS0uMjg2LS4yNC0uMzM0LS4xNDEtLjc3Mi4yNTItMS4wMjJjLjM5My0uMjUuODYyLS4xNTkgMS4xNTcuMTU5LjI5NS4zMTcuMjI3Ljc3My0uMTY2IDEuMDkyem0tNC45MDYgMTBjLjAxMi0uMDMgNC44ODUgNS45MDYgNi40NjQtLjM2NEMxNi42NDcgMTYuODQ0IDE1LjU2IDE0IDEyIDE0Yy0yLjc2MiAwLTUgMi4wMjItNSAzLjVzMi4yMzggMy41IDUgMy41eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtMSkiLz4KPC9zdmc>" alt="Brain icon" class="brain-icon"/>
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxwYXRoIGZpbGw9IiNGRkNBRCBEIiBkPSJNMTIgMmMtNC40MTggMC04IDMtOCA2czQgNiA4IDZzOC0zIDgtNnMtMy41ODItNi04LTYuMDAxem0wIDJjMi43NjEgMCA1IDIuMDIyIDUgNC41czIuNTEgNC41IDAgNC41YzAtLjQxNC0uMzM2LS43NS0uNzUtLjc1cy0uNzUuMzM2LS43NS43NS4zMzYgLjc1Ljc1LjY4IDEuMTUgMCAxLjI0NyAyYy00LjQ4MiA3.jgxNi0uOTMyIDIuNzYyLS45MzJ6bS01IDEyYzAgMi42NjcgMCA1IDAgNnMyLjIzOCAyIDUgMiAyLjU2Mi01LTItNnptMTQtMTIuMDAyYzAgNC40MTktMy41ODIgOC04IDhzLTggMy41ODEtOC04YzAtLjI3LjAyNi0uNTI5LjA0LS43OC4wMTQtLjI1LjA0LS40OTcuMDctLjc0em0yLTIuOTk4YzAgMi43NjItMi41MTIgNS01IDUgMCAuMjM1LjAzMy40NTguMDY1LjcwNi0uNTUuMjY0LTEuMDY0LjQ1MS0xLjQ0Mi41NjctLjM3OC4xMTYtLjc1MS4wNDgtLjk5MS0uMjg2LS4yNC0uMzM0LS4xNDEtLjc3Mi4yNTItMS4wMjJjLjM5My0uMjUuODYyLS4xNTkgMS4xNTcuMTU5LjI5NS4zMTcuMjI3Ljc3My0uMTY2IDEuMDkyem0tNC45MDYgMTBjLjAxMi0uMDMgNC44ODUgNS45MDYgNi40NjQtLjM2NEMxNi42NDcgMTYuODQ0IDE1LjU2IDE0IDEyIDE0Yy0yLjc2MiAwLTUgMi4wMjItNSAzLjVzMi4yMzggMy41IDUgMy41eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtMSkiLz4KPC9zdmc>" alt="Brain icon" class="brain-icon"/>
             <div style="font-size: 10px; color: white;">*Символ не является реальным изображением мозга.</div>
         </div>
     </div>
 </div>
 
 <script>
-// ВАЖНО: КОНФИГУРАЦИЯ И ЛОГИКА ОСТАВЛЕНЫ БЕЗ ИЗМЕНЕНИЙ
+// ВАЖНО: КОНФИГУРАЦИЯ И ЛОГИКА ОСТАЮТСЯ БЕЗ ИЗМЕНЕНИЙ
 // -----------------------------------------------------
 
 const PRIZES = [
@@ -302,6 +303,8 @@ const PRIZES = [
     "2000 meet-бонусов", "1000 meet-бонусов", "Промокод на бесплатную доставку", 
     "Скидка 10%", "Скидка 15%", "SoleFresh к заказу"
 ];
+// Теперь сектора призов соответствуют не "полосам", а виртуальным 10 делениям
+// внутри 5 видимых широких полос. Логика API при этом остается прежней.
 const NUM_SECTORS = PRIZES.length; // = 10
 const SECTOR_ANGLE = 360 / NUM_SECTORS; // = 36 градусов
 
@@ -393,7 +396,7 @@ function initTelegramApp() {
 
 
 // -----------------------------------------------------
-// 4. ЛОГИКА API 
+// 4. ЛОГИКА API (ОСТАВЛЕНА БЕЗ ИЗМЕНЕНИЙ)
 // -----------------------------------------------------
 
 async function getSpinResultFromBackend() {
