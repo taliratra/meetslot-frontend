@@ -237,17 +237,17 @@
             );
 
             
-            /* Маска для придания форме звезды остроты и вырезания центра - ИСПРАВЛЕНО ЗДЕСЬ */
+            /* ИСПРАВЛЕННАЯ МАСКА: Теперь секторы видны от центральной кнопки до края */
 
             mask-image: radial-gradient(
 
                 circle at center, 
 
-                transparent 0%, transparent 70%, /* Внутренний радиус 70% */
+                transparent 0%, transparent 60%,  /* Прозрачный центр */
 
-                black 70%, black 98%, /* Теперь звезды будут видны почти до края */
+                black 60%, black 98%,             /* Видимая область с секторами */
 
-                transparent 98%, transparent 100% /* Очень тонкий прозрачный край */
+                transparent 98%, transparent 100%
 
             );
 
@@ -255,9 +255,9 @@
 
                 circle at center, 
 
-                transparent 0%, transparent 70%, 
+                transparent 0%, transparent 60%, 
 
-                black 70%, black 98%, 
+                black 60%, black 98%, 
 
                 transparent 98%, transparent 100%
 
@@ -572,7 +572,7 @@
 
             <button onclick="closeModal(true)">Click to continue</button>
 
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxwYXRoIGZpbGw9IiNGRkNBRCBEIiBkPSJNMTIgMmMtNC40MTggMC04IDMtOCA2czQgNiA4IDZzOC0zIDgtNnMtMy41ODItNi04LTYuMDAxem0wIDJjMi43NjEgMCA1IDIuMDIyIDUgNC41czIuNTEgNC41IDAgNC41YzAtLjQxNC0uMzM2LS43NS0uNzUtLjc1cy0uNzUuMzM2LS43NS43NXMtLjM0LjY0IDAtLjI0Ni0uNzc5LS42NTMtMS4wMi0uOTk2LS4yNDUtLjM3MS0uMjQtLjc3Mi4zMzYtLjc1Ljc1LS43NXMuNzUuMzM2Ljc1Ljc1YzAtLjM1LjI1LS43NDcuNzUtLjc1cy43NS4zMzYuNzUuNzVjLS4wMDIuNzIyLS42OCAxLjE1IDAgMS4yNDc1LjIwNS40MDQtLjAxIDEuNzA4LTMgMS43NTUtLjM2MSAwLS43MS0uMzctLjk2OS0uNzU1LS4yNTktLjM4Ni0uMjY4LS44MjktLjE3NS0xLjI0Ny4wOTMtLjQxNy40NzUtLjczMi45NTItLjcyMi40NzcgMC4wMSAxLjAwOC40NzUgMS4wMDggMS41MDktLjAwMSAxLjA1LS41MjYgMS40NDctMS4wMDggMS41MDgtLjUwOS4wNjQtLjk1My0uMjY3LTEuMDA4LS42ODMtLjA1NS0uNDEzLS4wNTYtLjc5NS0uMTItMS4xODQtLjA2Mi0uMzg5LS4xNTItLjc1NC0uMjctMS4wODctLjExOC0uMzMzLS4yNjktLjY0Ni0uNDQ3LS45MjUtLjE3OC0uMjgtLjM4OC0uNTI0LS42MjQtLjcyNy0uMjM2LS4yMDItLjUwMy0uMzY0LS43OTktLjQ3LS4yOTQtLjEwNS0uNjItLjE2Mi0uOTUzLS4xNjItMi43NjEgMC01IDIuMDIyLTUgNC41czIuMTE5IDQuNTAxIDUgNC41YzAtLjI2Ny4wMjctLjUyOS4wNTEtLjc4OS4wMjUtLjI2LjA1Ni0uNTE2LjA5Ny0uNzY2LjA0LS4yNS4wOC0uNDk3LjEzNC0uNzM2LjA1NC0uMjM4LjEyLS40NjkuMjA3LS42ODcuMDg4LS4yMTguMTg5LS40MjYuMzA0LS42MS4xMTUtLjE4My4yNDQtLjM1NC4zODktLjUwMy4xNDYtLjE1LjMxNC0uMjc3LjQ5NS0uMzgxLjE4LS4xMDQuMzc1LS4xODguNTg3LS4yNTQuMjE0LS4wNjYuNDQyLS4xMTIuNjgxLS4xNDcuMjM5LS4wMzUuNDkyLS4wNTUuNzU5LS4wNTV6bS01IDEyYzAgMi42NjcgMCA1IDAgNnMyLjIzOCAyIDUgMiAyLjU2Mi01LTItNnptMTQtMTIuMDAyYzAgNC40MTktMy41ODIgOC04IDhzLTggMy41ODEtOC04YzAtLjI3LjAyNi0uNTI5LjA0LS43OC4wMTQtLjI1LjA0LS40OTcuMDctLjc0em0tMi45OTggMGMwIDIuNzYyLTIuNTEyIDUtNSAzLjVzMi4yMzggMy41IDUgMy41eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtMS)” alt="Brain icon" class="brain-icon"/>
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxwYXRoIGZpbGw9IiNGRkNBRCBEIiBkPSJNMTIgMmMtNC40MTggMC04IDMtOCA2czQgNiA4IDZzOC0zIDgtNnMtMy41ODItNi04LTYuMDAxem0wIDJjMi43NjEgMCA1IDIuMDIyIDUgNC41czIuNTEgNC41IDAgNC41YzAtLjQxNC0uMzM2LS43NS0uNzUtLjc1cy0uNzUuMzM2LS43NS43NXMtLjM0LjY0IDAtLjI0Ni0uNzc5LS42NTMtMS4wMi0uOTk2LS4yNDUtLjM3MS0uMjQtLjc3Mi4zMzYtLjc1Ljc1LS43NXMuNzUuMzM2Ljc1Ljc1YzAtLjM1LjI1LS43NDcuNzUtLjc1cy43NS4zMzYuNzUuNzVjLS4wMDIuNzIyLS42OCAxLjE1IDAgMS4yNDc1LjIwNS40MDQtLjAxIDEuNzA4LTMgMS43NTUtLjM2MSAwLS43MS0uMzctLjkuOTY5LS43NTUtLjI1OS0uMzg2LS4yNjgtLjgyOS0uMTc1LTEuMjQ3LjA5My0uNDE3LjQ3NS0uNzMyLjk1Mi0uNzIyLjQ3NyAwLjAxIDEuMDA4LjQ3NSAxLjAwOCAxLjUwOS0uMDAxIDEuMDUtLjUyNiAxLjQ0Ny0xLjAwOCAxLjUwOC0uNTA5LjA2NC0uOTUzLS4yNjctMS4wMDgtLjY4My0uMDU1LS40MTMtLjA1Ni0uNzk1LS4xMi0xLjE4NC0uMDYyLS4zODktLjE1Mi0uNzU0LS4yNy0xLjA4Ny0uMTE4LS4zMzMtLjI2OS0uNjQ2LS40NDctLjkyNS0uMTc4LS4yOC0uMzg4LS41MjQtLjYyNC0uNzI3LS4yMzYtLjIwMi0uNTAzLS4zNjQtLjc5OS0uNDctLjI5NC0uMTA1LS42Mi0uMTYyLS45NTMtLjE2Mi0yLjc2MSAwLTUgMi4wMjItNSA0LjVzMi4xMTkgNC41MDEgNSA0LjVjMC0uMjY3LjAyNy0uNTI5LjA1MS0uNzg5LjAyNS0uMjYuMDU2LS41MTYuMDk3LS43NjYuMDQtLjI1LjA4LS40OTcuMTM0LS43MzYuMDU0LS4yMzguMTItLjQ2OS4yMDctLjY4Ny4wODgtLjIxOC4xODktLjQyNi4zMDQtLjYxLjExNS0uMTgzLjI0NC0uMzU0LjM4OS0uNTAzLjE0Ni0uMTUuMzE0LS4yNzcuNDk1LS4zODEuMTgtLjEwNC4zNzUtLjE4OC41ODctLjI1NC4yMTQtLjA2Ni40NDItLjExMi42ODEtLjE0Ny4yMzktLjAzNS40OTItLjA1NS43NTktLjA1NXptLTViMS53MS42NjdkcjAgNSAwIDZzMi4yMzggMiA1IDIgMi41NjItNS0yLTZ6bTE0LTEyLjAwMmMwIDQuNDE5LTMuNTgyIDgtOCBzLTggMy41ODEtOC04YzAtLjI3LjAyNi0uNTI5LjA0LS43OC4wMTQtLjI1LjA0LS40OTcuMDctLjc0em0tMi45OTggMGMwIDIuNzYyLTIuNTEyIDUtNSAzLjVzMi4yMzggMy41IDUgMy41eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtMS)” alt="Brain icon" class="brain-icon"/>
 
             <div style="font-size: 10px; color: white;">*Символ не является реальным изображением мозга.</div>
 
@@ -814,7 +814,7 @@ async function getSpinResultFromBackend() {
 
     let userId = null;
 
-    let username = null; // Добавлено для хранения никнейма
+    let username = null; 
 
 
 
@@ -862,7 +862,7 @@ async function getSpinResultFromBackend() {
 
     
 
-    // --- ПРОВЕРКА НА НЕОГРАНИЧЕННЫЙ ДОСТУП ---
+    // --- ПРОВЕРКА НА НЕОГРАНИЧЕННЫЙ ДОСТУП (@tlrtri) ---
 
     if (username && UNLIMITED_USERNAMES.includes(username)) {
 
