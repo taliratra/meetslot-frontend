@@ -19,7 +19,7 @@ const SECTOR_ANGLE = 360 / NUM_SECTORS; // 36 градусов на сектор
 
 // URL вашего бэкенд API на Railway (замените на реальный URL!)
 // Вы только что подтвердили, что этот URL используется:
-const API_BASE_URL = 'https://meetslot-api-backend-production.up.railway.app';
+const API_BASE_URL = 'http://meetslot-api-backend-production.up.railway.app/api';
 
 // -----------------------------------------------------
 // 2. ИНИЦИАЛИЗАЦИЯ И ЭЛЕМЕНТЫ
