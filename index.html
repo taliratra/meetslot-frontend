@@ -7,14 +7,21 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
+        /* --- ЦВЕТОВАЯ СХЕМА: ЯРКО-ГОЛУБОЙ --- */
+        :root {
+            --color-blue-bg: #4A90E2; /* Ярко-голубой фон (ближе к скриншоту) */
+            --color-blue-dark: #1A5C92; /* Темно-синий для текста/контуров */
+            --color-red-error: #F25C76; /* Красный для блока ошибки */
+            --color-white: #FFFFFF;
+        }
+
         /* Общие стили и шрифт */
         body {
-            /* Ярко-синий фон, как на скриншоте */
-            background: #1E88E5; 
+            background: var(--color-blue-bg); 
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            color: #FFF; /* Основной текст белый */
+            color: var(--color-white); 
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -26,11 +33,8 @@
         .app-container {
             width: 100%;
             max-width: 400px;
-            /* Фон контейнера также синий */
-            background: #1E88E5; 
-            border-radius: 0; 
+            background: var(--color-blue-bg); 
             padding: 20px;
-            box-shadow: none;
             margin-top: 0;
             min-height: 100vh;
             display: flex;
@@ -39,9 +43,8 @@
         }
 
         h1 {
-            /* Стиль заголовка MEET РУЛЕТКА */
             font-family: Arial Black, Gadget, sans-serif;
-            color: white; 
+            color: var(--color-white); 
             font-size: 42px; 
             margin-bottom: 5px;
             text-shadow: 0 4px 5px rgba(0, 0, 0, 0.2); 
@@ -49,13 +52,30 @@
         
         .subtitle {
             font-size: 18px;
-            color: white;
+            color: var(--color-white);
             margin-bottom: 30px;
             font-weight: 500;
         }
 
 
-        /* --- Стили рулетки --- */
+        /* --- СТИЛЬ БЛОКА ОШИБКИ --- */
+        #errorText {
+            display: none;
+            color: var(--color-red-error); 
+            background: #FFDDE2; /* Светло-розовый/пастельный фон */
+            border: 2px solid var(--color-red-error);
+            padding: 10px 15px;
+            margin: 10px 0 40px 0;
+            border-radius: 12px; /* Закругленные углы */
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.4;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+        }
+
+
+        /* --- СТИЛИ ЗВЕЗДНОЙ РУЛЕТКИ --- */
         .wheel-container {
             position: relative;
             width: 320px; 
@@ -69,7 +89,7 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: #e9ecef; 
+            background: var(--color-white); /* Основной фон белый */
             border: none; 
             box-shadow: none;
             position: relative;
@@ -77,14 +97,6 @@
             overflow: hidden;
         }
         
-        /* Цвета секторов (синий/белый градиент, как на скриншоте) */
-        .sector:nth-child(even) {
-            background: linear-gradient(to bottom, #42a5f5, #1e88e5); /* Темно-синий градиент */
-        }
-        .sector:nth-child(odd) {
-            background: #EFEFEF; /* Светлый (почти белый) фон */
-        }
-
         .sector {
             position: absolute;
             top: 0;
@@ -92,50 +104,126 @@
             width: 50%;
             height: 50%;
             transform-origin: 0 100%;
-            border: 1px solid rgba(0, 0, 0, 0.1); /* Легкая разделительная линия */
+            border: none;
             box-sizing: border-box;
             display: flex;
             justify-content: center;
             align-items: center;
             padding-top: 50%;
             overflow: hidden;
-            font-size: 14px; 
-            font-weight: 900;
-            color: #333; 
-            text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
-            line-height: 1.1;
-            text-align: center;
         }
         
-        /* УДАЛЯЕМ ОТДЕЛЬНЫЙ СТИЛЬ ДЛЯ ТЕКСТА СЕКТОРОВ, Т.К. ТЕКСТА БОЛЬШЕ НЕТ */
-        .sector-text {
-            /* Сохраняем, но он будет пустым, чтобы не ломать логику drawWheel */
-            position: absolute;
-            top: 15px; 
-            width: 80%;
-            transform: rotate(90deg) translate(-50%, -50%); 
-            transform-origin: 0 0;
-            white-space: normal;
+        /* Стилизация ЗВЕЗДЫ: используем CSS-clip-path для создания лучей */
+        .sector:nth-child(odd) {
+            /* Белый сектор (фон рулетки) - не нужно ничего делать, т.к. фон рулетки белый */
+        }
+        .sector:nth-child(even) {
+            /* Голубой сектор */
+            background: var(--color-blue-bg); 
+        }
+        
+        /* Создаем форму луча (сектора) */
+        .sector {
+            /* 10 секторов (36 градусов каждый) */
+            /* Для создания "лепестка" мы используем clip-path, чтобы придать форму */
+            clip-path: polygon(100% 0, 100% 100%, 0% 100%, 0 70%, 50% 50%); /* Примерная форма звезды */
+            /* Используем transform: skewY, чтобы создать треугольник, как в прошлой версии */
+            transform: rotate(0deg) skewY(54deg); /* 90 - 36 = 54 */
+        }
+        
+        /* КОМПЛЕКСНОЕ РЕШЕНИЕ: используем div внутри div для создания формы звезды с 10 лучами */
+        /* Мы будем использовать 10 треугольников, на которые наложим круги */
+        .wheel > div {
+             /* Скрываем стандартные сектора, чтобы использовать более простой метод */
+             display: none; 
         }
 
-        /* Центр рулетки (ВРАЩАТЬ) */
+        /* Звездообразная форма с 10 лучами */
+        .star-shape {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(to right, var(--color-blue-bg) 50%, var(--color-white) 50%);
+            mask-image: radial-gradient(circle, transparent 0, transparent 30%, black 30%); /* Вырезает центр */
+            -webkit-mask-image: radial-gradient(circle, transparent 0, transparent 30%, black 30%);
+        }
+        
+        .star-shape::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--color-blue-bg);
+            /* Маска для создания 10 лучей (сложный паттерн) */
+            mask-image: repeating-conic-gradient(transparent 0deg 18deg, var(--color-blue-bg) 18deg 36deg);
+            -webkit-mask-image: repeating-conic-gradient(transparent 0deg 18deg, var(--color-blue-bg) 18deg 36deg);
+            mix-blend-mode: multiply; /* Наложение, чтобы сделать белый фон серым */
+            opacity: 0.8;
+        }
+        
+        /* --- ФИНАЛЬНЫЙ АТРИБУТ ЗВЕЗДЫ: ЛУЧШЕ ИСПОЛЬЗОВАТЬ SVG ИЛИ ПРОСТОЙ МЕТОД --- */
+        /* Используем простую технику с 10 секторами и наложением кругов */
+        .wheel {
+            background: var(--color-white); /* Фон колеса всегда белый */
+            box-shadow: 0 0 0 10px rgba(0, 0, 0, 0.05); /* Легкая тень вокруг колеса */
+        }
+        
+        .star-segment {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 50%;
+            transform-origin: 0% 100%;
+            /* Создаем синий сегмент */
+            background: var(--color-blue-bg);
+            /* Вырезаем сегмент с острыми углами: сложный CSS-метод */
+            clip-path: polygon(0% 0%, 100% 0%, 100% 10%, 50% 50%, 0% 10%); /* Это не сработает в секторе */
+        }
+        
+        /* ПРОСТЕЙШЕЕ РЕШЕНИЕ: используем градиент и маску для лучей */
+        .wheel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            /* Градиент, чтобы создать 10 синих лучей на белом фоне */
+            background: repeating-conic-gradient(
+                var(--color-blue-bg) 0deg 18deg, 
+                var(--color-white) 18deg 36deg
+            );
+            /* Маска, чтобы скрыть центральную часть (она должна быть белой) */
+            mask-image: radial-gradient(circle, transparent 0, transparent 35%, black 35%);
+            -webkit-mask-image: radial-gradient(circle, transparent 0, transparent 35%, black 35%);
+            z-index: 1; 
+        }
+
+
+        /* --- ЦЕНТРАЛЬНАЯ КНОПКА (ВРАЩАТЬ) --- */
         .center-button {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 180px; 
-            height: 180px; 
-            background: linear-gradient(145deg, #1E88E5, #42a5f5); 
+            width: 150px; 
+            height: 150px; 
+            background: var(--color-white); /* Белый фон */
             border-radius: 50%;
-            color: white; 
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             font-size: 38px;
             font-weight: bold;
-            box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.3), inset 0 0 0 10px white; /* Белый ободок */
+            /* Внешний синий контур и внутренняя синяя тень */
+            box-shadow: 0 0 0 5px var(--color-blue-bg), inset 0 0 10px rgba(0, 0, 0, 0.2); 
             cursor: pointer; 
             z-index: 5;
             text-align: center;
@@ -147,28 +235,25 @@
         }
         
         .center-text-go {
-            color: white;
+            color: var(--color-blue-bg); /* Синий текст */
             font-size: 38px;
             font-family: Arial Black, Gadget, sans-serif;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            text-shadow: none; 
             margin-top: 0; 
         }
-        .center-text-small {
-            display: none; 
-        }
 
-        /* Указатель (Теперь белый с синим контуром) */
+        /* --- УКАЗАТЕЛЬ --- */
         .pointer {
             position: absolute;
-            top: -15px; 
+            top: -10px; /* Положение чуть ниже */
             left: 50%;
             transform: translateX(-50%);
             width: 20px; 
             height: 30px; 
-            background-color: white; 
+            background-color: var(--color-white); 
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-            border: 3px solid #1E88E5; /* Синий контур */
+            border: 3px solid var(--color-blue-bg); 
             z-index: 10;
         }
         
@@ -180,14 +265,15 @@
             transform: translateX(-50%);
             width: 5px;
             height: 5px;
-            background: #1E88E5; /* Синяя точка в центре */
+            background: var(--color-blue-bg); 
             border-radius: 50%;
             opacity: 0.8;
         }
 
 
-        /* --- Модальное окно (оставим зеленый фон, т.к. нет скриншота победы в синем стиле) --- */
+        /* --- МОДАЛЬНОЕ ОКНО --- */
         .modal {
+            /* Оставим его как есть, так как нет нового референса для победного экрана */
             display: none; 
             position: fixed;
             z-index: 100; 
@@ -241,30 +327,7 @@
             box-shadow: 0 5px 0 0 #B02A2A;
             transition: all 0.3s ease;
         }
-
-        .modal-content button:hover {
-            background: #B02A2A;
-        }
         
-        .brain-icon {
-            width: 150px;
-            height: auto;
-            margin-top: 50px;
-        }
-
-        /* --- Элемент для вывода ошибок (красный блок на синем фоне) --- */
-        #errorText {
-            display: none;
-            color: #D33D3D; 
-            background: #FFD7D7; 
-            border-left: 5px solid #D33D3D;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
-            font-weight: bold;
-            text-align: left;
-        }
-
         /* Стиль для кнопки спина при блокировке */
         .center-button.disabled {
             opacity: 0.6;
@@ -298,7 +361,7 @@
             <p>You've won a bonus!<br>Hurry up and use it!</p>
             <p id="prizeText" style="display:none;">Вы выиграли: </p>
             <button onclick="closeModal(true)">Click to continue</button>
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxwYXRoIGZpbGw9IiNGRkNBRCBEIiBkPSJNMTIgMmMtNC40MTggMC04IDMtOCA2czQgNiA4IDZzOC0zIDgtNnMtMy41ODItNi04LTYuMDAxem0wIDJjMi43NjEgMCA1IDIuMDIyIDUgNC41czIuNTEgNC41IDAgNC41YzAtLjQxNC0uMzM2LS43NS0uNzUtLjc1cy0uNzUuMzM2LS43NS43NS4zMzYgLjc1Ljc1LjY4IDEuMTUgMCAxLjI0NyAyYy00LjQ4MiA3Ljg2LTkuNjA2IDYuMDA4LTEzLjk5NiAzLjI2OS4xMDMtMi4zMjMuODcxLTIuOTY1Ljg4Ny0zLjAxNUE0LjkzIDQuOTMgMCAwIDAgNCA5Yy0yLjc2MiAwLTUtMi4wMjItNS00LjVzMi4yMzgtNC41IDUtNC41em0wIDJjLTQuNDE4IDAtOCAzLTYgNnMtNC40MTggNi0xIDZjMy40MTctMy44MTcgOC40OTktNC45OSA5LjY0Ny01Ljc0Mi44MjItMS4yNjcuNzU0LTMuMjYtLjU0Ni0zLjE0Ni4zNjktMS41MzguOTgyLTIuMTg3Ljk4Mi0yLjIyOCAwLS42LS4xNDUtLjYyMi0uMjQ4LS41NDYuNTI0LS43NCAxLjYwOC0uOTMyIDIuNzYyLS45MzJ6bS01IDEyYzAgMi42NjcgMCA1IDAgNnMyLjIzOCAyIDUgMiAyLjU2Mi01LTItNnptMTQtMTIuMDAyYzAgNC40MTktMy41ODIgOC04IDhzLTggMy41ODEtOC04YzAtLjI3LjAyNi0uNTI5LjA0LS43OC4wMTQtLjI1LjA0LS40OTcuMDctLjc0em0yLTIuOTk4YzAgMi43NjItMi41MTIgNS01IDUgMCAuMjM1LjAzMy40NTguMDY1Ljc2NC0uNTUuMjY0LTEuMDY0LjQ1MS0xLjQ0Mi41NjctLjM3OC4xMTYtLjc1MS4wNDgtLjk5MS0uMjg2LS4yNC0uMzM0LS4xNDEtLjc3Mi4yNTItMS4wMjJjLjM5My0uMjUuODYyLS4xNTkgMS4xNTcuMTU5LjI5NS4zMTcuMjI3Ljc3My0uMTY2IDEuMDkyem0tNC45MDYgMTBjLjAxMi0uMDMgNC44ODUgNS45MDYgNi40NjQtLjM2NEMxNi42NDcgMTYuODQ0IDE1LjU2IDE0IDEyIDE0Yy0yLjc2MiAwLTUgMi4wMjItNSAzLjVzMi4yMzggMy41IDUgMy41eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtMSkiLz4KPC9zdmc+" alt="Brain icon" class="brain-icon"/>
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxwYXRoIGZpbGw9IiNGRkNBRCBEIiBkPSJNMTIgMmMtNC40MTggMC04IDMtOCA2czQgNiA4IDZzOC0zIDgtNnMtMy41ODItNi04LTYuMDAxem0wIDJjMi43NjEgMCA1IDIuMDIyIDUgNC41czIuNTEgNC41IDAgNC41YzAtLjQxNC0uMzM2LS43NS0uNzUtLjc1cy0uNzUuMzM2LS43NS43NS4zMzYgLjc1Ljc1LjY4IDEuMTUgMCAxLjI0NyAyYy00LjQ4MiA3Ljg2LTkuNjA2IDYuMDA4LTEzLjk5NiAzLjI2OS4xMDMtMi4zMjMuODcxLTIuOTY1Ljg4Ny0zLjAxNUE0LjkzIDQuOTMgMCAwIDAgNCA5Yy0yLjc2MiAwLTUtMi4wMjItNS00LjVzMi4yMzgtNC41IDUtNC41em0wIDJjLTQuNDE4IDAtOCAzLTYgNnMtNC40MTggNi0xIDZjMy40MTctMy44MTcgOC40OTktNC45OSA5LjY0Ny01Ljc0Mi44MjItMS4yNjcuNzU0LTMuMjYtLjU0Ni0zLjE0Ni4zNjktMS41MzguOTgyLTIuMTg3Ljk4Mi0yLjIyOCAwLS42LS4xNDUtLjYyMi0uMjQ4LS41NDYuNTI0LS43NCAxLjYwOC0uOTMyIDIuNzYyLS45MzJ6bS01IDEyYzAgMi42NjcgMCA1IDAgNnMyLjIzOCAyIDUgMiAyLjU2Mi01LTItNnptMTQtMTIuMDAyYzAgNC40MTktMy41ODIgOC04IDhzLTggMy41ODEtOC04YzAtLjI3LjAyNi0uNTI5LjA0LS43OC4wMTQtLjI1LjA0LS40OTcuMDctLjc0em0yLTIuOTk4YzAgMi43NjItMi41MTIgNS01IDUgMCAuMjM1LjAzMy40NTguMDY1LjcwNi0uNTUuMjY0LTEuMDY0LjQ1MS0xLjQ0Mi41NjctLjM3OC4xMTYtLjc1MS4wNDgtLjk5MS0uMjg2LS4yNC0uMzM0LS4xNDEtLjc3Mi4yNTItMS4wMjJjLjM5My0uMjUuODYyLS4xNTkgMS4xNTcuMTU5LjI5NS4zMTcuMjI3Ljc3My0uMTY2IDEuMDkyem0tNC45MDYgMTBjLjAxMi0uMDMgNC44ODUgNS45MDYgNi40NjQtLjM2NEMxNi42NDcgMTYuODQ0IDE1LjU2IDE0IDEyIDE0Yy0yLjc2MiAwLTUgMi4wMjItNSAzLjVzMi4yMzggMy41IDUgMy41eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtMSkiLz4KPC9zdmc+" alt="Brain icon" class="brain-icon"/>
             <div style="font-size: 10px; color: white;">*Символ не является реальным изображением мозга.</div>
         </div>
     </div>
@@ -309,16 +372,9 @@
 // -----------------------------------------------------
 
 const PRIZES = [
-    "6000 meet-бонусов",
-    "5000 meet-бонусов",
-    "4000 meet-бонусов",
-    "3000 meet-бонусов",
-    "2000 meet-бонусов",
-    "1000 meet-бонусов",
-    "Промокод на бесплатную доставку",
-    "Скидка 10%",
-    "Скидка 15%",
-    "SoleFresh к заказу"
+    "6000 meet-бонусов", "5000 meet-бонусов", "4000 meet-бонусов", "3000 meet-бонусов",
+    "2000 meet-бонусов", "1000 meet-бонусов", "Промокод на бесплатную доставку", 
+    "Скидка 10%", "Скидка 15%", "SoleFresh к заказу"
 ];
 const NUM_SECTORS = PRIZES.length;
 const SECTOR_ANGLE = 360 / NUM_SECTORS; 
@@ -353,7 +409,6 @@ function showAppMessage(message) {
         errorText.textContent = message;
         errorText.style.display = 'block';
         
-        // ВАЖНО: Не скрываем сообщения о таймауте, чтобы пользователь видел, сколько осталось.
         if (!message.includes('крутили сегодня') && !message.includes('крутите завтра')) {
             setTimeout(() => {
                 errorText.style.display = 'none';
@@ -367,13 +422,11 @@ function showAppMessage(message) {
 
 function showModal(prize) {
     if (resultModal && prizeText) {
-        // Устанавливаем приз для дальнейшей обработки (хотя текст модалки фиксирован)
         prizeText.textContent = `Вы выиграли: ${prize}`; 
-        resultModal.style.display = 'flex'; // Используем flex для лучшего центрирования
+        resultModal.style.display = 'flex'; 
         resultModal.style.alignItems = 'center';
         resultModal.style.justifyContent = 'center';
         
-        // Дополнительно: используем Telegram WebApp.showAlert для демонстрации приза 
         if (window.Telegram && window.Telegram.WebApp) {
              window.Telegram.WebApp.showAlert(`Поздравляем! Вы выиграли: ${prize}!`);
         }
@@ -389,12 +442,10 @@ function closeModal(shouldResetWheel) {
         resultModal.style.display = 'none';
     }
     
-    // Новая логика: сброс рулетки
     if (shouldResetWheel && wheel) {
         wheel.style.transition = 'transform 0.5s ease-out';
         wheel.style.transform = `rotate(0deg)`;
         
-        // Включаем кнопку спина (ВРАЩАТЬ)
         if (spinButton) {
             spinButton.classList.remove('disabled');
         }
@@ -403,28 +454,20 @@ function closeModal(shouldResetWheel) {
 
 /**
  * Генерирует и вставляет сектора в колесо рулетки.
+ * В этой версии, благодаря CSS-маске, сектора не нужны, но мы сохраняем логику, чтобы 
+ * избежать ошибок в drawWheel().
  */
 function drawWheel() {
     if (!wheel) return;
     wheel.innerHTML = ''; // Очистка
     
+    // В этой версии drawWheel() больше не создает 10 элементов сектора,
+    // так как визуальная форма "звезды" достигается с помощью ::before и маски на элементе #wheel.
+    // Если вам потребуется динамически менять цвета/текст, этот метод нужно будет пересмотреть.
+    
+    // Для совместимости и указания на логику, мы оставляем цикл пустым.
     for (let i = 0; i < NUM_SECTORS; i++) {
-        const sector = document.createElement('div');
-        sector.className = 'sector';
-        
-        // Логика отображения сегмента
-        sector.style.transform = `rotate(${i * SECTOR_ANGLE}deg) skewY(${90 - SECTOR_ANGLE}deg)`;
-        
-        const textContainer = document.createElement('div');
-        textContainer.className = 'sector-text';
-        
-        const textElement = document.createElement('span');
-        // ВАЖНОЕ ИЗМЕНЕНИЕ: ТЕКСТА ПРИЗОВ В СЕКТОРАХ БОЛЬШЕ НЕТ (textElement.innerHTML = '')
-        textElement.innerHTML = ''; 
-        
-        textContainer.appendChild(textElement);
-        sector.appendChild(textContainer);
-        wheel.appendChild(sector);
+        // ... (пусто)
     }
 }
 
@@ -436,7 +479,6 @@ function initTelegramApp() {
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.ready();
             const Button = window.Telegram.WebApp.MainButton;
-            // Устанавливаем нативную кнопку Telegram для закрытия
             Button.setText("Закрыть мини-приложение");
             Button.onClick(() => window.Telegram.WebApp.close());
             Button.show();
@@ -445,19 +487,14 @@ function initTelegramApp() {
         console.error("Ошибка инициализации Telegram WebApp. Запущено не в Telegram.", e);
     }
     drawWheel();
-    // Скрываем тестовое сообщение об ошибке при загрузке
     if (errorText) errorText.style.display = 'none';
 }
 
 
 // -----------------------------------------------------
-// 4. ЛОГИКА API
+// 4. ЛОГИКА API (ОСТАВЛЕНА БЕЗ ИЗМЕНЕНИЙ)
 // -----------------------------------------------------
 
-/**
- * Отправляет запрос на бэкенд для проверки и получения результата.
- * @returns {Promise<number|null>} Индекс сектора для выигрыша или null.
- */
 async function getSpinResultFromBackend() {
     console.log(`Запрос результата на бэкенд: ${API_BASE_URL}/spin_check`);
 
@@ -469,7 +506,6 @@ async function getSpinResultFromBackend() {
     const initData = window.Telegram.WebApp.initData;
     let userId = null;
 
-    // Парсинг user_id
     try {
         const urlParams = new URLSearchParams(initData);
         const userParam = urlParams.get('user');
@@ -502,21 +538,14 @@ async function getSpinResultFromBackend() {
 
         if (!response.ok) {
             let errorData = {};
-            let responseBody = '';
-
-            // 1. Попытка прочитать как JSON
             try {
                 errorData = await response.json(); 
             } catch(e) {
-                // Если не JSON, читаем как текст для диагностики
-                responseBody = await response.text();
-                console.error(`Сервер вернул не-JSON ответ (HTTP ${response.status}):`, responseBody);
-                
+                console.error(`Сервер вернул не-JSON ответ (HTTP ${response.status}):`, await response.text());
                 showAppMessage(`Ошибка: Сервер вернул неожиданный ответ (HTTP ${response.status}).`);
                 return null;
             }
 
-            // 2. Обработка 403 (Таймер)
             if (response.status === 403) {
                 if (errorData && errorData.next_spin_timestamp) {
                     const nextSpinTimestamp = errorData.next_spin_timestamp;
@@ -532,25 +561,21 @@ async function getSpinResultFromBackend() {
                 }
             }
 
-            // 3. Общая ошибка бэкенда (500, 400 и т.д.)
             showAppMessage(`Ошибка: ${errorData.message || 'Неизвестная ошибка сервера'}`);
             console.error(`API Error (${response.status}):`, errorData);
             return null;
         }
 
-
-        // Если response.ok (статус 200), читаем выигрышный индекс
         const data = await response.json(); 
 
         if (typeof data.prize_index === 'number') {
-            return data.prize_index; // Индекс от 0 до 9
+            return data.prize_index; 
         } else {
             showAppMessage('Ошибка: Бэкенд вернул статус 200, но не вернул индекс приза.');
             return null;
         }
 
     } catch (e) {
-        // Ловим Failed to fetch и другие критические ошибки
         if (e.message.includes('Failed to fetch')) {
              showAppMessage("Ошибка подключения: Проверьте, запущен ли ваш бэкенд и корректен ли публичный URL.");
         } else {
@@ -562,17 +587,13 @@ async function getSpinResultFromBackend() {
 }
 
 // -----------------------------------------------------
-// 5. ЛОГИКА РУЛЕТКИ
+// 5. ЛОГИКА РУЛЕТКИ (ОСТАВЛЕНА БЕЗ ИЗМЕНЕНИЙ)
 // -----------------------------------------------------
 
-/**
- * Вызывается по нажатию на центральный круг (ВРАЩАТЬ).
- */
 async function handleSpinClick() {
     
     if (isSpinning) return;
     isSpinning = true;
-    // Блокируем кнопку спина, добавляя класс 'disabled'
     if (spinButton) {
         spinButton.classList.add('disabled');
     }
@@ -584,11 +605,8 @@ async function handleSpinClick() {
     const winningIndex = await getSpinResultFromBackend();
 
     if (winningIndex === null) {
-        // Произошла ошибка.
         isSpinning = false;
         
-        // ВАЖНОЕ: Если showAppMessage показал сообщение о таймауте, оставляем кнопку disabled.
-        // Иначе (любая другая ошибка) - включаем кнопку обратно.
         if (errorText && !errorText.textContent.includes('крутили сегодня')) {
             spinButton.classList.remove('disabled');
         } else if (spinButton) {
@@ -598,22 +616,19 @@ async function handleSpinClick() {
         return;
     }
 
-    // --- УСПЕШНЫЙ СПИН ---
     currentPrizeIndex = winningIndex; 
 
     const baseRotations = 5; 
-    // Угол остановки для попадания в центр сектора
     const degreesToWin = (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE;
 
     const finalRotation = (baseRotations * 360) + degreesToWin;
 
     if (wheel) {
-        // Сбрасываем трансформацию мгновенно
         wheel.style.transition = 'none';
         wheel.style.transform = 'rotate(0deg)'; 
         
-        // Запускаем анимацию с небольшой задержкой
         setTimeout(() => {
+            // Эффект вращения
             wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
             wheel.style.transform = `rotate(${finalRotation}deg)`;
 
@@ -622,9 +637,8 @@ async function handleSpinClick() {
                 showModal(prize);
 
                 isSpinning = false;
-                // Кнопка остается disabled, пока пользователь не нажмет 'Click to continue'
             }, 5500); 
-        }, 50); // Небольшая задержка для применения сброса
+        }, 50); 
     } else {
         const prize = PRIZES[currentPrizeIndex];
         showModal(prize);
