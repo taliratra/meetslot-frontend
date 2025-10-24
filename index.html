@@ -105,7 +105,7 @@
             box-sizing: border-box;
         }
         
-        /* Псевдоэлемент для создания звездообразной формы - ИЗМЕНЕНО */
+        /* Псевдоэлемент для создания звездообразной формы */
         .wheel::before {
             content: '';
             position: absolute;
@@ -116,22 +116,21 @@
             border-radius: 50%;
             
             /* Создаем 5 полос (10 сегментов - 5 светлых, 5 темных) */
-            /* 360 градусов / 5 полос = 72 градуса на полосу */
             background: repeating-conic-gradient(
                 var(--color-blue-light-segment) 0deg 36deg, /* Светлый сегмент (половина от 72) */
                 var(--color-blue-dark-segment) 36deg 72deg  /* Темный сегмент (половина от 72) */
             );
             
-            /* Маска для придания форме звезды остроты и вырезания центра - ИЗМЕНЕНО */
+            /* Маска для придания форме звезды остроты и вырезания центра - КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
             mask-image: radial-gradient(
                 circle at center, 
-                transparent 0%, transparent 45%, /* УМЕНЬШЕНО ВНУТРЕННЕЕ ОТВЕРСТИЕ */
-                black 45%, black 100% 
+                transparent 0%, **transparent 70%**, /* УМЕНЬШЕНО ВНУТРЕННЕЕ ОТВЕРСТИЕ (было 45%) */
+                black **70%**, black 100% 
             );
             -webkit-mask-image: radial-gradient(
                 circle at center, 
-                transparent 0%, transparent 45%, 
-                black 45%, black 100%
+                transparent 0%, **transparent 70%**, 
+                black **70%**, black 100%
             );
             z-index: 1; 
             filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
@@ -149,8 +148,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 180px; 
-            height: 180px; 
+            width: **100px**; /* УМЕНЬШЕНО (было 180px) */
+            height: **100px**; /* УМЕНЬШЕНО (было 180px) */
             background: var(--color-blue-bg); 
             border-radius: 50%;
             display: flex;
@@ -158,9 +157,9 @@
             justify-content: center;
             align-items: center;
             color: var(--color-white); 
-            font-size: 38px;
+            font-size: **20px**; /* УМЕНЬШЕНО */
             font-weight: bold;
-            box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.3), inset 0 0 15px rgba(0, 0, 0, 0.5); 
+            box-shadow: 0 0 0 **5px** rgba(255, 255, 255, 0.3), inset 0 0 **8px** rgba(0, 0, 0, 0.5); /* УМЕНЬШЕНА ОБВОДКА */
             cursor: pointer; 
             z-index: 5;
             transition: transform 0.1s;
@@ -172,7 +171,7 @@
         
         .center-text-go {
             color: var(--color-white); 
-            font-size: 38px;
+            font-size: **20px**; /* УМЕНЬШЕНО */
             font-family: Arial Black, Gadget, sans-serif;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
             margin-top: 0; 
