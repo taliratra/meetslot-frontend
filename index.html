@@ -55,7 +55,6 @@
         }
 
         h1 {
-            /* ИСПОЛЬЗУЕМ TT HOVES PRO TRIAL BOLD */
             font-family: 'TT Hoves Pro Trial Bold', 'Arial Black', Gadget, sans-serif;
             color: var(--color-white); 
             font-size: 30px; 
@@ -180,7 +179,6 @@
         .center-text-go {
             color: var(--color-white); 
             font-size: 40.8px; 
-            /* ИСПОЛЬЗУЕМ TT HOVES PRO TRIAL BOLD */
             font-family: 'TT Hoves Pro Trial Bold', 'Arial Black', Gadget, sans-serif;
             text-shadow: 0 0 4.25px rgba(0, 0, 0, 0.5); 
             margin-top: 0; 
@@ -284,31 +282,33 @@
             transform: translateY(3px);
         }
         
-        /* СТИЛЬ ДЛЯ МЕНЕЕ ЗАМЕТНОЙ КНОПКИ (ОБНОВЛЕН ДЛЯ ТОЧНОГО СООТВЕТСТВИЯ СКРИНШОТУ) */
+        /* --- ИЗМЕНЕНИЯ: СТИЛЬ ДЛЯ КНОПКИ "ЗАКРЫТЬ" (SECONDARY-MODAL-LINK) --- */
         .secondary-modal-link {
             display: block; 
-            background-color: #363636; /* Темно-серый фон как на скриншоте */
-            color: var(--color-white); /* Белый текст */
-            border: none;
-            padding: 10px 20px; /* Увеличим padding, чтобы соответствовать размеру */
-            font-size: 16px; /* Размер шрифта как на скриншоте */
-            font-weight: bold; /* Жирный текст */
-            border-radius: 10px; /* Радиус как на основной кнопке */
+            background-color: transparent; /* Прозрачный фон */
+            color: var(--color-black); /* Черный текст */
+            border: none; /* Удалить рамку */
+            padding: 10px 20px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            border-radius: 10px; 
             cursor: pointer;
-            width: 100%; /* Занимаем всю доступную ширину */
-            max-width: 250px; /* Ограничиваем максимальную ширину как у основной */
-            margin: 10px auto 0; /* Центрируем и добавляем отступ сверху */
-            transition: background-color 0.1s ease, transform 0.1s ease;
-            box-shadow: 0 4px 0 0 #222222; /* Тень для темно-серой кнопки */
+            width: 100%; 
+            max-width: 250px; 
+            margin: 10px auto 0; 
+            transition: color 0.1s ease, transform 0.1s ease; /* Изменить transition на цвет */
+            box-shadow: none; /* Удалить тень */
         }
         
         .secondary-modal-link:active {
-             box-shadow: 0 1px 0 0 #222222;
-             transform: translateY(3px);
+             box-shadow: none; /* Удалить тень при нажатии */
+             transform: translateY(0); /* Удалить эффект нажатия */
+             color: #333; /* Чуть темнее при нажатии, если нужно */
         }
 
         .secondary-modal-link:hover {
-            background-color: #444444; /* Чуть светлее при наведении */
+            background-color: transparent; /* Остается прозрачным */
+            color: #555; /* Чуть темнее при наведении, чтобы показать интерактивность */
         }
         
         /* Стили для эмодзи */
