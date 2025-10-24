@@ -109,11 +109,18 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
+            /* ИЗМЕНЕНИЕ: Несколько радиальных градиентов для бликов */
             background: 
                 radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%),
+                radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 60%),
+                radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 60%),
+                radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 70%),
                 var(--color-blue-bg); 
-            border: 4.25px solid rgba(255, 255, 255, 0.1); 
-            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 0, 0, 0.2);
+            
+            border: 4.25px solid rgba(255, 255, 255, 0.15); /* Чуть более заметный ободок */
+            box-shadow: 
+                inset 0 0 20px rgba(0, 0, 0, 0.4), /* Усиленная внутренняя тень */
+                0 0 15px rgba(0, 0, 0, 0.3); /* Усиленная внешняя тень */
             position: relative;
             transition: transform 0s;
             overflow: hidden;
@@ -174,9 +181,10 @@
             font-size: 32.3px; 
             font-weight: bold;
             box-shadow: 
-                0 0 0 8.5px rgba(255, 255, 255, 0.3), 
-                inset 0 0 12.75px rgba(0, 0, 0, 0.5),
-                inset 0 0 20px rgba(255, 255, 255, 0.4); 
+                0 0 0 8.5px rgba(255, 255, 255, 0.4), /* Чуть более яркий внешний свет */
+                inset 0 0 15px rgba(0, 0, 0, 0.6), /* Усиленная внутренняя тень */
+                inset 0 0 25px rgba(255, 255, 255, 0.5); /* Усиленный внутренний свет */
+            filter: brightness(1.1); /* Немного ярче */
             cursor: pointer; 
             z-index: 5;
             transition: transform 0.1s;
@@ -202,7 +210,7 @@
             transform: translateX(-50%);
             width: 21.25px; 
             height: 34px; 
-            background: linear-gradient(to bottom, var(--color-white), #B0C4DE); 
+            background: linear-gradient(to bottom, var(--color-white), #C0D8F0); /* Чуть светлее */
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             box-shadow: 0 4.25px 8.5px rgba(0, 0, 0, 0.3); 
             border: 2.55px solid var(--color-blue-bg); 
