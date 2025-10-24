@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEET SLOT - Рулетка Призов</title>
+    <title>Meet Рулетка</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
         /* Общие стили и шрифт */
         body {
-            /* Ярко-розовый фон как на скриншоте */
-            background: #F9E7EA; 
+            /* Ярко-синий фон, как на скриншоте */
+            background: #1E88E5; 
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            color: #333;
+            color: #FFF; /* Основной текст белый */
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -26,8 +26,8 @@
         .app-container {
             width: 100%;
             max-width: 400px;
-            /* Ярко-желтый фон как на скриншоте */
-            background: #F9D75F; 
+            /* Фон контейнера также синий */
+            background: #1E88E5; 
             border-radius: 0; 
             padding: 20px;
             box-shadow: none;
@@ -39,19 +39,19 @@
         }
 
         h1 {
-            /* Стиль заголовка Meet Рулетка */
+            /* Стиль заголовка MEET РУЛЕТКА */
             font-family: Arial Black, Gadget, sans-serif;
-            color: #D33D3D; /* Красный/Оранжевый цвет */
-            font-size: 32px;
+            color: white; 
+            font-size: 42px; /* Увеличенный размер для синего дизайна */
             margin-bottom: 5px;
-            text-shadow: 2px 2px 0 #FFC800; /* Желтый контур */
+            text-shadow: 0 4px 5px rgba(0, 0, 0, 0.2); 
         }
         
         .subtitle {
-            font-size: 16px;
-            color: #D33D3D;
+            font-size: 18px;
+            color: white;
             margin-bottom: 30px;
-            font-weight: bold;
+            font-weight: 500;
         }
 
 
@@ -62,18 +62,29 @@
             height: 320px;
             margin: 0 auto 50px;
             transform: translateY(20px); 
+            /* Добавляем тень рулетке для объема */
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.4));
         }
 
         .wheel {
             width: 100%;
             height: 100%;
             border-radius: 50%;
+            /* Удаляем старые цвета, делаем рулетку чистой */
             background: #e9ecef; 
-            border: 5px solid #D33D3D; /* Тонкая красная рамка */
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            border: none; /* Убираем красную рамку */
+            box-shadow: none;
             position: relative;
             transition: transform 0s;
             overflow: hidden;
+        }
+        
+        /* Цвета секторов (синий/белый градиент, как на скриншоте) */
+        .sector:nth-child(even) {
+            background: linear-gradient(to bottom, #42a5f5, #1e88e5); /* Темно-синий градиент */
+        }
+        .sector:nth-child(odd) {
+            background: #EFEFEF; /* Светлый (почти белый) фон */
         }
 
         .sector {
@@ -83,7 +94,7 @@
             width: 50%;
             height: 50%;
             transform-origin: 0 100%;
-            border: 1px solid rgba(255, 255, 255, 0.4); 
+            border: 1px solid rgba(0, 0, 0, 0.1); /* Легкая разделительная линия */
             box-sizing: border-box;
             display: flex;
             justify-content: center;
@@ -92,41 +103,46 @@
             overflow: hidden;
             font-size: 14px; 
             font-weight: 900;
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            color: #333; /* Черный/темно-серый для текста */
+            text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
             line-height: 1.1;
             text-align: center;
+        }
+        
+        .sector:nth-child(even) .sector-text {
+             color: white; /* Белый текст на синем фоне */
+             text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
         }
         
         .sector-text {
             position: absolute;
             top: 15px; 
             width: 80%;
-            /* Корректировка для центрирования текста в сегменте */
             transform: rotate(90deg) translate(-50%, -50%); 
             transform-origin: 0 0;
             white-space: normal;
         }
 
-        /* Центр рулетки (Теперь просто "Вращать" или пустой) */
+        /* Центр рулетки (ВРАЩАТЬ) */
         .center-button {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 110px;
-            height: 110px;
-            background: #E8E8E8; /* Светлый фон */
+            width: 180px; /* Увеличенный размер для доминирования */
+            height: 180px; 
+            /* Градиентный сине-белый фон для центральной кнопки */
+            background: linear-gradient(145deg, #1E88E5, #42a5f5); 
             border-radius: 50%;
-            color: #D33D3D; /* Красный текст */
+            color: white; 
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 20px; /* Уменьшаем размер для "Вращать" */
+            font-size: 38px;
             font-weight: bold;
-            box-shadow: inset 0 0 0 8px #FFC800; /* Внутренний желтый контур */
-            cursor: pointer; /* Делаем кликабельным */
+            box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.3), inset 0 0 0 10px white; /* Белый ободок */
+            cursor: pointer; 
             z-index: 5;
             text-align: center;
             transition: transform 0.1s;
@@ -136,31 +152,29 @@
             transform: translate(-50%, -50%) scale(0.95);
         }
         
-        /* Стили для текста в центре (только "Вращать") */
         .center-text-go {
-            color: #D33D3D;
-            font-size: 28px;
+            color: white;
+            font-size: 38px;
             font-family: Arial Black, Gadget, sans-serif;
-            text-shadow: 1px 1px 0 #FFC800;
-            margin-top: 5px; /* Немного центрируем */
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            margin-top: 0; 
         }
-        /* Убираем маленький текст "SPIN" */
         .center-text-small {
             display: none; 
         }
 
-
-        /* Указатель (Синяя капля) */
+        /* Указатель (Теперь белый с синим контуром) */
         .pointer {
             position: absolute;
-            top: -20px; 
+            top: -15px; 
             left: 50%;
             transform: translateX(-50%);
-            width: 25px; 
-            height: 35px; 
-            background-color: #4A90E2; 
+            width: 20px; 
+            height: 30px; 
+            background-color: white; 
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            border: 3px solid #1E88E5; /* Синий контур */
             z-index: 10;
         }
         
@@ -172,13 +186,13 @@
             transform: translateX(-50%);
             width: 5px;
             height: 5px;
-            background: white;
+            background: #1E88E5; /* Синяя точка в центре */
             border-radius: 50%;
             opacity: 0.8;
         }
 
 
-        /* --- Модальное окно (Конгратуляция) --- */
+        /* --- Модальное окно (оставим зеленый фон, т.к. нет скриншота победы в синем стиле) --- */
         .modal {
             display: none; 
             position: fixed;
@@ -188,7 +202,6 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            /* Фон как на правом скриншоте - темно-зеленый/хаки */
             background-color: #798E69; 
             text-align: center;
         }
@@ -239,23 +252,27 @@
             background: #B02A2A;
         }
         
-        /* Анимация для мозга */
         .brain-icon {
             width: 150px;
             height: auto;
             margin-top: 50px;
         }
 
-        /* --- Элемент для вывода ошибок --- */
+        /* --- Элемент для вывода ошибок (красный блок на синем фоне) --- */
         #errorText {
             display: none;
-            color: #851e3e;
-            background: #ffd3d3;
-            border: 1px solid #f5c6cb;
+            /* Цвет из скриншота у2уу.png */
+            color: #D33D3D; 
+            background: #FFC800; /* Ярко-желтый для заметности, или красный из скриншота */
+            border: 1px solid #D33D3D;
             padding: 10px;
             margin: 10px 0;
             border-radius: 8px;
             font-weight: bold;
+            /* Стилизация блока ошибки из скриншота */
+            background: #FFD7D7; 
+            border-left: 5px solid #D33D3D;
+            text-align: left;
         }
 
         /* Стиль для кнопки спина при блокировке */
@@ -269,18 +286,16 @@
 </head>
 <body>
 <div class="app-container">
-    <h1>Meet Рулетка</h1>
+    <h1>MEET РУЛЕТКА</h1>
     <p class="subtitle">Вращай рулетку и выигрывай призы каждый день!</p>
 
-    <div id="errorText"></div>
-
-    <div class="wheel-container">
+    <div id="errorText">Вы уже крутили сегодня! Попробуйте через 19 ч. 43 м.</div> <div class="wheel-container">
         <div id="wheel" class="wheel">
         </div>
         <div class="pointer"></div> 
         <div id="spinButton" class="center-button">
             <span class="center-text-go">ВРАЩАТЬ</span>
-            </div>
+        </div>
     </div>
     
     <div style="height: 50px;"></div> 
@@ -319,19 +334,8 @@ const SECTOR_ANGLE = 360 / NUM_SECTORS;
 // --- КОРРЕКТНЫЙ ПУБЛИЧНЫЙ URL ВАШЕГО БЭКЕНДА ---
 const API_BASE_URL = 'https://meetslot-api-backend-production.up.railway.app/api';
 
-// Цвета для секторов, приближенные к скриншоту
-const SECTOR_COLORS = [
-    '#FF6347', /* Красный */
-    '#FFC800', /* Желтый/Оранжевый */
-    '#3CB371', /* Зеленый */
-    '#4A90E2', /* Синий */
-    '#DA70D6', /* Фиолетовый */
-    '#FFA07A', /* Светло-оранжевый */
-    '#98FB98', /* Светло-зеленый */
-    '#ADD8E6', /* Светло-синий */
-    '#FF69B4', /* Розовый */
-    '#F4A460'  /* Коричневый/Песочный */
-];
+// УДАЛЕНЫ СТАРЫЕ ЦВЕТА СЕКТОРОВ: Теперь используются CSS-правила .sector:nth-child(even/odd)
+// const SECTOR_COLORS = []; 
 
 
 // -----------------------------------------------------
@@ -339,7 +343,6 @@ const SECTOR_COLORS = [
 // -----------------------------------------------------
 
 const wheel = document.getElementById('wheel');
-// spinButton теперь ссылается на центральный DIV
 const spinButton = document.getElementById('spinButton'); 
 const resultModal = document.getElementById('resultModal');
 const prizeText = document.getElementById('prizeText'); 
@@ -375,13 +378,11 @@ function showAppMessage(message) {
 
 function showModal(prize) {
     if (resultModal && prizeText) {
-        // Устанавливаем приз для дальнейшей обработки (хотя текст модалки фиксирован)
         prizeText.textContent = `Вы выиграли: ${prize}`; 
-        resultModal.style.display = 'flex'; // Используем flex для лучшего центрирования
+        resultModal.style.display = 'flex'; 
         resultModal.style.alignItems = 'center';
         resultModal.style.justifyContent = 'center';
         
-        // Дополнительно: используем Telegram WebApp.showAlert для демонстрации приза 
         if (window.Telegram && window.Telegram.WebApp) {
              window.Telegram.WebApp.showAlert(`Поздравляем! Вы выиграли: ${prize}!`);
         }
@@ -397,12 +398,10 @@ function closeModal(shouldResetWheel) {
         resultModal.style.display = 'none';
     }
     
-    // Новая логика: сброс рулетки
     if (shouldResetWheel && wheel) {
         wheel.style.transition = 'transform 0.5s ease-out';
         wheel.style.transform = `rotate(0deg)`;
         
-        // Включаем кнопку спина (ВРАЩАТЬ)
         if (spinButton) {
             spinButton.classList.remove('disabled');
         }
@@ -414,12 +413,13 @@ function closeModal(shouldResetWheel) {
  */
 function drawWheel() {
     if (!wheel) return;
-    wheel.innerHTML = ''; // Очистка
+    wheel.innerHTML = ''; 
     
     for (let i = 0; i < NUM_SECTORS; i++) {
         const sector = document.createElement('div');
         sector.className = 'sector';
-        sector.style.backgroundColor = SECTOR_COLORS[i % SECTOR_COLORS.length];
+        // Убрано: sector.style.backgroundColor = SECTOR_COLORS[i % SECTOR_COLORS.length];
+        // Цвета теперь управляются через CSS :nth-child(even/odd)
         
         // Логика отображения сегмента
         sector.style.transform = `rotate(${i * SECTOR_ANGLE}deg) skewY(${90 - SECTOR_ANGLE}deg)`;
@@ -432,7 +432,6 @@ function drawWheel() {
         textContainer.style.transformOrigin = '0 0';
         
         const textElement = document.createElement('span');
-        // Очищаем текст от лишних символов для лаконичности на рулетке
         textElement.innerHTML = PRIZES[i]
             .replace(' meet-бонусов', ' Meet')
             .replace('Промокод на бесплатную доставку', 'Доставка')
@@ -455,16 +454,16 @@ function initTelegramApp() {
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.ready();
             const Button = window.Telegram.WebApp.MainButton;
-            // Устанавливаем нативную кнопку Telegram для закрытия
             Button.setText("Закрыть мини-приложение");
             Button.onClick(() => window.Telegram.WebApp.close());
             Button.show();
-            console.log("Telegram WebApp инициализировано.");
         }
     } catch (e) {
         console.error("Ошибка инициализации Telegram WebApp. Запущено не в Telegram.", e);
     }
     drawWheel();
+    // Скрываем тестовое сообщение об ошибке при загрузке
+    if (errorText) errorText.style.display = 'none';
 }
 
 
@@ -526,7 +525,6 @@ async function getSpinResultFromBackend() {
             try {
                 errorData = await response.json(); 
             } catch(e) {
-                // Если не JSON, читаем как текст для диагностики
                 responseBody = await response.text();
                 console.error(`Сервер вернул не-JSON ответ (HTTP ${response.status}):`, responseBody);
                 
@@ -561,14 +559,13 @@ async function getSpinResultFromBackend() {
         const data = await response.json(); 
 
         if (typeof data.prize_index === 'number') {
-            return data.prize_index; // Индекс от 0 до 9
+            return data.prize_index; 
         } else {
             showAppMessage('Ошибка: Бэкенд вернул статус 200, но не вернул индекс приза.');
             return null;
         }
 
     } catch (e) {
-        // Ловим Failed to fetch и другие критические ошибки
         if (e.message.includes('Failed to fetch')) {
              showAppMessage("Ошибка подключения: Проверьте, запущен ли ваш бэкенд и корректен ли публичный URL.");
         } else {
@@ -590,7 +587,6 @@ async function handleSpinClick() {
     
     if (isSpinning) return;
     isSpinning = true;
-    // Блокируем кнопку спина, добавляя класс 'disabled'
     if (spinButton) {
         spinButton.classList.add('disabled');
     }
@@ -602,11 +598,9 @@ async function handleSpinClick() {
     const winningIndex = await getSpinResultFromBackend();
 
     if (winningIndex === null) {
-        // Произошла ошибка.
         isSpinning = false;
         
-        // ВАЖНОЕ: Если showAppMessage показал сообщение о таймауте, оставляем кнопку disabled.
-        // Иначе (любая другая ошибка) - включаем кнопку обратно.
+        // ВАЖНОЕ: Если показано сообщение о таймауте, оставляем кнопку disabled.
         if (errorText && !errorText.textContent.includes('крутили сегодня')) {
             spinButton.classList.remove('disabled');
         } else if (spinButton) {
@@ -620,17 +614,14 @@ async function handleSpinClick() {
     currentPrizeIndex = winningIndex; 
 
     const baseRotations = 5; 
-    // Угол остановки для попадания в центр сектора
     const degreesToWin = (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE;
 
     const finalRotation = (baseRotations * 360) + degreesToWin;
 
     if (wheel) {
-        // Сбрасываем трансформацию мгновенно
         wheel.style.transition = 'none';
         wheel.style.transform = 'rotate(0deg)'; 
         
-        // Запускаем анимацию с небольшой задержкой
         setTimeout(() => {
             wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
             wheel.style.transform = `rotate(${finalRotation}deg)`;
@@ -640,9 +631,8 @@ async function handleSpinClick() {
                 showModal(prize);
 
                 isSpinning = false;
-                // Кнопка остается disabled, пока пользователь не нажмет 'Click to continue'
             }, 5500); 
-        }, 50); // Небольшая задержка для применения сброса
+        }, 50); 
     } else {
         const prize = PRIZES[currentPrizeIndex];
         showModal(prize);
