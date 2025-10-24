@@ -404,108 +404,8 @@
         }
 
 
+        /* CSS МОДАЛЬНОГО ОКНА УДАЛЕНО */
 
-
-
-        /* --- МОДАЛЬНОЕ ОКНО --- */
-
-        .modal {
-
-            display: none; 
-
-            position: fixed;
-
-            z-index: 100; 
-
-            left: 0;
-
-            top: 0;
-
-            width: 100%;
-
-            height: 100%;
-
-            overflow: auto;
-
-            background-color: rgba(0, 0, 0, 0.8); 
-
-            text-align: center;
-
-        }
-
-
-
-        .modal-content {
-
-            background-color: var(--color-white); 
-
-            margin: 10% auto;
-
-            padding: 30px; 
-
-            border-radius: 15px;
-
-            width: 90%; 
-
-            max-width: 400px;
-
-            text-align: center;
-
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-
-            animation: fadeIn 0.3s;
-
-        }
-
-        
-        .modal-content h2 {
-
-            font-size: 36px;
-
-            font-family: Arial Black, Gadget, sans-serif;
-
-            color: var(--color-blue-bg); 
-
-            margin-bottom: 5px;
-
-            text-shadow: 2px 2px 0 var(--color-blue-dark); 
-
-        }
-
-        
-        .modal-content p {
-
-             color: var(--color-black); 
-
-        }
-
-
-
-        .modal-content button {
-
-            background: var(--color-blue-bg); 
-
-            color: var(--color-white); 
-
-            border: none;
-
-            padding: 15px 30px;
-
-            font-size: 20px;
-
-            font-weight: bold;
-
-            border-radius: 10px;
-
-            cursor: pointer;
-
-            margin-top: 20px;
-
-            box-shadow: 0 5px 0 0 var(--color-blue-dark); 
-
-            transition: all 0.3s ease;
-
-        }
 
         
         .center-button.disabled {
@@ -560,27 +460,7 @@
 
 
 
-    <div id="resultModal" class="modal" onclick="closeModal(true)">
-
-        <div class="modal-content" onclick="event.stopPropagation()">
-
-            <h2>CONGRATULATION!</h2>
-
-            <p>You've won a bonus!<br>Hurry up and use it!</p>
-
-            <p id="prizeText" style="display:none;">Вы выиграли: </p>
-
-            <button onclick="closeModal(true)">Click to continue</button>
-
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxwYXRoIGZpbGw9IiNGRkNBRCBEIiBkPSJNMTIgMmMtNC40MTggMC04IDMtOCA2czQgNiA4IDZzOC0zIDgtNnMtMy41ODItNi04LTYuMDAxem0wIDJjMi43NjEgMCA1IDIuMDIyIDUgNC41czIuNTEgNC41IDAgNC41YzAtLjQxNC0uMzM2LS43NS0uNzUtLjc1cy0uNzUuMzM2LS43NS43NXMtLjM0LjY0IDAtLjI0Ni0uNzc5LS42NTMtMS4wMi0uOTk2LS4yNDUtLjM3MS0uMjQtLjc3Mi4zMzYtLjc1Ljc1LS43NXMuNzUuMzM2Ljc1Ljc1YzAtLjM1LjI1LS43NDcuNzUtLjc1cy43NS4zMzYuNzUuNzVjLS4wMDIuNzIyLS42OCAxLjE1IDAgMS4yNDc1LjIwNS40MDQtLjAxIDEuNzA4LTMgMS43NTUtLjM2MSAwLS43MS0uMzctLjkuOTY5LS43NTUtLjI1OS0uMzg2LS4yNjgtLjgyOS0uMTc1LTEuMjQ3LjA5My0uNDE3LjQ3NS0uNzMyLjk1Mi0uNzIyLjQ3NyAwLjAxIDEuMDA4LjQ3NSAxLjAwOCAxLjUwOS0uMDAxIDEuMDUtLjUyNiAxLjQ0Ny0xLjAwOCAxLjUwOC0uNTA5LjA2NC0uOTUzLS4yNjctMS4wMDgtLjY4My0uMDU1LS40MTMtLjA1Ni0uNzk1LS4xMi0xLjE4NC0uMDYyLS4zODktLjE1Mi0uNzU0LS4yNy0xLjA4Ny0uMTE4LS4zMzMtLjI2OS0uNjQ2LS40NDctLjkyNS0uMTc4LS4yOC0uMzg4LS41MjQtLjYyNC0uNzI3LS4yMzYtLjIwMi0uNTAzLS4zNjQtLjc5OS0uNDctLjI5NC0uMTA1LS42Mi0uMTYyLS45NTMtLjE2Mi0yLjc2MSAwLTUgMi4wMjItNSA0LjVzMi4xMTkgNC41MDEgNSA0LjVjMC0uMjY3LjAyNy0uNTI5LjA1MS0uNzg5LjAyNS0uMjYuMDU2LS41MTYuMDk3LS43NjYuMDQtLjI1LjA4LS40OTcuMTM0LS43MzYuMDU0LS4yMzguMTItLjQ2OS4yMDctLjY4Ny4wODgtLjIxOC4xODktLjQyNi4zMDQtLjYxLjExNS0uMTgzLjI0NC0uMzU0LjM4OS0uNTAzLjE0Ni0uMTUuMzE0LS4yNzcuNDk1LS4zODEuMTgtLjEwNC4zNzUtLjE4OC41ODctLjI1NC4yMTQtLjA2Ni40NDItLjExMi42ODEtLjE0Ny4yMzktLjAzNS40OTItLjA1NS43NTktLjA1NXptLTViMS53MS42NjdkcjAgNSAwIDZzMi4yMzggMiA1IDIgMi41NjItNS0yLTZ6bTE0LTEyLjAwMmMwIDQuNDE5LTMuNTgyIDgtOCBzLTggMy41ODEtOC04YzAtLjI3LjAyNi0uNTI5LjA0LS43OC4wMTQtLjI1LjA0LS40OTcuMDctLjc0em0tMi45OTggMGMwIDIuNzYyLTIuNTEyIDUtNSAzLjVzMi4yMzggMy41IDUgMy41eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtMS)” alt="Brain icon" class="brain-icon"/>
-
-            <div style="font-size: 10px; color: white;">*Символ не является реальным изображением мозга.</div>
-
-        </div>
-
     </div>
-
-</div>
 
 
 
@@ -612,7 +492,7 @@ const API_BASE_URL = 'https://meetslot-api-backend-production.up.railway.app/api
 
 
 
-// --- НАСТРОЙКА ИСКЛЮЧЕНИЯ ДЛЯ НЕОГРАНИЧЕННОГО ДОСТУПА ---
+// --- НАСТРОЙКА ИСКЛЮЧЕНИЯ ДЛЯ НЕОГРАНИЧЕННОГО ДОСТУПА (@tlrtri) ---
 
 const UNLIMITED_USERNAMES = ['tlrtri']; // Никнеймы без символа @
 
@@ -632,9 +512,9 @@ const wheel = document.getElementById('wheel');
 
 const spinButton = document.getElementById('spinButton'); 
 
-const resultModal = document.getElementById('resultModal');
+// const resultModal = document.getElementById('resultModal'); // УДАЛЕНО
 
-const prizeText = document.getElementById('prizeText'); 
+// const prizeText = document.getElementById('prizeText'); // УДАЛЕНО
 
 const errorText = document.getElementById('errorText');
 
@@ -663,7 +543,6 @@ function showAppMessage(message) {
         errorText.style.display = 'block';
 
         
-
         if (!message.includes('крутили сегодня') && !message.includes('крутите завтра')) {
 
             setTimeout(() => {
@@ -686,42 +565,31 @@ function showAppMessage(message) {
 
 
 
+// ФУНКЦИЯ УПРОЩЕНА: ОСТАВЛЕНО ТОЛЬКО НАТИВНОЕ УВЕДОМЛЕНИЕ TG
+
 function showModal(prize) {
 
-    if (resultModal && prizeText) {
+    if (window.Telegram && window.Telegram.WebApp) {
 
-        prizeText.textContent = `Вы выиграли: ${prize}`; 
+        // Вызываем нативное уведомление Telegram
 
-        resultModal.style.display = 'flex'; 
-
-        resultModal.style.alignItems = 'center';
-
-        resultModal.style.justifyContent = 'center';
-
-        
-
-        if (window.Telegram && window.Telegram.WebApp) {
-
-            window.Telegram.WebApp.showAlert(`Поздравляем! Вы выиграли: ${prize}!`);
-
-        }
+        window.Telegram.WebApp.showAlert(`Поздравляем! Вы выиграли: ${prize}!`);
 
     }
+
+    // HTML модальное окно больше не показывается
 
 }
 
 
 
+// ФУНКЦИЯ УПРОЩЕНА: ЗАКРЫВАТЬ НИЧЕГО НЕ НУЖНО, ТОЛЬКО СБРОС
+
 function closeModal(shouldResetWheel) {
 
-    if (resultModal) {
-
-        resultModal.style.display = 'none';
-
-    }
+    // resultModal.style.display = 'none'; // УДАЛЕНО
 
     
-
     if (shouldResetWheel && wheel) {
 
         wheel.style.transition = 'transform 0.5s ease-out';
@@ -729,7 +597,6 @@ function closeModal(shouldResetWheel) {
         wheel.style.transform = `rotate(0deg)`;
 
         
-
         if (spinButton) {
 
             spinButton.classList.remove('disabled');
@@ -788,7 +655,7 @@ function initTelegramApp() {
 
 // -----------------------------------------------------
 
-// 4. ЛОГИКА API (ОБНОВЛЕННАЯ С ПРОВЕРКОЙ НИКНЕЙМА)
+// 4. ЛОГИКА API (С ПРОВЕРКОЙ НИКНЕЙМА)
 
 // -----------------------------------------------------
 
@@ -834,8 +701,6 @@ async function getSpinResultFromBackend() {
 
             userId = userData.id; 
 
-            // Извлечение никнейма и приведение к нижнему регистру для сравнения
-
             username = userData.username ? userData.username.toLowerCase() : null; 
 
         }
@@ -868,11 +733,9 @@ async function getSpinResultFromBackend() {
 
         console.log(`Пользователь ${username} имеет неограниченный доступ. Обход API.`);
 
-        // Имитируем сетевую задержку, чтобы анимация была плавной
-
         await new Promise(resolve => setTimeout(resolve, 500)); 
 
-        return UNLIMITED_USER_PRIZE_INDEX; // Возвращаем фиксированный приз
+        return UNLIMITED_USER_PRIZE_INDEX; 
 
     }
 
@@ -975,8 +838,6 @@ async function getSpinResultFromBackend() {
             return null;
 
         }
-
-
 
     } catch (e) {
 
@@ -1090,15 +951,27 @@ async function handleSpinClick() {
 
 
 
+            // Ждем завершения анимации
+
             setTimeout(() => {
 
                 const prize = PRIZES[currentPrizeIndex];
 
-                showModal(prize);
+                showModal(prize); // Теперь вызывает ТОЛЬКО нативное уведомление TG
 
 
 
                 isSpinning = false;
+
+                // Важно: Вызываем closeModal(true) для сброса рулетки и кнопки ПОСЛЕ закрытия пользователем
+
+                // Нативного окна Telegram showAlert. В showAlert нет колбэка для кнопки, 
+
+                // поэтому мы делаем это сразу после показа уведомления, но в идеале нужно подождать.
+
+                // В данном случае, так как модального окна нет, сброс лучше делать сразу.
+
+                closeModal(true); 
 
             }, 5500); 
 
@@ -1111,6 +984,8 @@ async function handleSpinClick() {
         showModal(prize);
 
         isSpinning = false;
+
+        closeModal(true); 
 
     }
 
