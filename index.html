@@ -230,11 +230,11 @@
         Испытать Удачу!
     </button>
 
-    <div id="resultModal" class="modal" onclick="closeModal()">
+    <div id="resultModal" class="modal" onclick="closeModal(true)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <h2>🎉 ПОЗДРАВЛЯЕМ! 🎉</h2>
             <p id="prizeText">Вы выиграли: </p>
-            <button onclick="closeModal()">Получить Приз</button>
+            <button onclick="closeModal(true)">Получить Приз</button>
         </div>
     </div>
 </div>
@@ -310,9 +310,19 @@ function showModal(prize) {
     }
 }
 
-function closeModal() {
+/**
+ * Закрывает модальное окно и (ОПЦИОНАЛЬНО) сбрасывает рулетку.
+ * @param {boolean} shouldResetWheel - Нужно ли сбрасывать визуальный поворот рулетки.
+ */
+function closeModal(shouldResetWheel) {
     if (resultModal) {
         resultModal.style.display = 'none';
+    }
+    
+    // Новая логика: сброс рулетки
+    if (shouldResetWheel && wheel) {
+        wheel.style.transition = 'transform 0.5s ease-out';
+        wheel.style.transform = `rotate(0deg)`;
     }
 }
 
@@ -415,7 +425,6 @@ async function getSpinResultFromBackend() {
             body: JSON.stringify({ user_id: userId })
         });
 
-        // --- ИСПРАВЛЕННЫЙ БЛОК ДЛЯ УСТОЙЧИВОСТИ К ОШИБКАМ NON-JSON ---
         if (!response.ok) {
             let errorData = {};
             let responseBody = '';
@@ -424,11 +433,18 @@ async function getSpinResultFromBackend() {
             try {
                 errorData = await response.json(); 
             } catch(e) {
-                // Если не JSON, читаем как текст и выводим в консоль
+                // Если не JSON, читаем как текст
                 responseBody = await response.text();
                 console.error(`Сервер вернул не-JSON ответ (HTTP ${response.status}):`, responseBody);
                 
-                // Если это служебная ошибка Railway или сервера
+                // Проверяем, может ли это быть тайм-аут, который не вернул JSON
+                if (responseBody.includes('User already spun today')) {
+                    showAppMessage('Вы уже крутили сегодня! Попробуйте завтра.');
+                    // Важно: возвращаем null, но не отключаем кнопку, т.к. ее нужно вернуть в disabled
+                    // Это будет обработано в handleSpinClick
+                    return null;
+                }
+                
                 showAppMessage(`Ошибка: Cервер недоступен или вернул неожиданный ответ (HTTP ${response.status}).`);
                 return null;
             }
@@ -454,7 +470,6 @@ async function getSpinResultFromBackend() {
             console.error(`API Error (${response.status}):`, errorData);
             return null;
         }
-        // --- КОНЕЦ ИСПРАВЛЕННОГО БЛОКА ---
 
 
         // Если response.ok (статус 200), читаем выигрышный индекс
@@ -490,7 +505,7 @@ async function handleSpinClick() {
     
     if (isSpinning) return;
     isSpinning = true;
-    spinButton.disabled = true;
+    spinButton.disabled = true; // Отключаем сразу, чтобы избежать повторных кликов
     
     if (errorText) {
         errorText.style.display = 'none';
@@ -499,15 +514,25 @@ async function handleSpinClick() {
     const winningIndex = await getSpinResultFromBackend();
 
     if (winningIndex === null) {
+        // Произошла ошибка.
         isSpinning = false;
         
-        // Включаем кнопку обратно, если это не ошибка таймера
-        if (!errorText || !errorText.textContent.includes('Вы уже крутили')) {
+        // ВАЖНОЕ ИСПРАВЛЕНИЕ:
+        // Если showAppMessage показал сообщение о таймауте, мы оставляем кнопку disabled.
+        // Если это была другая ошибка (например, сеть, 500, 400), мы включаем кнопку обратно.
+        if (errorText && !errorText.textContent.includes('крутили сегодня')) {
              spinButton.disabled = false;
         }
+        
+        // Дополнительная проверка, если errorText null по какой-то причине
+        if (!errorText) {
+             spinButton.disabled = false;
+        }
+        
         return;
     }
 
+    // --- УСПЕШНЫЙ СПИН ---
     currentPrizeIndex = winningIndex; 
 
     const baseRotations = 5; 
@@ -516,16 +541,25 @@ async function handleSpinClick() {
     const finalRotation = (baseRotations * 360) + degreesToWin;
 
     if (wheel) {
-        wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
-        wheel.style.transform = `rotate(${finalRotation}deg)`;
-
+        // Убираем старый transition для мгновенного сброса
+        wheel.style.transition = 'none';
+        // Если рулетка уже была повернута, сбрасываем ее перед началом нового вращения
+        wheel.style.transform = 'rotate(0deg)'; 
+        
+        // Обеспечиваем, что transition применяется только к анимации вращения
+        // Используем setTimeout 0 для правильного применения стилей
         setTimeout(() => {
-            const prize = PRIZES[currentPrizeIndex];
-            showModal(prize);
+            wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            wheel.style.transform = `rotate(${finalRotation}deg)`;
 
-            isSpinning = false;
-            // Кнопка остается disabled, потому что спин использован
-        }, 5500); 
+            setTimeout(() => {
+                const prize = PRIZES[currentPrizeIndex];
+                showModal(prize);
+
+                isSpinning = false;
+                // Кнопка остается disabled, потому что спин использован
+            }, 5500); 
+        }, 50); // Небольшая задержка для применения сброса
     } else {
         const prize = PRIZES[currentPrizeIndex];
         showModal(prize);
