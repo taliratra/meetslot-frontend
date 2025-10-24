@@ -77,7 +77,9 @@
             width: 90%; 
             box-sizing: border-box;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); 
-            font-size: 16px;
+            /* ИЗМЕНЕНО: уменьшаем шрифт и фиксируем одну строку */
+            font-size: 14px;
+            white-space: nowrap; 
         }
 
 
@@ -120,17 +122,17 @@
                 var(--color-blue-dark-segment) 36deg 72deg 
             );
             
-            /* Маска для придания форме звезды остроты и вырезания центра - ИСПРАВЛЕНО ЗДЕСЬ */
+            /* Маска для придания форме звезды остроты и вырезания центра */
             mask-image: radial-gradient(
                 circle at center, 
                 transparent 0%, transparent 70%, /* Внутренний радиус 70% */
-                black 70%, **black 98%**, /* Теперь звезды будут видны почти до края */
+                black 70%, black 98%, /* Теперь звезды будут видны почти до края */
                 transparent 98%, transparent 100% /* Очень тонкий прозрачный край */
             );
             -webkit-mask-image: radial-gradient(
                 circle at center, 
                 transparent 0%, transparent 70%, 
-                black 70%, **black 98%**, 
+                black 70%, black 98%, 
                 transparent 98%, transparent 100%
             );
             z-index: 1; 
@@ -462,7 +464,8 @@ async function getSpinResultFromBackend() {
                     if (timeRemaining > 0) {
                         const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
                         const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-                        showAppMessage(`Попытки на сегодня закончились :( Возвращайтесь через ${hours} ч. ${minutes} м.`);
+                        // ИЗМЕНЕНИЕ: Укорочено сообщение для одной строки
+                        showAppMessage(`Попытки на сегодня закончились :( Через ${hours} ч. ${minutes} м.`);
                         return null; 
                     }
                 }
