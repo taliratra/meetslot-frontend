@@ -14,7 +14,6 @@
             --color-blue-light-segment: #D5DAE6; /* Светлый синий/серый для сегментов звезды */
             --color-blue-dark-segment: #657df5; /* Темный синий для сегментов звезды */
             
-            /* КРАСНЫЕ ЦВЕТА УДАЛЕНЫ ИЛИ ЗАМЕНЕНЫ */
             --color-white: #FFFFFF;
             --color-black: #000000; /* Добавлен для удобства */
         }
@@ -66,9 +65,9 @@
         /* --- СТИЛЬ БЛОКА ОШИБКИ (УВЕДОМЛЕНИЕ О ТАЙМАУТЕ) --- */
         #errorText {
             display: none;
-            color: var(--color-white); /* БЕЛЫЙ ТЕКСТ */
-            background: rgba(0, 0, 0, 0.7); /* ПРОЗРАЧНЫЙ ЧЕРНЫЙ ФОН */
-            border: none; /* УБРАН КРАСНЫЙ КОНТУР */
+            color: var(--color-white); 
+            background: rgba(0, 0, 0, 0.7); 
+            border: none; 
             padding: 15px 20px;
             margin: 10px 0 40px 0;
             border-radius: 8px; 
@@ -77,7 +76,7 @@
             line-height: 1.4;
             width: 90%; 
             box-sizing: border-box;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Немного более выраженная тень */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); 
             font-size: 16px;
         }
 
@@ -121,16 +120,18 @@
                 var(--color-blue-dark-segment) 36deg 72deg 
             );
             
-            /* Маска для придания форме звезды остроты и вырезания центра */
+            /* Маска для придания форме звезды остроты и вырезания центра - ИСПРАВЛЕНО ЗДЕСЬ */
             mask-image: radial-gradient(
                 circle at center, 
-                transparent 0%, transparent 70%, 
-                black 70%, black 100% 
+                transparent 0%, transparent 70%, /* Внутренний радиус 70% */
+                black 70%, black 85%, /* Теперь звезды будут видны до 85% внешнего радиуса */
+                transparent 85%, transparent 100% /* Плавное исчезновение на краю */
             );
             -webkit-mask-image: radial-gradient(
                 circle at center, 
                 transparent 0%, transparent 70%, 
-                black 70%, black 100%
+                black 70%, black 85%, 
+                transparent 85%, transparent 100%
             );
             z-index: 1; 
             filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
@@ -220,7 +221,7 @@
         }
 
         .modal-content {
-            background-color: var(--color-white); /* БЕЛЫЙ ФОН */
+            background-color: var(--color-white); 
             margin: 10% auto;
             padding: 30px; 
             border-radius: 15px;
@@ -234,17 +235,17 @@
         .modal-content h2 {
             font-size: 36px;
             font-family: Arial Black, Gadget, sans-serif;
-            color: var(--color-blue-bg); /* Синий заголовок */
+            color: var(--color-blue-bg); 
             margin-bottom: 5px;
             text-shadow: 2px 2px 0 var(--color-blue-dark); 
         }
         
         .modal-content p {
-             color: var(--color-black); /* Черный текст */
+             color: var(--color-black); 
         }
 
         .modal-content button {
-            background: var(--color-blue-bg); /* Синяя кнопка */
+            background: var(--color-blue-bg); 
             color: var(--color-white); 
             border: none;
             padding: 15px 30px;
@@ -290,7 +291,7 @@
             <p>You've won a bonus!<br>Hurry up and use it!</p>
             <p id="prizeText" style="display:none;">Вы выиграли: </p>
             <button onclick="closeModal(true)">Click to continue</button>
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxwYXRoIGZpbGw9IiNGRkNBRCBEIiBkPSJNMTIgMmMtNC40MTggMC04IDMtOCA2czQgNiA4IDZzOC0zIDgtNnMtMy41ODItNi04LTYuMDAxem0wIDJjMi43NjEgMCA1IDIuMDIyIDUgNC41czIuNTEgNC41IDAgNC41YzAtLjQxNC0uMzM2LS43NS0uNzUtLjc1cy0uNzUuMzM2LS43NS43NS4zMzYgLjc1Ljc1LjY4IDEuMTUgMCAxLjI0NyAyYy00LjQ4MiA3.jgxNi0uOTMyIDIuNzYyLS45MzJ6bS01IDEyYzAgMi42NjcgMCA1IDAgNnMyLjIzOCAyIDUgMiAyLjU2Mi01LTItNnptMTQtMTIuMDAyYzAgNC40MTktMy41ODIgOC04IDhzLTggMy41ODEtOC04YzAtLjI3LjAyNi0uNTI5LjA0LS43OC4wMTQtLjI1LjA0LS40OTcuMDctLjc0em0yLTIuOTk4YzAgMi43NjItMi41MTIgNS01IDUgMCAuMjM1LjAzMy40NTguMDY1LjcwNi0uNTUuMjY0LTEuMDY0LjQ1MS0xLjQ0Mi41NjctLjM3OC4xMTYtLjc1MS4wNDgtLjk5MS0uMjg2LS4yNC0uMzM0LS4xNDEtLjc3Mi4yNTItMS4wMjJjLjM5My0uMjUuODYyLS4xNTkgMS4xNTcuMTU5LjI5NS4zMTcuMjI3Ljc3My0uMTY2IDEuMDkyem0tNC45MDYgMTBjLjAxMi0uMDMgNC44ODUgNS45MDYgNi40NjQtLjM2NEMxNi42NDcgMTYuODQ0IDE1LjU2IDE0IDEyIDE0Yy0yLjc2MiAwLTUgMi4wMjItNSAzLjVzMi4yMzggMy41IDUgMy41eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtMS)” alt="Brain icon" class="brain-icon"/>
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxwYXRoIGZpbGw9IiNGRkNBRCBEIiBkPSJNMTIgMmMtNC40MTggMC04IDMtOCA2czQgNiA4IDZzOC0zIDgtNnMtMy41ODItNi04LTYuMDAxem0wIDJjMi43NjEgMCA1IDIuMDIyIDUgNC41czIuNTEgNC41IDAgNC41YzAtLjQxNC0uMzM2LS43NS0uNzUtLjc1cy0uNzUuMzM2LS.3323236LS43NS.336-.75.75.68 1.15 0 1.247 2c-4.482 7.jgxNi0uOTMyIDIuNzYyLS45MzJ6bS01IDEyYzAgMi42NjcgMCA1IDAgNnMyLjIzOCAyIDUgMiAyLjU2Mi01LTItNnptMTQtMTIuMDAyYzAgNC40MTktMy41ODIgOC04IDhzLTggMy41ODEtOC04YzAtLjI3LjAyNi0uNTI5LjA0LS43OC4wMTQtLjI1LjA0LS40OTcuMDctLjc0em0yLTIuOTk4YzAgMi43NjItMi41MTIgNS01IDUgMCAuMjM1LjAzMy40NTguMDY1LjcwNi0uNTUuMjY0LTEuMDY0LjQ1MS0xLjQ0Mi41NjctLjM3OC4xMTYtLjc1MS4wNDgtLjk5MS0uMjg2LS4yNC0uMzM0LS4xNDEtLjc3Mi4yNTItMS4wMjJjLjM5My0uMjUuODYyLS4xNTkgMS4xNTcuMTU5LjI5NS4zMTcuMjI3Ljc3My0uMTY2IDEuMDkyem0tNC45MDYgMTBjLjAxMi0uMDMgNC44ODUgNS45MDYgNi40NjQtLjM2NEMxNi42NDcgMTYuODQ0IDE1LjU2IDE0IDEyIDE0Yy0yLjc2MiAwLTUgMi4wMjItNSAzLjVzMi4yMzggMy41IDUgMy41eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtMS)” alt="Brain icon" class="brain-icon"/>
             <div style="font-size: 10px; color: white;">*Символ не является реальным изображением мозга.</div>
         </div>
     </div>
@@ -302,7 +303,7 @@
 
 const PRIZES = [
     "6000 meet-бонусов", "5000 meet-бонусов", "4000 meet-бонусов", "3000 meet-бонусов",
-    "2000 meet-бонусов", "1000 meet-бонусов", "Промокод на бесплатную доставку", 
+    "2000 meet-бонусов", "2000 meet-бонусов", "1000 meet-бонусов", "Промокод на бесплатную доставку", 
     "Скидка 10%", "Скидка 15%", "SoleFresh к заказу"
 ];
 // Теперь сектора призов соответствуют не "полосам", а виртуальным 10 делениям
