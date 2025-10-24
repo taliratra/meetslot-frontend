@@ -139,35 +139,6 @@
             display: none;
         }
 
-        /* --- Стили для точек в секторах --- */
-        .dots-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            pointer-events: none; /* Точки не должны мешать клику на кнопку */
-            z-index: 2; /* Над секторами, но под центральной кнопкой */
-            transition: transform 0s; /* Нулевая начальная анимация */
-        }
-        
-        /* Радиус размещения точки 70px был подобран для размера 272px (136px радиус) */
-        /* 70 / 136 ≈ 51% от радиуса */
-        .dot {
-            position: absolute;
-            width: 7px; /* Размер точки */
-            height: 7px; /* Размер точки */
-            background-color: #1a2d8d; /* Темно-синий цвет точек */
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform-origin: 0 0; /* Точки вращаются вокруг центра колеса */
-            /* Используем переменную для угла и translateY, чтобы разместить точку по радиусу */
-            transform: translate(-50%, -50%) rotate(var(--dot-rotation)) translateY(-70px); 
-            box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
-        }
-
 
         /* --- ЦЕНТРАЛЬНАЯ КНОПКА (ВРАЩАТЬ) (Уменьшена на 15%) --- */
         .center-button {
@@ -461,7 +432,7 @@ function handlePrizeClaim() {
     closeModal(true); 
 }
 
-// ФУНКЦИЯ УПРОЩЕНА: ТОЛЬКО СБРОС СОСТОЯНИЯ
+// ФУНКЦИЯ УПРОЩЕНА: ТОЛЬКО СБРОС СОСТОЯНИЯ (Удалено обращение к dotsContainer)
 function closeModal(shouldResetWheel) {
     if (resultModal) {
         resultModal.style.display = 'none'; // Скрываем модальное окно
@@ -471,44 +442,13 @@ function closeModal(shouldResetWheel) {
         wheel.style.transition = 'transform 0.5s ease-out';
         wheel.style.transform = `rotate(0deg)`;
         
-        // Сбрасываем и контейнер точек
-        const dotsContainer = wheel.querySelector('.dots-container');
-        if (dotsContainer) {
-            dotsContainer.style.transition = 'transform 0.5s ease-out';
-            dotsContainer.style.transform = `rotate(0deg)`;
-        }
-
         if (spinButton) {
             spinButton.classList.remove('disabled');
         }
     }
 }
 
-// *** ИСПРАВЛЕННАЯ ФУНКЦИЯ ДЛЯ ДОБАВЛЕНИЯ ТОЧЕК ***
-function drawWheel() {
-    if (!wheel) return;
-    // Очищаем старые точки перед добавлением новых
-    let dotsContainer = wheel.querySelector('.dots-container');
-    if (dotsContainer) {
-        dotsContainer.remove();
-    }
-
-    dotsContainer = document.createElement('div');
-    dotsContainer.classList.add('dots-container');
-
-    for (let i = 0; i < NUM_SECTORS; i++) {
-        const dot = document.createElement('div');
-        dot.classList.add('dot');
-        
-        // Вычисляем угол: середина сектора (18 градусов) + i * 36 градусов
-        const rotationAngle = (i * SECTOR_ANGLE) + (SECTOR_ANGLE / 2);
-        dot.style.setProperty('--dot-rotation', `${rotationAngle}deg`);
-        
-        dotsContainer.appendChild(dot);
-    }
-    wheel.appendChild(dotsContainer); 
-}
-// ************************************************
+// ФУНКЦИЯ drawWheel УДАЛЕНА. Колесо не требует динамической прорисовки, кроме секторов в CSS.
 
 function initTelegramApp() {
     try {
@@ -523,7 +463,7 @@ function initTelegramApp() {
     } catch (e) {
         console.error("Ошибка инициализации Telegram WebApp. Запущено не в Telegram.", e);
     }
-    drawWheel(); // Вызываем drawWheel здесь, чтобы создать точки
+    // drawWheel(); // Удалено
     if (errorText) errorText.style.display = 'none';
 }
 
@@ -676,23 +616,10 @@ async function handleSpinClick() {
         wheel.style.transition = 'none';
         wheel.style.transform = 'rotate(0deg)'; 
         
-        // Вращение для контейнера точек
-        const dotsContainer = wheel.querySelector('.dots-container');
-        if (dotsContainer) {
-            dotsContainer.style.transition = 'none';
-            dotsContainer.style.transform = 'rotate(0deg)';
-        }
-
         setTimeout(() => {
             wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
             wheel.style.transform = `rotate(${finalRotation}deg)`;
             
-            // Также вращаем контейнер с точками
-            if (dotsContainer) {
-                dotsContainer.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
-                dotsContainer.style.transform = `rotate(${finalRotation}deg)`;
-            }
-
             // Ждем завершения анимации
             setTimeout(() => {
                 const prize = PRIZES[currentPrizeIndex];
