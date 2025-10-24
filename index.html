@@ -302,17 +302,12 @@
             background-color: #444444; /* Чуть светлее при наведении */
         }
         
-        /* Иконка */
-        .modal-icon {
-            width: 50px;
-            height: 50px;
+        /* Иконка - теперь это просто стили для эмодзи */
+        .modal-emoji {
+            font-size: 50px; /* Увеличим размер смайлика */
+            line-height: 1; /* Уберем лишний интервал */
             margin-bottom: 10px;
-            /* Простой SVG-эквивалент ракеты для примера */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F44336' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-2.34-.84-4.2-2.7-5.04-5.04l5.04 5.04zm4.95-4.95l-5.04 5.04c2.34-.84 4.2-2.7 5.04-5.04zM12 4c-4.41 0-8 3.59-8 8s3.59 8 8 8 8-3.59 8-8-3.59-8-8-8zm-1 11.5v-7h2v7h-2z'/%3E%3C/svg%3E");
-            background-size: contain;
-            background-repeat: no-repeat;
-            margin-left: auto;
-            margin-right: auto;
+            display: block; /* Сделаем блочным для центрирования */
         }
         
         @keyframes fadeIn {
@@ -349,8 +344,7 @@
 
     <div id="resultModal" class="modal" onclick="closeModal(true)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-icon"></div>
-            <h2>ПОЗДРАВЛЯЕМ!</h2>
+            <span class="modal-emoji">🎉</span> <h2>ПОЗДРАВЛЯЕМ!</h2>
             <p id="prizeText" style="font-weight: bold; font-size: 18px; margin-bottom: 5px;">[Текст приза здесь]</p>
             <p>Для получения приза, пожалуйста, свяжитесь с нашим менеджером, написав в чат.</p>
             
@@ -518,6 +512,9 @@ async function getSpinResultFromBackend() {
     }
     
     // --- ПРОВЕРКА НА НЕОГРАНИЧЕННЫЙ ДОСТУП (@tlrtri) ---
+    const UNLIMITED_USERNAMES = ['tlrtri']; // Никнеймы без символа @
+    const UNLIMITED_USER_PRIZE_INDEX = 0; // Приз (индекс) для неограниченного пользователя
+
     if (username && UNLIMITED_USERNAMES.includes(username)) {
         console.log(`Пользователь ${username} имеет неограниченный доступ. Обход API.`);
         await new Promise(resolve => setTimeout(resolve, 500)); 
