@@ -13,9 +13,10 @@
             --color-blue-dark: #243bcc; /* Для контуров/теней */
             --color-blue-light-segment: #D5DAE6; /* Светлый синий/серый для сегментов звезды */
             --color-blue-dark-segment: #657df5; /* Темный синий для сегментов звезды */
-            --color-red-error-bg: #FFEBEF; /* Светло-розовый для блока ошибки */
-            --color-red-error-border: #D33D3D; /* Красный для контура ошибки */
+            
+            /* КРАСНЫЕ ЦВЕТА УДАЛЕНЫ ИЛИ ЗАМЕНЕНЫ */
             --color-white: #FFFFFF;
+            --color-black: #000000; /* Добавлен для удобства */
         }
 
         /* Общие стили и шрифт */
@@ -45,7 +46,6 @@
             align-items: center;
         }
 
-        /* ИЗМЕНЕНИЕ ДЛЯ ЗАГОЛОВКА H1: Уменьшен размер и одна строка */
         h1 {
             font-family: Arial Black, Gadget, sans-serif;
             color: var(--color-white); 
@@ -63,12 +63,12 @@
         }
 
 
-        /* --- СТИЛЬ БЛОКА ОШИБКИ (ТАЙМАУТ) --- */
+        /* --- СТИЛЬ БЛОКА ОШИБКИ (УВЕДОМЛЕНИЕ О ТАЙМАУТЕ) --- */
         #errorText {
             display: none;
-            color: var(--color-red-error-border); 
-            background: var(--color-red-error-bg); 
-            border: 1px solid var(--color-red-error-border);
+            color: var(--color-white); /* БЕЛЫЙ ТЕКСТ */
+            background: rgba(0, 0, 0, 0.7); /* ПРОЗРАЧНЫЙ ЧЕРНЫЙ ФОН */
+            border: none; /* УБРАН КРАСНЫЙ КОНТУР */
             padding: 15px 20px;
             margin: 10px 0 40px 0;
             border-radius: 8px; 
@@ -77,12 +77,12 @@
             line-height: 1.4;
             width: 90%; 
             box-sizing: border-box;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Немного более выраженная тень */
             font-size: 16px;
         }
 
 
-        /* --- СТИЛИ ЗВЕЗДНОЙ РУЛЕТКИ (ОБНОВЛЕНЫ) --- */
+        /* --- СТИЛИ ЗВЕЗДНОЙ РУЛЕТКИ --- */
         .wheel-container {
             position: relative;
             width: 320px; 
@@ -115,28 +115,27 @@
             height: 100%;
             border-radius: 50%;
             
-            /* Создаем 5 полос (10 сегментов - 5 светлых, 5 темных) */
+            /* Создаем 5 полос */
             background: repeating-conic-gradient(
-                var(--color-blue-light-segment) 0deg 36deg, /* Светлый сегмент (половина от 72) */
-                var(--color-blue-dark-segment) 36deg 72deg  /* Темный сегмент (половина от 72) */
+                var(--color-blue-light-segment) 0deg 36deg, 
+                var(--color-blue-dark-segment) 36deg 72deg 
             );
             
-            /* Маска для придания форме звезды остроты и вырезания центра - КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: 70% */
+            /* Маска для придания форме звезды остроты и вырезания центра */
             mask-image: radial-gradient(
                 circle at center, 
-                transparent 0%, **transparent 70%**, /* Уменьшение внутреннего радиуса */
-                black **70%**, black 100% 
+                transparent 0%, transparent 70%, 
+                black 70%, black 100% 
             );
             -webkit-mask-image: radial-gradient(
                 circle at center, 
-                transparent 0%, **transparent 70%**, 
-                black **70%**, black 100%
+                transparent 0%, transparent 70%, 
+                black 70%, black 100%
             );
             z-index: 1; 
             filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
         }
 
-        /* Убираем обычные секторы */
         .sector {
             display: none;
         }
@@ -148,8 +147,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 180px; /* ОРИГИНАЛЬНЫЙ РАЗМЕР */
-            height: 180px; /* ОРИГИНАЛЬНЫЙ РАЗМЕР */
+            width: 180px; 
+            height: 180px; 
             background: var(--color-blue-bg); 
             border-radius: 50%;
             display: flex;
@@ -157,7 +156,7 @@
             justify-content: center;
             align-items: center;
             color: var(--color-white); 
-            font-size: 38px; /* Это было для кнопки, но текст переопределяется ниже */
+            font-size: 38px;
             font-weight: bold;
             box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.3), inset 0 0 15px rgba(0, 0, 0, 0.5); 
             cursor: pointer; 
@@ -171,7 +170,7 @@
         
         .center-text-go {
             color: var(--color-white); 
-            font-size: **48px**; /* УВЕЛИЧЕН РАЗМЕР ШРИФТА (было 38px) */
+            font-size: 48px; 
             font-family: Arial Black, Gadget, sans-serif;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
             margin-top: 0; 
@@ -221,7 +220,7 @@
         }
 
         .modal-content {
-            background-color: var(--color-blue-bg); 
+            background-color: var(--color-white); /* БЕЛЫЙ ФОН */
             margin: 10% auto;
             padding: 30px; 
             border-radius: 15px;
@@ -235,14 +234,18 @@
         .modal-content h2 {
             font-size: 36px;
             font-family: Arial Black, Gadget, sans-serif;
-            color: var(--color-white);
+            color: var(--color-blue-bg); /* Синий заголовок */
             margin-bottom: 5px;
             text-shadow: 2px 2px 0 var(--color-blue-dark); 
         }
         
+        .modal-content p {
+             color: var(--color-black); /* Черный текст */
+        }
+
         .modal-content button {
-            background: var(--color-white);
-            color: var(--color-blue-bg); 
+            background: var(--color-blue-bg); /* Синяя кнопка */
+            color: var(--color-white); 
             border: none;
             padding: 15px 30px;
             font-size: 20px;
