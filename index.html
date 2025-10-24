@@ -45,6 +45,23 @@
             min-height: 100vh;
             text-align: center;
             box-sizing: border-box;
+            position: relative; /* Важно для позиционирования псевдоэлемента */
+            overflow: hidden; /* Чтобы блик не выходил за пределы видимой области */
+        }
+
+        body::before { /* НОВЫЙ ПСЕВДОЭЛЕМЕНТ ДЛЯ АНИМИРОВАННОГО БЛИКА НА ФОНЕ */
+            content: '';
+            position: absolute;
+            top: -100%; /* Начинаем высоко за пределами экрана */
+            left: -100%; /* И слева */
+            width: 300%; /* Больше, чтобы покрыть весь экран */
+            height: 300%; /* Больше, чтобы покрыть весь экран */
+            background: radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
+            border-radius: 50%; /* Круглая форма блика */
+            filter: blur(50px); /* Сильное размытие для мягкости */
+            z-index: -1; /* Под основным контентом */
+            animation: background-shine 15s infinite ease-in-out; /* Новая анимация */
+            pointer-events: none; /* Не мешает взаимодействию */
         }
 
         .app-container {
@@ -157,27 +174,8 @@
             z-index: 1; 
             filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.4)) brightness(1.1); 
         }
-
-        /* НОВЫЙ ПСЕВДОЭЛЕМЕНТ ДЛЯ АНИМИРОВАННОГО БЛИКА */
-        .wheel::after { 
-            content: '';
-            position: absolute;
-            top: -50%; /* Начинаем за пределами верхнего края */
-            left: -50%; /* Начинаем за пределами левого края */
-            width: 200%; /* Шире рулетки, чтобы покрыть большую площадь */
-            height: 200%; /* Выше рулетки */
-            opacity: 0; /* Изначально невидимый */
-            
-            /* Градиент для блика - можно экспериментировать */
-            background: radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 50%);
-            
-            border-radius: 50%; /* Чтобы блик был круглым */
-            filter: blur(10px); /* Немного размываем, чтобы выглядело мягче */
-            z-index: 2; /* Над секторами, но под центральной кнопкой */
-            
-            animation: shine-effect 8s infinite ease-in-out; /* Применяем анимацию */
-            pointer-events: none; /* Не мешает взаимодействию */
-        }
+        
+        /* Удаленный .wheel::after блок был здесь */
 
         .sector {
             display: none;
@@ -364,27 +362,27 @@
             to {opacity: 1; transform: scale(1);}
         }
 
-        /* НОВАЯ ANIMATION KEYFRAMES */
-        @keyframes shine-effect {
+        /* НОВАЯ ANIMATION KEYFRAMES ДЛЯ ФОНОВОГО БЛИКА */
+        @keyframes background-shine {
             0% {
                 transform: translate(0%, 0%) rotate(0deg);
-                opacity: 0;
+                opacity: 0.2; /* Начальная видимость */
             }
             25% {
-                transform: translate(25%, 25%) rotate(90deg);
-                opacity: 0.7; /* Максимальная прозрачность блика */
+                transform: translate(10%, 20%) rotate(90deg);
+                opacity: 0.5; /* Максимальная видимость */
             }
             50% {
-                transform: translate(50%, 0%) rotate(180deg);
-                opacity: 0;
+                transform: translate(30%, -10%) rotate(180deg);
+                opacity: 0.2;
             }
             75% {
-                transform: translate(25%, -25%) rotate(270deg);
-                opacity: 0.5;
+                transform: translate(-10%, 15%) rotate(270deg);
+                opacity: 0.4;
             }
             100% {
                 transform: translate(0%, 0%) rotate(360deg);
-                opacity: 0;
+                opacity: 0.2;
             }
         }
 
