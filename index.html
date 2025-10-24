@@ -275,27 +275,31 @@
             transform: translateY(3px);
         }
         
-        /* СТИЛЬ ДЛЯ МЕНЕЕ ЗАМЕТНОЙ КНОПКИ (ОБНОВЛЕН) */
+        /* СТИЛЬ ДЛЯ МЕНЕЕ ЗАМЕТНОЙ КНОПКИ (ОБНОВЛЕН ДЛЯ ТОЧНОГО СООТВЕТСТВИЯ СКРИНШОТУ) */
         .secondary-modal-link {
             display: block; 
-            background-color: #CCCCCC; /* Светло-серый фон */
+            background-color: #363636; /* Темно-серый фон как на скриншоте */
             color: var(--color-white); /* Белый текст */
             border: none;
-            padding: 7px 14px; /* Уменьшаем padding еще больше */
-            font-size: 13px; /* Уменьшаем шрифт еще больше */
-            font-weight: normal;
-            border-radius: 7px; /* Немного меньше радиус */
+            padding: 10px 20px; /* Увеличим padding, чтобы соответствовать размеру */
+            font-size: 16px; /* Размер шрифта как на скриншоте */
+            font-weight: bold; /* Жирный текст */
+            border-radius: 10px; /* Радиус как на основной кнопке */
             cursor: pointer;
-            width: fit-content; /* Ширина по контенту */
+            width: 100%; /* Занимаем всю доступную ширину */
+            max-width: 250px; /* Ограничиваем максимальную ширину как у основной */
             margin: 10px auto 0; /* Центрируем и добавляем отступ сверху */
             transition: background-color 0.1s ease, transform 0.1s ease;
-            box-shadow: 0 2px 0 0 #A0A0A0; /* Легкая тень для 3D эффекта */
+            box-shadow: 0 4px 0 0 #222222; /* Тень для темно-серой кнопки */
         }
         
+        .secondary-modal-link:active {
+             box-shadow: 0 1px 0 0 #222222;
+             transform: translateY(3px);
+        }
+
         .secondary-modal-link:hover {
-            background-color: #B0B0B0; /* Чуть темнее при наведении */
-            transform: translateY(1px);
-            box-shadow: 0 1px 0 0 #A0A0A0;
+            background-color: #444444; /* Чуть светлее при наведении */
         }
         
         /* Иконка */
