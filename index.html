@@ -7,7 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        /* --- ЦВЕТОВАЯ СХЕМА: ГЛУБОКИЙ СИНИЙ (ближе к #0047AB или #1E408F) --- */
+        /* --- ЦВЕТОВАЯ СХЕМА: ГЛУБОКИЙ СИНИЙ (Секторная рулетка) --- */
         :root {
             --color-blue-bg: #1A54A8; /* Глубокий синий фон */
             --color-blue-dark: #003366; /* Для контуров */
@@ -37,7 +37,7 @@
             width: 100%;
             max-width: 400px;
             background: var(--color-blue-bg); 
-            padding: 20px 10px; /* Уменьшаем боковые отступы */
+            padding: 20px 10px;
             margin-top: 0;
             min-height: 100vh;
             display: flex;
@@ -95,7 +95,7 @@
             height: 100%;
             border-radius: 50%;
             background: #EFEFEF; /* Светлый фон */
-            border: 5px solid var(--color-blue-dark); /* Темный синий контур вокруг колеса */
+            border: 5px solid var(--color-blue-dark); /* Темный синий контур */
             box-shadow: none;
             position: relative;
             transition: transform 0s;
@@ -106,30 +106,18 @@
         /* Секторы (Треугольники) */
         .sector {
             position: absolute;
-            top: 50%; 
+            top: 0;
             left: 50%;
             width: 50%; 
             height: 50%; 
-            transform-origin: 0 0; 
+            transform-origin: 0 100%; 
             border: 1px solid rgba(0, 0, 0, 0.1); /* Разделительная линия */
             box-sizing: border-box;
             overflow: hidden;
-            /* Формируем сектор-треугольник */
-            clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
-            /* Смещаем к краю и поворачиваем */
-            transform: translate(-50%, -100%) rotate(0deg) skewX(0deg); 
-        }
-        
-        /* Применяем стили для правильного отображения 10 секторов */
-        .sector {
-            width: 50%;
-            height: 50%;
-            top: 0;
-            left: 50%;
-            transform-origin: 0 100%;
-            /* Перерисовываем для 10 секторов (36 градусов) */
-            transform: rotate(0deg) skewY(54deg);
-            clip-path: none;
+            
+            /* ГАРАНТИЯ СИММЕТРИИ (10 СЕКТОРОВ = 36 градусов, 90-36 = 54) */
+            /* Трансформация поворачивает сектор и скашивает его в треугольник */
+            transform: rotate(0deg) skewY(54deg); 
         }
 
         /* Цветовая схема: синий/светло-синий градиент */
@@ -151,7 +139,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 180px; /* Крупная, как на скриншоте */
+            width: 180px; 
             height: 180px; 
             /* Синий градиентный фон */
             background: linear-gradient(145deg, var(--color-blue-light), var(--color-blue-bg)); 
@@ -185,9 +173,9 @@
             top: -15px; 
             left: 50%;
             transform: translateX(-50%);
-            width: 25px; /* Немного крупнее */
+            width: 25px; 
             height: 40px; 
-            background: linear-gradient(to bottom, var(--color-white), #B0C4DE); /* Белый/серый градиент */
+            background: linear-gradient(to bottom, var(--color-white), #B0C4DE); 
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
             border: 3px solid var(--color-blue-bg); /* Синий контур */
@@ -218,7 +206,7 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.8); /* Темный полупрозрачный фон */
+            background-color: rgba(0, 0, 0, 0.8); 
             text-align: center;
         }
 
@@ -242,13 +230,6 @@
             text-shadow: 2px 2px 0 var(--color-blue-dark);
         }
         
-        .modal-content p {
-            font-size: 18px;
-            color: var(--color-white);
-            font-weight: bold;
-            margin-bottom: 30px;
-        }
-
         .modal-content button {
             background: var(--color-white);
             color: var(--color-blue-bg);
@@ -267,13 +248,6 @@
             opacity: 0.6;
             cursor: not-allowed;
             pointer-events: none;
-        }
-        
-        /* Стилизация нижней кнопки Telegram WebApp (по умолчанию) */
-        .tg-main-button {
-            /* Оставляем на усмотрение Telegram, но для соответствия цветам */
-            /* Здесь нет прямого контроля, но для стилизации примера: */
-            /* background-color: #0077B6 !important; */
         }
 
     </style>
@@ -317,8 +291,9 @@ const PRIZES = [
     "2000 meet-бонусов", "1000 meet-бонусов", "Промокод на бесплатную доставку", 
     "Скидка 10%", "Скидка 15%", "SoleFresh к заказу"
 ];
-const NUM_SECTORS = PRIZES.length;
-const SECTOR_ANGLE = 360 / NUM_SECTORS; 
+// ГАРАНТИЯ 10 СИММЕТРИЧНЫХ СЕКТОРОВ
+const NUM_SECTORS = PRIZES.length; // = 10
+const SECTOR_ANGLE = 360 / NUM_SECTORS; // = 36 градусов
 
 // --- КОРРЕКТНЫЙ ПУБЛИЧНЫЙ URL ВАШЕГО БЭКЕНДА ---
 const API_BASE_URL = 'https://meetslot-api-backend-production.up.railway.app/api';
@@ -341,10 +316,6 @@ let currentPrizeIndex = null;
 // 3. ФУНКЦИИ UI / ВЗАИМОДЕЙСТВИЯ
 // -----------------------------------------------------
 
-/**
- * Показывает сообщение об ошибке (например, таймер или отказ сети)
- * @param {string} message - Сообщение для пользователя
- */
 function showAppMessage(message) {
     if (errorText) {
         errorText.textContent = message;
@@ -374,10 +345,6 @@ function showModal(prize) {
     }
 }
 
-/**
- * Закрывает модальное окно и (ОПЦИОНАЛЬНО) сбрасывает рулетку.
- * @param {boolean} shouldResetWheel - Нужно ли сбрасывать визуальный поворот рулетки.
- */
 function closeModal(shouldResetWheel) {
     if (resultModal) {
         resultModal.style.display = 'none';
@@ -394,24 +361,27 @@ function closeModal(shouldResetWheel) {
 }
 
 /**
- * Генерирует и вставляет сектора в колесо рулетки.
+ * Генерирует и вставляет 10 симметричных секторов.
  */
 function drawWheel() {
     if (!wheel) return;
     wheel.innerHTML = ''; 
     
+    // 90 - 36 (SECTOR_ANGLE) = 54
+    const skewAngle = 90 - SECTOR_ANGLE; 
+
     for (let i = 0; i < NUM_SECTORS; i++) {
         const sector = document.createElement('div');
         sector.className = 'sector';
         
-        // Поворот сектора
-        sector.style.transform = `rotate(${i * SECTOR_ANGLE}deg) skewY(${90 - SECTOR_ANGLE}deg)`;
+        // Поворот сектора: i * 36 градусов
+        sector.style.transform = `rotate(${i * SECTOR_ANGLE}deg) skewY(${skewAngle}deg)`;
         
         const textContainer = document.createElement('div');
         textContainer.className = 'sector-text';
         
         const textElement = document.createElement('span');
-        textElement.innerHTML = ''; // Оставляем пустым, как на скриншоте
+        textElement.innerHTML = ''; 
         
         textContainer.appendChild(textElement);
         sector.appendChild(textContainer);
@@ -419,9 +389,6 @@ function drawWheel() {
     }
 }
 
-/**
- * Инициализация Telegram WebApp
- */
 function initTelegramApp() {
     try {
         if (window.Telegram && window.Telegram.WebApp) {
@@ -440,7 +407,7 @@ function initTelegramApp() {
 
 
 // -----------------------------------------------------
-// 4. ЛОГИКА API
+// 4. ЛОГИКА API (ОСТАВЛЕНА БЕЗ ИЗМЕНЕНИЙ)
 // -----------------------------------------------------
 
 async function getSpinResultFromBackend() {
@@ -567,6 +534,7 @@ async function handleSpinClick() {
     currentPrizeIndex = winningIndex; 
 
     const baseRotations = 5; 
+    // Угол остановки для попадания в центр сектора
     const degreesToWin = (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE;
 
     const finalRotation = (baseRotations * 360) + degreesToWin;
