@@ -415,20 +415,25 @@ async function getSpinResultFromBackend() {
             body: JSON.stringify({ user_id: userId })
         });
 
-        // --- ИСПРАВЛЕННЫЙ БЛОК ОБРАБОТКИ ОШИБОК ---
+        // --- ИСПРАВЛЕННЫЙ БЛОК ДЛЯ УСТОЙЧИВОСТИ К ОШИБКАМ NON-JSON ---
         if (!response.ok) {
             let errorData = {};
-            // Читаем тело ответа ОДИН раз для обработки ошибок
+            let responseBody = '';
+
+            // 1. Попытка прочитать как JSON
             try {
                 errorData = await response.json(); 
             } catch(e) {
-                // Если не удалось прочитать JSON (напр., сервер вернул пустой текст или HTML)
-                console.error("Не удалось прочитать JSON ответа:", e);
-                showAppMessage(`Ошибка: Не удалось прочитать ответ сервера (HTTP ${response.status}).`);
+                // Если не JSON, читаем как текст и выводим в консоль
+                responseBody = await response.text();
+                console.error(`Сервер вернул не-JSON ответ (HTTP ${response.status}):`, responseBody);
+                
+                // Если это служебная ошибка Railway или сервера
+                showAppMessage(`Ошибка: Cервер недоступен или вернул неожиданный ответ (HTTP ${response.status}).`);
                 return null;
             }
 
-            // 1. Обработка 403 (Таймер)
+            // 2. Обработка 403 (Таймер) - (теперь errorData точно JSON)
             if (response.status === 403) {
                 if (errorData && errorData.next_spin_timestamp) {
                     const nextSpinTimestamp = errorData.next_spin_timestamp;
@@ -439,12 +444,12 @@ async function getSpinResultFromBackend() {
                         const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
                         const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
                         showAppMessage(`Вы уже крутили сегодня! Попробуйте через ${hours} ч. ${minutes} м.`);
-                        return null; // Обязательный возврат после показа таймера
+                        return null; 
                     }
                 }
             }
 
-            // 2. Общая ошибка бэкенда (500, 400 и т.д.)
+            // 3. Общая ошибка бэкенда (500, 400 и т.д.)
             showAppMessage(`Ошибка: ${errorData.message || 'Неизвестная ошибка сервера'}`);
             console.error(`API Error (${response.status}):`, errorData);
             return null;
@@ -458,13 +463,13 @@ async function getSpinResultFromBackend() {
         if (typeof data.prize_index === 'number') {
             return data.prize_index; // Индекс от 0 до 9
         } else {
-            showAppMessage('Ошибка: Бэкенд не вернул индекс приза.');
+            showAppMessage('Ошибка: Бэкенд вернул статус 200, но не вернул индекс приза.');
             return null;
         }
 
     } catch (e) {
-        console.error("Ошибка при выполнении запроса к API:", e);
-        showAppMessage("Ошибка подключения к серверу. Попробуйте позже.");
+        console.error("Критическая ошибка при выполнении запроса fetch:", e);
+        showAppMessage("Критическая ошибка: Проблема с сетью или URL-адресом сервера. Проверьте статус бэкенда.");
         return null;
     }
 }
@@ -506,8 +511,6 @@ async function handleSpinClick() {
     currentPrizeIndex = winningIndex; 
 
     const baseRotations = 5; 
-    // Угол сектора: 360 / 10 = 36 градусов.
-    // Мы используем 0.5 для центрирования стрелки на секторе.
     const degreesToWin = (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE;
 
     const finalRotation = (baseRotations * 360) + degreesToWin;
@@ -521,6 +524,7 @@ async function handleSpinClick() {
             showModal(prize);
 
             isSpinning = false;
+            // Кнопка остается disabled, потому что спин использован
         }, 5500); 
     } else {
         const prize = PRIZES[currentPrizeIndex];
