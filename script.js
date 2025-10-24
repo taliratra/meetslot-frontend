@@ -18,6 +18,7 @@ const NUM_SECTORS = PRIZES.length;
 const SECTOR_ANGLE = 360 / NUM_SECTORS; // 36 градусов на сектор
 
 // URL вашего бэкенд API на Railway (замените на реальный URL!)
+// Вы только что подтвердили, что этот URL используется:
 const API_BASE_URL = 'https://meetslot-api-backend-production.up.railway.app';
 
 // -----------------------------------------------------
@@ -28,7 +29,9 @@ const wheel = document.getElementById('wheel');
 const spinButton = document.getElementById('spinButton');
 const resultModal = document.getElementById('resultModal');
 const prizeText = document.getElementById('prizeText');
+const errorText = document.getElementById('errorText');
 let isSpinning = false;
+let currentPrizeIndex = null; // Индекс, который мы сохраняем после проверки
 
 // -----------------------------------------------------
 // 3. ФУНКЦИИ ВЗАИМОДЕЙСТВИЯ С TELEGRAM
@@ -40,7 +43,6 @@ let isSpinning = false;
  */
 function initTelegramApp() {
     try {
-        // Устанавливаем цвет кнопки и фон, если доступно
         window.Telegram.WebApp.ready();
         const Button = window.Telegram.WebApp.MainButton;
         Button.setText("Закрыть рулетку");
@@ -49,43 +51,84 @@ function initTelegramApp() {
 
         console.log("Telegram WebApp инициализировано.");
 
-        // В реальном приложении здесь должен быть запрос к API_BASE_URL
-        // для проверки: доступен ли спин сегодня (см. handleSpinClick)
+        // Попытка проверки статуса рулетки при загрузке (по желанию)
+        // checkSpinStatus();
 
     } catch (e) {
         console.error("Ошибка инициализации Telegram WebApp. Запущено не в Telegram.", e);
-        // Можно показать сообщение, что приложение нужно запускать в Telegram
     }
 }
 
 /**
+ * Показывает сообщение об ошибке (например, таймер или отказ сети)
+ * @param {string} message - Сообщение для пользователя
+ */
+function showAppMessage(message) {
+    // Временно используем errorText для отображения сообщений
+    errorText.textContent = message;
+    errorText.style.display = 'block';
+    setTimeout(() => {
+        errorText.style.display = 'none';
+        errorText.textContent = '';
+    }, 5000);
+}
+
+
+/**
  * Отправляет запрос на бэкенд для проверки и получения результата.
+ * Возвращает индекс сектора или сообщение о таймере/ошибке.
  * @returns {Promise<number|null>} Индекс сектора для выигрыша или null.
  */
 async function getSpinResultFromBackend() {
-    // ВНИМАНИЕ: Это заглушка! В реальном коде вам нужно:
-    // 1. Отправить запрос на ваш бэкенд (API_BASE_URL + '/check_and_spin')
-    // 2. Передать в заголовках или теле запроса window.Telegram.WebApp.initData
-    // 3. Бэкенд должен проверить:
-    //    a) Валидность пользователя (используя initData)
-    //    b) Крутил ли он сегодня (пользовательский ID из БД)
-    //    c) Если нет, выбрать приз, сохранить в БД и вернуть его индекс.
-
-    // --- Заглушка для ДЕМОНСТРАЦИИ ---
     console.log("Запрос результата на бэкенд...");
-    // Выбираем случайный приз
-    const randomIndex = Math.floor(Math.random() * NUM_SECTORS);
-    await new Promise(resolve => setTimeout(resolve, 500)); // Имитация задержки сети
 
-    // Имитация проверки, если пользователь уже крутил
-    // if (localStorage.getItem('lastSpinDate') === new Date().toDateString()) {
-    //    alert("Вы уже крутили сегодня! Попробуйте завтра.");
-    //    return null;
-    // }
+    // Получаем данные аутентификации Telegram
+    const initData = window.Telegram.WebApp.initData;
 
-    // localStorage.setItem('lastSpinDate', new Date().toDateString());
-    return randomIndex; // Индекс от 0 до 9
-    // --- Конец Заглушки ---
+    try {
+        const response = await fetch(`${API_BASE_URL}/check_and_spin`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // Отправляем initData в заголовке для аутентификации на бэкенде
+                'X-Telegram-Init-Data': initData
+            },
+            // Тело запроса пустое, все данные в заголовке
+            body: JSON.stringify({})
+        });
+
+        // Если ответ не 200, значит, произошла ошибка или отказ
+        if (!response.ok) {
+            const errorData = await response.json();
+
+            // Если бэкенд вернул сообщение о таймере (403 Forbidden, например)
+            if (response.status === 403 && errorData.error_message) {
+                showAppMessage(errorData.error_message); // Покажет "Попробуйте через X часов..."
+                return null;
+            }
+
+            // Общая ошибка бэкенда
+            showAppMessage(`Ошибка: ${errorData.error_message || 'Неизвестная ошибка сервера'}`);
+            console.error('API Error:', errorData);
+            return null;
+        }
+
+        const data = await response.json();
+
+        // Ожидаем, что бэкенд вернет индекс приза
+        if (typeof data.prize_index === 'number') {
+            return data.prize_index; // Индекс от 0 до 9
+        } else {
+            showAppMessage('Ошибка: Бэкенд не вернул индекс приза.');
+            return null;
+        }
+
+    } catch (e) {
+        // Ошибка сети или CORS
+        console.error("Ошибка при выполнении запроса к API:", e);
+        showAppMessage("Ошибка подключения к серверу. Попробуйте позже.");
+        return null;
+    }
 }
 
 // -----------------------------------------------------
@@ -99,22 +142,24 @@ async function handleSpinClick() {
     if (isSpinning) return;
     isSpinning = true;
     spinButton.disabled = true;
+    errorText.style.display = 'none'; // Скрываем предыдущие ошибки
 
     // 1. Получаем результат (индекс выигрышного сектора) от бэкенда
     const winningIndex = await getSpinResultFromBackend();
 
     if (winningIndex === null) {
-        // Спин недоступен (пользователь уже крутил)
+        // Спин недоступен (пользователь уже крутил или произошла ошибка)
         isSpinning = false;
         spinButton.disabled = false;
         return;
     }
 
+    currentPrizeIndex = winningIndex; // Сохраняем индекс для последующей обработки
+
     // 2. Вычисляем угол, на который нужно повернуть рулетку
     const baseRotations = 5; // Минимум 5 полных оборотов
     // Угол сектора: 360 / 10 = 36 градусов.
-    // Угол выигрыша: (NUM_SECTORS - 1 - winningIndex) * SECTOR_ANGLE
-    // Мы используем NUM_SECTORS - 1, потому что 0-й сектор находится сверху.
+    // Мы используем 0.5 для центрирования стрелки на секторе.
     const degreesToWin = (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE;
 
     // Угол для вращения
@@ -127,16 +172,12 @@ async function handleSpinClick() {
     // 4. Ждем завершения анимации
     setTimeout(() => {
         // 5. Показываем результат
-        const prize = PRIZES[winningIndex];
+        const prize = PRIZES[currentPrizeIndex];
         showModal(prize);
 
         // 6. Сбрасываем состояние
         isSpinning = false;
-        // В реальном приложении кнопка остается disabled до следующего дня
-        // spinButton.disabled = false; // <-- Если только для тестирования
-
-        // ВАЖНО: Здесь также нужно отправить финальный POST-запрос на бэкенд
-        // (например, '/log_win'), чтобы подтвердить получение приза.
+        // Кнопка остается disabled, так как спин использован
 
     }, 5500); // 5000 мс вращение + 500 мс запас
 }
@@ -152,8 +193,7 @@ function showModal(prize) {
 
 function closeModal() {
     resultModal.style.display = 'none';
-    // После закрытия модального окна можно закрыть Mini App
-    // window.Telegram.WebApp.close();
+    // window.Telegram.WebApp.close(); // Можно закрывать приложение
 }
 
 // Запускаем инициализацию при загрузке
