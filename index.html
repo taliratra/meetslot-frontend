@@ -562,7 +562,7 @@ function showAppMessage(message) {
 
 
 
-// ФУНКЦИЯ ОБНОВЛЕНА: Используем showPopup() для кастомизации
+// ФУНКЦИЯ ОБНОВЛЕНА: Используем showPopup() с одной кнопкой и полным сообщением
 
 function showModal(prize) {
 
@@ -579,7 +579,9 @@ function showModal(prize) {
     
     const messageTitle = `Поздравляем! Вы выиграли: ${prize}!`;
 
-    const messageText = `Для получения приза, пожалуйста, напишите в наш чат: ${MANAGER_CHAT_LINK}`;
+    // Текст сообщения теперь включает и приз, и инструкцию
+
+    const messageText = `Для получения этого приза, пожалуйста, напишите в наш чат: ${MANAGER_CHAT_LINK}`;
 
     
     window.Telegram.WebApp.showPopup({
@@ -590,9 +592,9 @@ function showModal(prize) {
 
         buttons: [
 
-            {id: 'chat', type: 'default', text: 'Связаться с менеджером'},
+            // Оставляем только одну кнопку "Получить приз"
 
-            {id: 'close', type: 'destructive', text: 'Закрыть'}
+            {id: 'chat', type: 'default', text: 'Получить приз'}
 
         ]
 
@@ -608,15 +610,9 @@ function showModal(prize) {
 
             closeModal(true); 
 
-        } else if (buttonId === 'close') {
-
-            // Сброс рулетки и кнопки при закрытии
-
-            closeModal(true); 
-
         } else {
 
-            // Сброс на всякий случай
+            // Если по какой-то причине нажали другую кнопку (хотя она одна), все равно сбрасываем
 
             closeModal(true);
 
@@ -1000,11 +996,11 @@ async function handleSpinClick() {
 
                 const prize = PRIZES[currentPrizeIndex];
 
-                showModal(prize); // Теперь вызывает showPopup() с кнопками
+                showModal(prize); // Вызываем showPopup() с одной кнопкой
 
                 isSpinning = false;
 
-                // Важно: closeModal(true) теперь вызывается только в showModal после нажатия кнопки
+                // Сброс closeModal(true) теперь происходит только при нажатии кнопки в showPopup
 
             }, 5500); 
 
