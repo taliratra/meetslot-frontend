@@ -17,8 +17,7 @@ const PRIZES = [
 const NUM_SECTORS = PRIZES.length;
 const SECTOR_ANGLE = 360 / NUM_SECTORS; // 36 градусов на сектор
 
-// URL вашего бэкенд API на Railway
-// ИСПОЛЬЗУЕМ ВНУТРЕННИЙ HTTP-АДРЕС ДЛЯ ОБХОДА ПРОБЛЕМ SSL/TLS
+// URL вашего бэкенд API на Railway (внутренний HTTP-адрес)
 const API_BASE_URL = 'http://meetslot-api-backend.railway.internal/api';
 
 // -----------------------------------------------------
@@ -43,17 +42,14 @@ let currentPrizeIndex = null; // Индекс, который мы сохран�
  */
 function initTelegramApp() {
     try {
-        window.Telegram.WebApp.ready();
-        const Button = window.Telegram.WebApp.MainButton;
-        Button.setText("Закрыть рулетку");
-        Button.onClick(() => window.Telegram.WebApp.close());
-        Button.show();
-
-        console.log("Telegram WebApp инициализировано.");
-
-        // Попытка проверки статуса рулетки при загрузке (по желанию)
-        // checkSpinStatus();
-
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            const Button = window.Telegram.WebApp.MainButton;
+            Button.setText("Закрыть рулетку");
+            Button.onClick(() => window.Telegram.WebApp.close());
+            Button.show();
+            console.log("Telegram WebApp инициализировано.");
+        }
     } catch (e) {
         console.error("Ошибка инициализации Telegram WebApp. Запущено не в Telegram.", e);
     }
@@ -64,7 +60,6 @@ function initTelegramApp() {
  * @param {string} message - Сообщение для пользователя
  */
 function showAppMessage(message) {
-    // Временно используем errorText для отображения сообщений
     errorText.textContent = message;
     errorText.style.display = 'block';
     setTimeout(() => {
@@ -76,37 +71,48 @@ function showAppMessage(message) {
 
 /**
  * Отправляет запрос на бэкенд для проверки и получения результата.
- * Возвращает индекс сектора или сообщение о таймере/ошибке.
  * @returns {Promise<number|null>} Индекс сектора для выигрыша или null.
  */
 async function getSpinResultFromBackend() {
     console.log("Запрос результата на бэкенд...");
 
-    // Получаем данные аутентификации Telegram
+    if (!window.Telegram || !window.Telegram.WebApp || !window.Telegram.WebApp.initData) {
+        showAppMessage("Ошибка: Запуск не в Telegram WebApp или данные пользователя недоступны.");
+        return null;
+    }
+
     const initData = window.Telegram.WebApp.initData;
-    
-    // Получаем ID пользователя из initData (для бэкенда)
-    const urlParams = new URLSearchParams(initData);
-    const userParam = urlParams.get('user');
     let userId = null;
-    if (userParam) {
-        try {
-            const userData = JSON.parse(decodeURIComponent(userParam));
-            userId = userData.id;
-        } catch(e) {
-            console.error("Не удалось разобрать данные пользователя:", e);
+
+    // ИСПРАВЛЕНИЕ: Более надежный способ парсинга user_id
+    try {
+        const urlParams = new URLSearchParams(initData);
+        const userParam = urlParams.get('user');
+        
+        if (userParam) {
+            // Декодируем и парсим строку пользователя (это JSON)
+            const decodedUser = decodeURIComponent(userParam);
+            const userData = JSON.parse(decodedUser);
+            userId = userData.id; // Получаем ID пользователя
         }
+    } catch(e) {
+        // Ловим ошибку парсинга, если initData нестандартная
+        console.error("Не удалось разобрать данные пользователя:", e);
+        showAppMessage("Ошибка аутентификации пользователя.");
+        return null;
+    }
+    
+    if (!userId) {
+        showAppMessage("Ошибка: ID пользователя не найден в данных Telegram.");
+        return null;
     }
 
 
     try {
-        // Запрос отправляется на внутренний HTTP-адрес
         const response = await fetch(`${API_BASE_URL}/spin_check`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                // Отправляем initData в заголовке для аутентификации на бэкенде
-                // 'X-Telegram-Init-Data': initData // Передача user_id в теле - более надежна
             },
             // Тело запроса: отправляем ID пользователя
             body: JSON.stringify({ user_id: userId })
@@ -114,34 +120,36 @@ async function getSpinResultFromBackend() {
 
         // Если ответ не 200, значит, произошла ошибка или отказ
         if (!response.ok) {
-            const errorData = await response.json();
-
-            // Если бэкенд вернул сообщение о таймере (403 Forbidden, например)
-            if (errorData.status === "cooldown") {
-                // Если бэкенд возвращает статус cooldown, показываем сообщение таймера
-                const nextSpinTimestamp = errorData.next_spin_timestamp;
-                const nextSpinDate = new Date(nextSpinTimestamp * 1000);
-                const timeRemaining = nextSpinDate - new Date();
+            // Если бэкенд вернул 403 Forbidden (таймер)
+            if (response.status === 403) {
+                const errorData = await response.json();
                 
-                if (timeRemaining > 0) {
-                    const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
-                    const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-                    showAppMessage(`Вы уже крутили сегодня! Попробуйте через ${hours} ч. ${minutes} м.`);
-                } else {
-                    showAppMessage("Произошла ошибка проверки таймера.");
+                // Проверяем наличие ключа next_spin_timestamp для отображения таймера
+                if (errorData && errorData.next_spin_timestamp) {
+                    const nextSpinTimestamp = errorData.next_spin_timestamp;
+                    const nextSpinDate = new Date(nextSpinTimestamp * 1000);
+                    const timeRemaining = nextSpinDate - new Date();
+                    
+                    if (timeRemaining > 0) {
+                        const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+                        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                        // Бэкенд теперь должен вернуть 403 и next_spin_timestamp
+                        showAppMessage(`Вы уже крутили сегодня! Попробуйте через ${hours} ч. ${minutes} м.`);
+                        return null;
+                    }
                 }
-                return null;
             }
 
-            // Общая ошибка бэкенда
+            // Общая ошибка бэкенда (например, 500)
+            const errorData = await response.json();
             showAppMessage(`Ошибка: ${errorData.message || 'Неизвестная ошибка сервера'}`);
-            console.error('API Error:', errorData);
+            console.error(`API Error (${response.status}):`, errorData);
             return null;
         }
 
         const data = await response.json();
 
-        // Ожидаем, что бэкенд вернет индекс приза
+        // Ожидаем, что бэкенд вернет prize_index (200 OK)
         if (typeof data.prize_index === 'number') {
             return data.prize_index; // Индекс от 0 до 9
         } else {
@@ -150,7 +158,7 @@ async function getSpinResultFromBackend() {
         }
 
     } catch (e) {
-        // Ошибка сети или CORS
+        // Ошибка сети или CORS (которой теперь не должно быть)
         console.error("Ошибка при выполнении запроса к API:", e);
         showAppMessage("Ошибка подключения к серверу. Попробуйте позже.");
         return null;
@@ -176,9 +184,10 @@ async function handleSpinClick() {
     if (winningIndex === null) {
         // Спин недоступен (пользователь уже крутил или произошла ошибка)
         isSpinning = false;
-        // Кнопка остается disabled, если пришел ответ о таймере.
-        // Если была другая ошибка, включаем кнопку обратно, чтобы пользователь мог повторить.
-        if (errorText.textContent.includes('Ошибка подключения') || errorText.textContent.includes('Неизвестная ошибка')) {
+        
+        // Включаем кнопку обратно, только если это не ошибка таймера, 
+        // чтобы пользователь мог повторить попытку
+        if (!errorText.textContent.includes('Вы уже крутили')) {
              spinButton.disabled = false;
         }
         return;
