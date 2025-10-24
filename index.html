@@ -149,8 +149,11 @@
             border-radius: 50%;
             pointer-events: none; /* Точки не должны мешать клику на кнопку */
             z-index: 2; /* Над секторами, но под центральной кнопкой */
+            transition: transform 0s; /* Нулевая начальная анимация */
         }
-
+        
+        /* Радиус размещения точки 70px был подобран для размера 272px (136px радиус) */
+        /* 70 / 136 ≈ 51% от радиуса */
         .dot {
             position: absolute;
             width: 7px; /* Размер точки */
@@ -160,7 +163,8 @@
             top: 50%;
             left: 50%;
             transform-origin: 0 0; /* Точки вращаются вокруг центра колеса */
-            transform: translate(-50%, -50%) rotate(var(--dot-rotation)) translateY(-70px); /* Радиус размещения */
+            /* Используем переменную для угла и translateY, чтобы разместить точку по радиусу */
+            transform: translate(-50%, -50%) rotate(var(--dot-rotation)) translateY(-70px); 
             box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
         }
 
@@ -355,9 +359,7 @@
 
     <div class="wheel-container">
         <div id="wheel" class="wheel">
-            <div class="dots-container">
-                <div class="dot" style="--dot-rotation: 18deg;"></div>   <div class="dot" style="--dot-rotation: 54deg;"></div>   <div class="dot" style="--dot-rotation: 90deg;"></div>   <div class="dot" style="--dot-rotation: 126deg;"></div>  <div class="dot" style="--dot-rotation: 162deg;"></div>  <div class="dot" style="--dot-rotation: 198deg;"></div>  <div class="dot" style="--dot-rotation: 234deg;"></div>  <div class="dot" style="--dot-rotation: 270deg;"></div>  <div class="dot" style="--dot-rotation: 306deg;"></div>  <div class="dot" style="--dot-rotation: 342deg;"></div>  </div>
-</div>
+            </div>
         <div class="pointer"></div> 
         <div id="spinButton" class="center-button">
             <span class="center-text-go">ВРАЩАТЬ</span>
@@ -469,34 +471,44 @@ function closeModal(shouldResetWheel) {
         wheel.style.transition = 'transform 0.5s ease-out';
         wheel.style.transform = `rotate(0deg)`;
         
+        // Сбрасываем и контейнер точек
+        const dotsContainer = wheel.querySelector('.dots-container');
+        if (dotsContainer) {
+            dotsContainer.style.transition = 'transform 0.5s ease-out';
+            dotsContainer.style.transform = `rotate(0deg)`;
+        }
+
         if (spinButton) {
             spinButton.classList.remove('disabled');
         }
     }
 }
 
+// *** ИСПРАВЛЕННАЯ ФУНКЦИЯ ДЛЯ ДОБАВЛЕНИЯ ТОЧЕК ***
 function drawWheel() {
     if (!wheel) return;
-    // Очищаем старые точки перед добавлением новых, если функция вызывается повторно
-    const dotsContainer = wheel.querySelector('.dots-container');
+    // Очищаем старые точки перед добавлением новых
+    let dotsContainer = wheel.querySelector('.dots-container');
     if (dotsContainer) {
         dotsContainer.remove();
     }
 
-    const newDotsContainer = document.createElement('div');
-    newDotsContainer.classList.add('dots-container');
+    dotsContainer = document.createElement('div');
+    dotsContainer.classList.add('dots-container');
 
     for (let i = 0; i < NUM_SECTORS; i++) {
         const dot = document.createElement('div');
         dot.classList.add('dot');
-        // Вычисляем угол для размещения точки в середине каждого сектора
-        // Поворот на 18 градусов для первого сектора (36 / 2)
-        // Затем добавляем 36 градусов для каждого следующего сектора
-        dot.style.setProperty('--dot-rotation', `${(i * SECTOR_ANGLE) + (SECTOR_ANGLE / 2)}deg`);
-        newDotsContainer.appendChild(dot);
+        
+        // Вычисляем угол: середина сектора (18 градусов) + i * 36 градусов
+        const rotationAngle = (i * SECTOR_ANGLE) + (SECTOR_ANGLE / 2);
+        dot.style.setProperty('--dot-rotation', `${rotationAngle}deg`);
+        
+        dotsContainer.appendChild(dot);
     }
-    wheel.appendChild(newDotsContainer); // Добавляем контейнер с точками в колесо
+    wheel.appendChild(dotsContainer); 
 }
+// ************************************************
 
 function initTelegramApp() {
     try {
@@ -511,7 +523,7 @@ function initTelegramApp() {
     } catch (e) {
         console.error("Ошибка инициализации Telegram WebApp. Запущено не в Telegram.", e);
     }
-    drawWheel(); // Вызываем drawWheel здесь
+    drawWheel(); // Вызываем drawWheel здесь, чтобы создать точки
     if (errorText) errorText.style.display = 'none';
 }
 
@@ -663,7 +675,8 @@ async function handleSpinClick() {
     if (wheel) {
         wheel.style.transition = 'none';
         wheel.style.transform = 'rotate(0deg)'; 
-        // Добавляем вращение для контейнера точек
+        
+        // Вращение для контейнера точек
         const dotsContainer = wheel.querySelector('.dots-container');
         if (dotsContainer) {
             dotsContainer.style.transition = 'none';
