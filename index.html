@@ -81,14 +81,14 @@
         }
 
 
-        /* --- СТИЛИ ЗВЕЗДНОЙ РУЛЕТКИ --- */
+        /* --- СТИЛИ ЗВЕЗДНОЙ РУЛЕТКИ (Уменьшены на 15%) --- */
         .wheel-container {
             position: relative;
-            width: 320px; 
-            height: 320px;
-            margin: 0 auto 50px;
-            transform: translateY(20px); 
-            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.4));
+            width: 272px; /* 320px * 0.85 = 272px */
+            height: 272px; /* 320px * 0.85 = 272px */
+            margin: 0 auto 42.5px; /* 50px * 0.85 = 42.5px */
+            transform: translateY(17px); /* 20px * 0.85 = 17px */
+            filter: drop-shadow(0 0 8.5px rgba(0, 0, 0, 0.4)); /* 10px * 0.85 = 8.5px */
         }
 
         .wheel {
@@ -96,7 +96,7 @@
             height: 100%;
             border-radius: 50%;
             background: var(--color-blue-bg); 
-            border: 5px solid rgba(0, 0, 0, 0.2); 
+            border: 4.25px solid rgba(0, 0, 0, 0.2); /* 5px * 0.85 = 4.25px */
             box-shadow: none;
             position: relative;
             transition: transform 0s;
@@ -104,7 +104,6 @@
             box-sizing: border-box;
         }
         
-        /* Псевдоэлемент для создания звездообразной формы */
         .wheel::before {
             content: '';
             position: absolute;
@@ -114,17 +113,15 @@
             height: 100%;
             border-radius: 50%;
             
-            /* Создаем 5 полос */
             background: repeating-conic-gradient(
                 var(--color-blue-light-segment) 0deg 36deg, 
                 var(--color-blue-dark-segment) 36deg 72deg 
             );
             
-            /* ИСПРАВЛЕННАЯ МАСКА */
             mask-image: radial-gradient(
                 circle at center, 
-                transparent 0%, transparent 60%,  /* Прозрачный центр */
-                black 60%, black 98%,             /* Видимая область с секторами */
+                transparent 0%, transparent 60%,  
+                black 60%, black 98%,             
                 transparent 98%, transparent 100%
             );
             -webkit-mask-image: radial-gradient(
@@ -134,7 +131,7 @@
                 transparent 98%, transparent 100%
             );
             z-index: 1; 
-            filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
+            filter: drop-shadow(0 0 4.25px rgba(0, 0, 0, 0.3)); /* 5px * 0.85 = 4.25px */
         }
 
         .sector {
@@ -142,14 +139,14 @@
         }
 
 
-        /* --- ЦЕНТРАЛЬНАЯ КНОПКА (ВРАЩАТЬ) --- */
+        /* --- ЦЕНТРАЛЬНАЯ КНОПКА (ВРАЩАТЬ) (Уменьшена на 15%) --- */
         .center-button {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 180px; 
-            height: 180px; 
+            width: 153px; /* 180px * 0.85 = 153px */
+            height: 153px; /* 180px * 0.85 = 153px */
             background: var(--color-blue-bg); 
             border-radius: 50%;
             display: flex;
@@ -157,9 +154,9 @@
             justify-content: center;
             align-items: center;
             color: var(--color-white); 
-            font-size: 38px;
+            font-size: 32.3px; /* 38px * 0.85 = 32.3px */
             font-weight: bold;
-            box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.3), inset 0 0 15px rgba(0, 0, 0, 0.5); 
+            box-shadow: 0 0 0 8.5px rgba(255, 255, 255, 0.3), inset 0 0 12.75px rgba(0, 0, 0, 0.5); /* 10px * 0.85 = 8.5px, 15px * 0.85 = 12.75px */
             cursor: pointer; 
             z-index: 5;
             transition: transform 0.1s;
@@ -171,35 +168,35 @@
         
         .center-text-go {
             color: var(--color-white); 
-            font-size: 48px; 
+            font-size: 40.8px; /* 48px * 0.85 = 40.8px */
             font-family: Arial Black, Gadget, sans-serif;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 0 4.25px rgba(0, 0, 0, 0.5); /* 5px * 0.85 = 4.25px */
             margin-top: 0; 
         }
 
-        /* --- УКАЗАТЕЛЬ --- */
+        /* --- УКАЗАТЕЛЬ (Уменьшен на 15%) --- */
         .pointer {
             position: absolute;
-            top: -15px; 
+            top: -12.75px; /* -15px * 0.85 = -12.75px */
             left: 50%;
             transform: translateX(-50%);
-            width: 25px; 
-            height: 40px; 
+            width: 21.25px; /* 25px * 0.85 = 21.25px */
+            height: 34px; /* 40px * 0.85 = 34px */
             background: linear-gradient(to bottom, var(--color-white), #B0C4DE); 
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-            border: 3px solid var(--color-blue-bg); 
+            box-shadow: 0 4.25px 8.5px rgba(0, 0, 0, 0.3); /* 5px * 0.85 = 4.25px, 10px * 0.85 = 8.5px */
+            border: 2.55px solid var(--color-blue-bg); /* 3px * 0.85 = 2.55px */
             z-index: 10;
         }
         
         .pointer::after {
             content: '';
             position: absolute;
-            top: 10px;
+            top: 8.5px; /* 10px * 0.85 = 8.5px */
             left: 50%;
             transform: translateX(-50%);
-            width: 8px;
-            height: 8px;
+            width: 6.8px; /* 8px * 0.85 = 6.8px */
+            height: 6.8px; /* 8px * 0.85 = 6.8px */
             background: var(--color-blue-bg); 
             border-radius: 50%;
             opacity: 0.8;
@@ -229,11 +226,11 @@
 
         .modal-content {
             background-color: var(--color-white); 
-            margin: 10vh auto 0; /* Ещё меньше верхний отступ (было 15vh) */
-            padding: 20px; /* Уменьшаем padding (было 25px) */
+            margin: 10vh auto 0; 
+            padding: 20px; 
             border-radius: 15px;
             width: 90%; 
-            max-width: 280px; /* Уменьшаем максимальную ширину (было 320px) */
+            max-width: 280px; 
             text-align: center;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             animation: fadeIn 0.3s;
@@ -304,10 +301,10 @@
         
         /* Стили для эмодзи */
         .modal-emoji {
-            font-size: 50px; /* Увеличим размер смайлика */
-            line-height: 1; /* Уберем лишний интервал */
+            font-size: 50px; 
+            line-height: 1; 
             margin-bottom: 10px;
-            display: block; /* Сделаем блочным для центрирования */
+            display: block; 
         }
         
         @keyframes fadeIn {
