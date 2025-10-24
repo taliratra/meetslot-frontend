@@ -28,7 +28,7 @@
             max-width: 400px;
             /* Ярко-желтый фон как на скриншоте */
             background: #F9D75F; 
-            border-radius: 0; /* Убираем радиус, чтобы заполнить ширину */
+            border-radius: 0; 
             padding: 20px;
             box-shadow: none;
             margin-top: 0;
@@ -58,10 +58,10 @@
         /* --- Стили рулетки --- */
         .wheel-container {
             position: relative;
-            width: 320px; /* Немного больше */
+            width: 320px; 
             height: 320px;
             margin: 0 auto 50px;
-            transform: translateY(20px); /* Чтобы указатель был виден */
+            transform: translateY(20px); 
         }
 
         .wheel {
@@ -83,14 +83,14 @@
             width: 50%;
             height: 50%;
             transform-origin: 0 100%;
-            border: 1px solid rgba(255, 255, 255, 0.4); /* Светлые разделители */
+            border: 1px solid rgba(255, 255, 255, 0.4); 
             box-sizing: border-box;
             display: flex;
             justify-content: center;
             align-items: center;
             padding-top: 50%;
             overflow: hidden;
-            font-size: 14px; /* Увеличиваем шрифт */
+            font-size: 14px; 
             font-weight: 900;
             color: white;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
@@ -100,7 +100,7 @@
         
         .sector-text {
             position: absolute;
-            top: 15px; /* Отступ от внешнего края */
+            top: 15px; 
             width: 80%;
             /* Корректировка для центрирования текста в сегменте */
             transform: rotate(90deg) translate(-50%, -50%); 
@@ -108,7 +108,7 @@
             white-space: normal;
         }
 
-        /* Центр рулетки как на скриншоте (GO) */
+        /* Центр рулетки (GO SPIN) */
         .center-button {
             position: absolute;
             top: 50%;
@@ -126,9 +126,14 @@
             font-size: 24px;
             font-weight: bold;
             box-shadow: inset 0 0 0 8px #FFC800; /* Внутренний желтый контур */
-            pointer-events: none; 
-            text-align: center;
+            cursor: pointer; /* Делаем кликабельным */
             z-index: 5;
+            text-align: center;
+            transition: transform 0.1s;
+        }
+
+        .center-button:active:not(:disabled) {
+            transform: translate(-50%, -50%) scale(0.95);
         }
         
         .center-text-go {
@@ -144,20 +149,20 @@
             margin-top: -5px;
         }
 
-        /* Указатель как на скриншоте (Синяя капля) */
+        /* Указатель (Синяя капля) */
         .pointer {
             position: absolute;
-            top: -20px; /* Поднимаем выше колеса */
+            top: -20px; 
             left: 50%;
             transform: translateX(-50%);
-            width: 25px; /* Шире */
-            height: 35px; /* Длиннее */
-            background-color: #4A90E2; /* Синий цвет */
+            width: 25px; 
+            height: 35px; 
+            background-color: #4A90E2; 
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
             z-index: 10;
         }
-        /* Светлый "блик" на указателе */
+        
         .pointer::after {
             content: '';
             position: absolute;
@@ -172,38 +177,6 @@
         }
 
 
-        /* --- Кнопка "BACK" (Испытать Удачу!) --- */
-        .spin-button {
-            background: #D33D3D; /* Красный цвет */
-            color: white;
-            border: 3px solid white;
-            padding: 15px 30px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 0 0 #B02A2A, 0 5px 15px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 250px;
-            text-transform: uppercase;
-        }
-
-        .spin-button:hover:not(:disabled) {
-            background: #B02A2A;
-            box-shadow: 0 3px 0 0 #901A1A, 0 5px 15px rgba(0, 0, 0, 0.5);
-            transform: translateY(2px);
-        }
-
-        .spin-button:disabled {
-            background: #adb5bd;
-            border: 3px solid #ccc;
-            cursor: not-allowed;
-            box-shadow: none;
-            opacity: 0.7;
-        }
-        
         /* --- Модальное окно (Конгратуляция) --- */
         .modal {
             display: none; 
@@ -254,10 +227,12 @@
             border: 3px solid white;
             padding: 15px 30px;
             font-size: 20px;
+            font-weight: bold;
             border-radius: 10px;
             cursor: pointer;
             margin-top: 20px;
             box-shadow: 0 5px 0 0 #B02A2A;
+            transition: all 0.3s ease;
         }
 
         .modal-content button:hover {
@@ -273,9 +248,21 @@
 
         /* --- Элемент для вывода ошибок --- */
         #errorText {
+            display: none;
             color: #851e3e;
             background: #ffd3d3;
             border: 1px solid #f5c6cb;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        /* Стиль для кнопки спина при блокировке */
+        .center-button.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
         }
 
     </style>
@@ -291,15 +278,13 @@
         <div id="wheel" class="wheel">
         </div>
         <div class="pointer"></div> 
-        <div class="center-button">
+        <div id="spinButton" class="center-button">
             <span class="center-text-go">GO</span>
             <span class="center-text-small">SPIN</span>
         </div>
     </div>
-
-    <button id="spinButton" class="spin-button">
-        BACK
-    </button>
+    
+    <div style="height: 50px;"></div> 
 
     <div id="resultModal" class="modal" onclick="closeModal(true)">
         <div class="modal-content" onclick="event.stopPropagation()">
@@ -355,9 +340,10 @@ const SECTOR_COLORS = [
 // -----------------------------------------------------
 
 const wheel = document.getElementById('wheel');
-const spinButton = document.getElementById('spinButton');
+// !!! spinButton теперь ссылается на центральный DIV !!!
+const spinButton = document.getElementById('spinButton'); 
 const resultModal = document.getElementById('resultModal');
-const prizeText = document.getElementById('prizeText'); // Теперь скрыт, но используется для данных
+const prizeText = document.getElementById('prizeText'); 
 const errorText = document.getElementById('errorText');
 
 let isSpinning = false;
@@ -375,10 +361,14 @@ function showAppMessage(message) {
     if (errorText) {
         errorText.textContent = message;
         errorText.style.display = 'block';
-        setTimeout(() => {
-            errorText.style.display = 'none';
-            errorText.textContent = '';
-        }, 5000);
+        
+        // ВАЖНО: Не скрываем сообщения о таймауте, чтобы пользователь видел, сколько осталось.
+        if (!message.includes('крутили сегодня') && !message.includes('крутите завтра')) {
+            setTimeout(() => {
+                errorText.style.display = 'none';
+                errorText.textContent = '';
+            }, 5000);
+        }
     } else {
         console.error("ОШИБКА: Не могу показать сообщение, элемент #errorText отсутствует.");
     }
@@ -386,8 +376,7 @@ function showAppMessage(message) {
 
 function showModal(prize) {
     if (resultModal && prizeText) {
-        // prizeText теперь скрыт, так как модалка имеет фиксированный текст "CONGRATULATION!"
-        // Мы просто используем его, чтобы сохранить функционал
+        // Устанавливаем приз для дальнейшей обработки (хотя текст модалки фиксирован)
         prizeText.textContent = `Вы выиграли: ${prize}`; 
         resultModal.style.display = 'flex'; // Используем flex для лучшего центрирования
         resultModal.style.alignItems = 'center';
@@ -395,7 +384,7 @@ function showModal(prize) {
         
         // Дополнительно: используем Telegram WebApp.showAlert для демонстрации приза 
         if (window.Telegram && window.Telegram.WebApp) {
-             window.Telegram.WebApp.showAlert(`Вы выиграли: ${prize}!`);
+             window.Telegram.WebApp.showAlert(`Поздравляем! Вы выиграли: ${prize}!`);
         }
     }
 }
@@ -414,9 +403,9 @@ function closeModal(shouldResetWheel) {
         wheel.style.transition = 'transform 0.5s ease-out';
         wheel.style.transform = `rotate(0deg)`;
         
-        // Включаем кнопку "BACK", чтобы снова можно было кликнуть (если спин не был использован)
-        if (spinButton && spinButton.disabled) {
-            spinButton.disabled = false;
+        // Включаем кнопку спина (GO SPIN)
+        if (spinButton) {
+            spinButton.classList.remove('disabled');
         }
     }
 }
@@ -439,7 +428,7 @@ function drawWheel() {
         const textContainer = document.createElement('div');
         textContainer.className = 'sector-text';
         
-        // Логика поворота текста внутри сегмента (Обратный skew и поворот)
+        // Логика поворота текста внутри сегмента
         textContainer.style.transform = `skewY(-${90 - SECTOR_ANGLE}deg) rotate(90deg) translate(-50%, -50%)`;
         textContainer.style.transformOrigin = '0 0';
         
@@ -448,12 +437,10 @@ function drawWheel() {
         textElement.innerHTML = PRIZES[i]
             .replace(' meet-бонусов', ' Meet')
             .replace('Промокод на бесплатную доставку', 'Доставка')
-            .replace(' (от 20 000 ₽)', '')
-            .replace(' (от 25 000 ₽)', '')
             .replace(' к заказу', '')
-            .replace('Скидка ', 'Скидка<br>') // Перенос строки для скидок
-            .replace('Meet', 'Meet<br>') // Перенос строки для бонусов
-            .replace('SoleFresh', 'Sole<br>Fresh');
+            .replace('Meet', 'Meet<br>') 
+            .replace('SoleFresh', 'Sole<br>Fresh')
+            .replace('Скидка ', 'Скидка<br>');
         
         textContainer.appendChild(textElement);
         sector.appendChild(textContainer);
@@ -469,6 +456,7 @@ function initTelegramApp() {
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.ready();
             const Button = window.Telegram.WebApp.MainButton;
+            // Устанавливаем нативную кнопку Telegram для закрытия
             Button.setText("Закрыть мини-приложение");
             Button.onClick(() => window.Telegram.WebApp.close());
             Button.show();
@@ -482,7 +470,7 @@ function initTelegramApp() {
 
 
 // -----------------------------------------------------
-// 4. ЛОГИКА API (НЕ ИЗМЕНЕНА)
+// 4. ЛОГИКА API
 // -----------------------------------------------------
 
 /**
@@ -539,21 +527,15 @@ async function getSpinResultFromBackend() {
             try {
                 errorData = await response.json(); 
             } catch(e) {
-                // Если не JSON, читаем как текст
+                // Если не JSON, читаем как текст для диагностики
                 responseBody = await response.text();
                 console.error(`Сервер вернул не-JSON ответ (HTTP ${response.status}):`, responseBody);
                 
-                // Проверяем, может ли это быть таймаут, который не вернул JSON
-                if (responseBody.includes('User already spun today')) {
-                    showAppMessage('Вы уже крутили сегодня! Попробуйте завтра.');
-                    return null;
-                }
-                
-                showAppMessage(`Ошибка: Cервер вернул неожиданный ответ (HTTP ${response.status}).`);
+                showAppMessage(`Ошибка: Сервер вернул неожиданный ответ (HTTP ${response.status}).`);
                 return null;
             }
 
-            // 2. Обработка 403 (Таймер) - (теперь errorData точно JSON)
+            // 2. Обработка 403 (Таймер)
             if (response.status === 403) {
                 if (errorData && errorData.next_spin_timestamp) {
                     const nextSpinTimestamp = errorData.next_spin_timestamp;
@@ -599,26 +581,20 @@ async function getSpinResultFromBackend() {
 }
 
 // -----------------------------------------------------
-// 5. ЛОГИКА РУЛЕТКИ (НЕ ИЗМЕНЕНА)
+// 5. ЛОГИКА РУЛЕТКИ
 // -----------------------------------------------------
 
 /**
- * Вызывается по нажатию кнопки "BACK", но запускает спин.
- * (На скриншоте спин активируется кликом по центру, но в вашем коде - кнопкой, я оставляю вашу логику)
+ * Вызывается по нажатию на центральный круг (GO SPIN).
  */
 async function handleSpinClick() {
-    // В вашем коде спин привязан к кнопке "Испытать Удачу!", которую я переименовал в "BACK".
-    // Чтобы сохранить логику, я оставляю привязку на эту кнопку.
-    
-    if (!spinButton) {
-        console.error("ОШИБКА: Кнопка спина не найдена.");
-        showAppMessage("Критическая ошибка: Кнопка запуска не найдена.");
-        return;
-    }
     
     if (isSpinning) return;
     isSpinning = true;
-    spinButton.disabled = true; 
+    // Блокируем кнопку спина, добавляя класс 'disabled'
+    if (spinButton) {
+        spinButton.classList.add('disabled');
+    }
     
     if (errorText) {
         errorText.style.display = 'none';
@@ -630,15 +606,12 @@ async function handleSpinClick() {
         // Произошла ошибка.
         isSpinning = false;
         
-        // ВАЖНОЕ: Если showAppMessage показал сообщение о таймауте, мы оставляем кнопку disabled.
+        // ВАЖНОЕ: Если showAppMessage показал сообщение о таймауте, оставляем кнопку disabled.
         // Иначе (любая другая ошибка) - включаем кнопку обратно.
         if (errorText && !errorText.textContent.includes('крутили сегодня')) {
-            spinButton.disabled = false;
-        }
-        
-        // Дополнительная проверка на случай, если errorText не существует
-        if (!errorText && spinButton) {
-            spinButton.disabled = false;
+            spinButton.classList.remove('disabled');
+        } else if (spinButton) {
+            spinButton.classList.remove('disabled');
         }
         
         return;
@@ -648,22 +621,17 @@ async function handleSpinClick() {
     currentPrizeIndex = winningIndex; 
 
     const baseRotations = 5; 
-    // Центр сектора - это угол начала сектора + половина угла сектора. 
-    // Поскольку стрелка направлена вверх (0 градусов), мы считаем от верха.
-    // Сектора идут по часовой, но рулетка вращается против часовой. 
-    // Для попадания в центр i-го сектора (сверху) нужно: (NUM_SECTORS - i - 0.5) * SECTOR_ANGLE
+    // Угол остановки для попадания в центр сектора
     const degreesToWin = (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE;
 
     const finalRotation = (baseRotations * 360) + degreesToWin;
 
     if (wheel) {
-        // Убираем старый transition для мгновенного сброса
+        // Сбрасываем трансформацию мгновенно
         wheel.style.transition = 'none';
-        // Сбрасываем ее перед началом нового вращения
         wheel.style.transform = 'rotate(0deg)'; 
         
-        // Обеспечиваем, что transition применяется только к анимации вращения
-        // Используем setTimeout 0 для правильного применения стилей
+        // Запускаем анимацию с небольшой задержкой
         setTimeout(() => {
             wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
             wheel.style.transform = `rotate(${finalRotation}deg)`;
@@ -673,7 +641,7 @@ async function handleSpinClick() {
                 showModal(prize);
 
                 isSpinning = false;
-                // Кнопка остается disabled, потому что спин использован
+                // Кнопка остается disabled, пока пользователь не нажмет 'Click to continue'
             }, 5500); 
         }, 50); // Небольшая задержка для применения сброса
     } else {
@@ -683,7 +651,7 @@ async function handleSpinClick() {
     }
 }
 
-// Привязка обработчика к кнопке
+// Привязка обработчика к кнопке (центральному кругу)
 if (spinButton) {
     spinButton.addEventListener('click', handleSpinClick);
 }
