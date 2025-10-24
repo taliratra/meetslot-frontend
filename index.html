@@ -416,7 +416,7 @@
         }
 
 
-        /* --- СТИЛИ МОДАЛЬНОГО ОКНА (ВОССТАНОВЛЕНЫ И АДАПТИРОВАНЫ) --- */
+        /* --- СТИЛИ МОДАЛЬНОГО ОКНА --- */
         .modal {
             display: none; 
             position: fixed;
@@ -436,7 +436,7 @@
             padding: 30px; 
             border-radius: 15px;
             width: 90%; 
-            max-width: 350px; /* Немного уменьшим для мобильного вида */
+            max-width: 350px; 
             text-align: center;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             animation: fadeIn 0.3s;
@@ -458,7 +458,7 @@
         }
 
         .modal-content button {
-            background: var(--color-blue-bg); /* Синяя кнопка */
+            background: var(--color-blue-bg); 
             color: var(--color-white); 
             border: none;
             padding: 15px 30px;
@@ -468,8 +468,9 @@
             cursor: pointer;
             width: 100%;
             max-width: 250px;
-            box-shadow: 0 4px 0 0 var(--color-blue-dark); /* Эффект 3D */
+            box-shadow: 0 4px 0 0 var(--color-blue-dark); 
             transition: all 0.1s ease;
+            margin-bottom: 15px; /* Добавим отступ для вторичной кнопки */
         }
         
         .modal-content button:active {
@@ -477,7 +478,29 @@
             transform: translateY(3px);
         }
         
-        /* Иконка (Ракета или другой элемент, чтобы соответствовать стилю) */
+        /* СТИЛЬ ДЛЯ МЕНЕЕ ЗАМЕТНОЙ КНОПКИ */
+        .secondary-modal-link {
+            display: block;
+            background: none;
+            border: none;
+            color: var(--color-blue-bg); /* Используем основной цвет, но без фона */
+            text-decoration: underline;
+            font-size: 14px;
+            font-weight: normal;
+            cursor: pointer;
+            padding: 0;
+            margin: 10px auto 0;
+            width: 100%;
+            max-width: 250px;
+            transition: opacity 0.1s;
+            opacity: 0.7; /* Делаем её менее заметной */
+        }
+        
+        .secondary-modal-link:hover {
+            opacity: 1;
+        }
+        
+        /* Иконка */
         .modal-icon {
             width: 50px;
             height: 50px;
@@ -540,7 +563,12 @@
             <h2>ПОЗДРАВЛЯЕМ!</h2>
             <p id="prizeText" style="font-weight: bold; font-size: 18px; margin-bottom: 5px;">[Текст приза здесь]</p>
             <p>Для получения приза, пожалуйста, свяжитесь с нашим менеджером, написав в чат.</p>
+            
             <button onclick="handlePrizeClaim()">Получить приз</button>
+            
+            <button class="secondary-modal-link" onclick="closeModal(true)">
+                Продолжить использование приложения
+            </button>
         </div>
     </div>
 
