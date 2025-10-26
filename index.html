@@ -667,7 +667,6 @@ function displayPrizes(prizes) {
     prizesListElement.innerHTML = ''; // Очистка предыдущего списка
 
     if (!prizes || prizes.length === 0) {
-        // Убедимся, что это <ul>, а не <p>
         prizesListElement.innerHTML = '<p class="no-prizes-message">Вы пока ничего не выиграли.</p>';
         return;
     }
