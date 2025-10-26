@@ -1,389 +1,356 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meet Рулетка</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <style>
-        /* --- ПОДКЛЮЧЕНИЕ ШРИФТА TT HOVES PRO TRIAL BOLD --- */
-        @font-face {
-            font-family: 'TT Hoves Pro Trial Bold';
-            src: url('https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/fonts/TT%20Hoves%20Pro%20Trial%20Bold.ttf') format('truetype');
-            font-weight: 700;
-            font-style: normal;
-            font-display: swap; 
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meet Рулетка</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <style>
+        /* --- ПОДКЛЮЧЕНИЕ ШРИФТА TT HOVES PRO TRIAL BOLD --- */
+        @font-face {
+            font-family: 'TT Hoves Pro Trial Bold';
+            src: url('https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/fonts/TT%20Hoves%20Pro%20Trial%20Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap; 
+        }
 
-        /* --- ЦВЕТОВАЯ СХЕМА: ОБНОВЛЕННЫЙ СИНИЙ (Звездная рулетка) --- */
-        :root {
-            --color-blue-bg: #2d4aff; /* Глубокий синий фон (верхняя точка градиента) */
-            --color-blue-dark: #243bcc; /* Для контуров/теней */
-            --color-blue-light-segment: #D5DAE6; /* Светлый синий/серый для сегментов звезды */
-            --color-blue-dark-segment: #657df5; /* Темный синий для сегментов звезды */
-            
-            --color-white: #FFFFFF;
-            --color-black: #000000; /* Добавлен для удобства */
-        }
+        /* --- ЦВЕТОВАЯ СХЕМА: ОБНОВЛЕННЫЙ СИНИЙ (Звездная рулетка) --- */
+        :root {
+            --color-blue-bg: #2d4aff; /* Глубокий синий фон (верхняя точка градиента) */
+            --color-blue-dark: #243bcc; /* Для контуров/теней */
+            --color-blue-light-segment: #D5DAE6; /* Светлый синий/серый для сегментов звезды */
+            --color-blue-dark-segment: #657df5; /* Темный синий для сегментов звезды */
+            
+            --color-white: #FFFFFF;
+            --color-black: #000000; /* Добавлен для удобства */
+        }
 
-        /* Общие стили и шрифт */
-        body {
-            /* Логотип в правом нижнем углу, увеличенный размер */
-            background: 
-                url('https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/fonts/eqwq.png') no-repeat right 20px bottom 20px / 96% auto, 
-                linear-gradient(to bottom, var(--color-blue-bg), #1a32a0); 
-            background-blend-mode: soft-light; /* Режим смешивания */
-            
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: var(--color-white); 
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            text-align: center;
-            box-sizing: border-box;
-            /* УДАЛЕНЫ: position: relative; и overflow: hidden; */
-        }
-        
-        /* УДАЛЕН body::before */
+        /* Общие стили и шрифт */
+        body {
+            /* Логотип в правом нижнем углу, увеличенный размер */
+            background: 
+                url('https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/fonts/eqwq.png') no-repeat right 20px bottom 20px / 96% auto, 
+                linear-gradient(to bottom, var(--color-blue-bg), #1a32a0); 
+            background-blend-mode: soft-light; /* Режим смешивания */
+            
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--color-white); 
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            text-align: center;
+            box-sizing: border-box;
+            /* УДАЛЕНЫ: position: relative; и overflow: hidden; */
+        }
+        
+        /* УДАЛЕН body::before */
 
-        .app-container {
-            width: 100%;
-            max-width: 400px;
-            background: transparent; 
-            padding: 20px 10px;
-            margin-top: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        .app-container {
+            width: 100%;
+            max-width: 400px;
+            background: transparent; 
+            padding: 20px 10px;
+            margin-top: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-        h1 {
-            font-family: 'TT Hoves Pro Trial Bold', 'Arial Black', Gadget, sans-serif;
-            color: var(--color-white); 
-            font-size: 30px; 
-            margin-bottom: 5px;
-            text-shadow: 0 4px 5px rgba(0, 0, 0, 0.2); 
-            white-space: nowrap; 
-        }
-        
-        .subtitle {
-            font-size: 18px;
-            color: var(--color-white);
-            margin-bottom: 30px;
-            font-weight: 500;
-        }
-
-
-        /* --- СТИЛЬ БЛОКА ОШИБКИ (УВЕДОМЛЕНИЕ О ТАЙМАУТЕ) --- */
-        #errorText {
-            display: none;
-            color: var(--color-white); 
-            background: rgba(0, 0, 0, 0.7); 
-            border: none; 
-            padding: 15px 20px;
-            margin: 10px 0 40px 0;
-            border-radius: 8px; 
-            font-weight: bold;
-            text-align: center;
-            line-height: 1.4;
-            width: 90%; 
-            box-sizing: border-box;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); 
-            font-size: 16px;
-        }
+        h1 {
+            font-family: 'TT Hoves Pro Trial Bold', 'Arial Black', Gadget, sans-serif;
+            color: var(--color-white); 
+            font-size: 30px; 
+            margin-bottom: 5px;
+            text-shadow: 0 4px 5px rgba(0, 0, 0, 0.2); 
+            white-space: nowrap; 
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            color: var(--color-white);
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
 
 
-        /* --- СТИЛИ ЗВЕЗДНОЙ РУЛЕТКИ (Уменьшены на 15%) --- */
-        .wheel-container {
-            position: relative;
-            width: 272px; 
-            height: 272px; 
-            margin: 0 auto 42.5px; 
-            filter: drop-shadow(0 0 8.5px rgba(0, 0, 0, 0.4)); 
-            transform: translateY(17px); 
-        }
-
-        .wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            /* СОХРАНЕНЫ: Несколько радиальных градиентов для чётких бликов */
-            background: 
-                radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%),
-                radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 60%),
-                radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 60%),
-                radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 70%),
-                var(--color-blue-bg); 
-            
-            border: 4.25px solid rgba(255, 255, 255, 0.15); /* Чуть более заметный ободок */
-            box-shadow: 
-                inset 0 0 20px rgba(0, 0, 0, 0.4), /* Усиленная внутренняя тень */
-                0 0 15px rgba(0, 0, 0, 0.3); /* Усиленная внешняя тень */
-            position: relative; 
-            transition: transform 0s;
-            overflow: hidden; 
-            box-sizing: border-box;
-        }
-        
-        .wheel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            
-            background: repeating-conic-gradient(
-                var(--color-blue-light-segment) 0deg 36deg, 
-                var(--color-blue-dark-segment) 36deg 72deg 
-            );
-            
-            /* Маска для отображения секторов */
-            mask-image: radial-gradient(
-                circle at center, 
-                transparent 0%, transparent 60%,  
-                black 60%, black 98%,             
-                transparent 98%, transparent 100%
-            );
-            -webkit-mask-image: radial-gradient(
-                circle at center, 
-                transparent 0%, transparent 60%, 
-                black 60%, black 98%, 
-                transparent 98%, transparent 100%
-            );
-            z-index: 1; 
-            filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.4)) brightness(1.1); 
-        }
-        
-        /* .wheel::after (анимированный блик) удален */
-
-        .sector {
-            display: none;
-        }
+        /* --- СТИЛЬ БЛОКА ОШИБКИ (УВЕДОМЛЕНИЕ О ТАЙМАУТЕ) --- */
+        #errorText {
+            display: none;
+            color: var(--color-white); 
+            background: rgba(0, 0, 0, 0.7); 
+            border: none; 
+            padding: 15px 20px;
+            margin: 10px 0 40px 0;
+            border-radius: 8px; 
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.4;
+            width: 90%; 
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); 
+            font-size: 16px;
+        }
 
 
-        /* --- ЦЕНТРАЛЬНАЯ КНОПКА (ВРАЩАТЬ) (Уменьшена на 15%) --- */
-        .center-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 153px; 
-            height: 153px; 
-            background: var(--color-blue-bg); 
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: var(--color-white); 
-            font-size: 32.3px; 
-            font-weight: bold;
-            box-shadow: 
-                0 0 0 8.5px rgba(255, 255, 255, 0.4), /* Чуть более яркий внешний свет */
-                inset 0 0 15px rgba(0, 0, 0, 0.6), /* Усиленная внутренняя тень */
-                inset 0 0 25px rgba(255, 255, 255, 0.5); /* Усиленный внутренний свет */
-            filter: brightness(1.1); /* Немного ярче */
-            cursor: pointer; 
-            z-index: 5;
-            transition: transform 0.1s;
-        }
+        /* --- СТИЛИ ЗВЕЗДНОЙ РУЛЕТКИ (Уменьшены на 15%) --- */
+        .wheel-container {
+            position: relative;
+            width: 272px; 
+            height: 272px; 
+            margin: 0 auto 42.5px; 
+            filter: drop-shadow(0 0 8.5px rgba(0, 0, 0, 0.4)); 
+            transform: translateY(17px); 
+        }
 
-        .center-button:active:not(:disabled) {
-            transform: translate(-50%, -50%) scale(0.95);
-        }
-        
-        .center-text-go {
-            color: var(--color-white); 
-            font-size: 40.8px; 
-            font-family: 'TT Hoves Pro Trial Bold', 'Arial Black', Gadget, sans-serif;
-            text-shadow: 0 0 4.25px rgba(0, 0, 0, 0.5); 
-            margin-top: 0; 
-        }
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            /* СОХРАНЕНЫ: Несколько радиальных градиентов для чётких бликов */
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%),
+                radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 60%),
+                radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 60%),
+                radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 70%),
+                var(--color-blue-bg); 
+            
+            border: 4.25px solid rgba(255, 255, 255, 0.15); /* Чуть более заметный ободок */
+            box-shadow: 
+                inset 0 0 20px rgba(0, 0, 0, 0.4), /* Усиленная внутренняя тень */
+                0 0 15px rgba(0, 0, 0, 0.3); /* Усиленная внешняя тень */
+            position: relative; 
+            transition: transform 0s;
+            overflow: hidden; 
+            box-sizing: border-box;
+        }
+        
+        .wheel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            
+            background: repeating-conic-gradient(
+                var(--color-blue-light-segment) 0deg 36deg, 
+                var(--color-blue-dark-segment) 36deg 72deg 
+            );
+            
+            /* Маска для отображения секторов */
+            mask-image: radial-gradient(
+                circle at center, 
+                transparent 0%, transparent 60%,  
+                black 60%, black 98%,             
+                transparent 98%, transparent 100%
+            );
+            -webkit-mask-image: radial-gradient(
+                circle at center, 
+                transparent 0%, transparent 60%, 
+                black 60%, black 98%, 
+                transparent 98%, transparent 100%
+            );
+            z-index: 1; 
+            filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.4)) brightness(1.1); 
+        }
+        
+        /* .wheel::after (анимированный блик) удален */
 
-        /* --- УКАЗАТЕЛЬ (Уменьшен на 15%) --- */
-        .pointer {
-            position: absolute;
-            top: -12.75px; 
-            left: 50%;
-            transform: translateX(-50%);
-            width: 21.25px; 
-            height: 34px; 
-            background: linear-gradient(to bottom, var(--color-white), #C0D8F0); /* Чуть светлее */
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            box-shadow: 0 4.25px 8.5px rgba(0, 0, 0, 0.3); 
-            border: 2.55px solid var(--color-blue-bg); 
-            z-index: 10;
-        }
-        
-        .pointer::after {
-            content: '';
-            position: absolute;
-            top: 8.5px; 
-            left: 50%;
-            transform: translateX(-50%);
-            width: 6.8px; 
-            height: 6.8px; 
-            background: var(--color-blue-bg); 
-            border-radius: 50%;
-            opacity: 0.8;
-        }
-
-        
-        .center-button.disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
+        .sector {
+            display: none;
+        }
 
 
-        /* --- СТИЛИ КНОПКИ ПОДДЕРЖКИ (НОВЫЙ БЛОК) --- */
-        #supportButton {
-            /* Стиль повторяет стиль модальной кнопки, но без абсолютной позиции */
-            background: var(--color-white); /* Светлый фон */
-            color: var(--color-blue-bg); /* Синий текст */
-            border: none;
-            padding: 15px 30px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 100%;
-            max-width: 300px;
-            box-shadow: 0 4px 0 0 #D5DAE6; /* Светлая тень */
-            transition: all 0.1s ease;
-            margin-top: 15px; /* Отступ от нижнего края экрана/контента */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none; /* Если сделаем ссылкой */
-        }
-        
-        #supportButton:active {
-            box-shadow: 0 1px 0 0 #D5DAE6;
-            transform: translateY(3px);
-        }
-        
-        #supportButton span {
-            margin-right: 8px; /* Отступ для эмодзи */
-            font-size: 20px;
-        }
+        /* --- ЦЕНТРАЛЬНАЯ КНОПКА (ВРАЩАТЬ) (Уменьшена на 15%) --- */
+        .center-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 153px; 
+            height: 153px; 
+            background: var(--color-blue-bg); 
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--color-white); 
+            font-size: 32.3px; 
+            font-weight: bold;
+            box-shadow: 
+                0 0 0 8.5px rgba(255, 255, 255, 0.4), /* Чуть более яркий внешний свет */
+                inset 0 0 15px rgba(0, 0, 0, 0.6), /* Усиленная внутренняя тень */
+                inset 0 0 25px rgba(255, 255, 255, 0.5); /* Усиленный внутренний свет */
+            filter: brightness(1.1); /* Немного ярче */
+            cursor: pointer; 
+            z-index: 5;
+            transition: transform 0.1s;
+        }
+
+        .center-button:active:not(:disabled) {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+        
+        .center-text-go {
+            color: var(--color-white); 
+            font-size: 40.8px; 
+            font-family: 'TT Hoves Pro Trial Bold', 'Arial Black', Gadget, sans-serif;
+            text-shadow: 0 0 4.25px rgba(0, 0, 0, 0.5); 
+            margin-top: 0; 
+        }
+
+        /* --- УКАЗАТЕЛЬ (Уменьшен на 15%) --- */
+        .pointer {
+            position: absolute;
+            top: -12.75px; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 21.25px; 
+            height: 34px; 
+            background: linear-gradient(to bottom, var(--color-white), #C0D8F0); /* Чуть светлее */
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            box-shadow: 0 4.25px 8.5px rgba(0, 0, 0, 0.3); 
+            border: 2.55px solid var(--color-blue-bg); 
+            z-index: 10;
+        }
+        
+        .pointer::after {
+            content: '';
+            position: absolute;
+            top: 8.5px; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6.8px; 
+            height: 6.8px; 
+            background: var(--color-blue-bg); 
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+
+        
+        .center-button.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
 
 
-        /* --- СТИЛИ МОДАЛЬНОГО ОКНА --- */
-        .modal {
-            display: none; 
-            position: fixed;
-            z-index: 100; 
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.8); 
-            text-align: center;
-        }
+        /* --- СТИЛИ МОДАЛЬНОГО ОКНА --- */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 100; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8); 
+            text-align: center;
+        }
 
-        .modal-content {
-            /* ИЗМЕНЕНИЕ: Полупрозрачный белый фон */
-            background-color: rgba(255, 255, 255, 0.9); 
-            margin: 10vh auto 0; 
-            padding: 20px; 
-            border-radius: 15px;
-            width: 90%; 
-            max-width: 280px; 
-            text-align: center;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.3s;
-            position: relative; 
-        }
-        
-        /* Крестик (Кнопка закрытия) */
-        .close-modal-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            color: var(--color-black); 
-            font-size: 30px;
-            font-weight: 300;
-            line-height: 1;
-            cursor: pointer;
-            opacity: 0.5; 
-            transition: opacity 0.1s;
-        }
+        .modal-content {
+            /* ИЗМЕНЕНИЕ: Полупрозрачный белый фон */
+            background-color: rgba(255, 255, 255, 0.9); 
+            margin: 10vh auto 0; 
+            padding: 20px; 
+            border-radius: 15px;
+            width: 90%; 
+            max-width: 280px; 
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+            position: relative; 
+        }
+        
+        /* Крестик (Кнопка закрытия) */
+        .close-modal-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: var(--color-black); 
+            font-size: 30px;
+            font-weight: 300;
+            line-height: 1;
+            cursor: pointer;
+            opacity: 0.5; 
+            transition: opacity 0.1s;
+        }
 
-        .close-modal-btn:hover,
-        .close-modal-btn:focus {
-            opacity: 0.8;
-        }
-        
-        .modal-content h2 {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--color-black); 
-            margin-bottom: 5px;
-        }
+        .close-modal-btn:hover,
+        .close-modal-btn:focus {
+            opacity: 0.8;
+        }
+        
+        .modal-content h2 {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--color-black); 
+            margin-bottom: 5px;
+        }
 
-        .modal-content p {
-             color: var(--color-black); 
-             font-size: 16px;
-             line-height: 1.4;
-             margin: 15px 0 25px 0;
-        }
-        
-        /* Дополнительный стиль для параграфов в модальном окне приветствия */
-        #welcomeModal .modal-content p:first-of-type {
-             margin-bottom: 5px;
-        }
-        #welcomeModal .modal-content p:nth-of-type(2) {
-             margin-top: 0;
-             margin-bottom: 25px;
-        }
+        .modal-content p {
+             color: var(--color-black); 
+             font-size: 16px;
+             line-height: 1.4;
+             margin: 15px 0 25px 0;
+        }
+        
+        /* Дополнительный стиль для параграфов в модальном окне приветствия */
+        #welcomeModal .modal-content p:first-of-type {
+             margin-bottom: 5px;
+        }
+        #welcomeModal .modal-content p:nth-of-type(2) {
+             margin-top: 0;
+             margin-bottom: 25px;
+        }
 
 
-        .modal-content button {
-            background: var(--color-blue-bg); 
-            color: var(--color-white); 
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 100%;
-            max-width: 250px;
-            box-shadow: 0 4px 0 0 var(--color-blue-dark); 
-            transition: all 0.1s ease;
-            margin-bottom: 15px; 
-        }
-        
-        .modal-content button:active {
-            box-shadow: 0 1px 0 0 var(--color-blue-dark);
-            transform: translateY(3px);
-        }
-        
-        /* Стили для эмодзи */
-        .modal-emoji {
-            font-size: 50px; 
-            line-height: 1; 
-            margin-bottom: 10px;
-            display: block; 
-        }
-        
-        @keyframes fadeIn {
-            from {opacity: 0; transform: scale(0.9);}
-            to {opacity: 1; transform: scale(1);}
-        }
+        .modal-content button {
+            background: var(--color-blue-bg); 
+            color: var(--color-white); 
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 250px;
+            box-shadow: 0 4px 0 0 var(--color-blue-dark); 
+            transition: all 0.1s ease;
+            margin-bottom: 15px; 
+        }
+        
+        .modal-content button:active {
+            box-shadow: 0 1px 0 0 var(--color-blue-dark);
+            transform: translateY(3px);
+        }
+        
+        /* Стили для эмодзи */
+        .modal-emoji {
+            font-size: 50px; 
+            line-height: 1; 
+            margin-bottom: 10px;
+            display: block; 
+        }
+        
+        @keyframes fadeIn {
+            from {opacity: 0; transform: scale(0.9);}
+            to {opacity: 1; transform: scale(1);}
+        }
 
-        /* @keyframes background-shine удален */
+        /* @keyframes background-shine удален */
 
-    </style>
+    </style>
 
 </head>
 
@@ -391,54 +358,51 @@
 
 <div class="app-container">
 
-    <h1>MEET РУЛЕТКА</h1>
+    <h1>MEET РУЛЕТКА</h1>
 
-    <p class="subtitle">Вращайте рулетку и выигрывайте призы каждый день!</p>
+    <p class="subtitle">Вращайте рулетку и выигрывайте призы каждый день!</p>
 
 
-    <div id="errorText" style="display: none;"></div> 
+    <div id="errorText" style="display: none;"></div> 
 
-    <div class="wheel-container">
-        <div id="wheel" class="wheel">
-            </div>
-        <div class="pointer"></div> 
-        <div id="spinButton" class="center-button">
-            <span class="center-text-go">ВРАЩАТЬ</span>
-        </div>
-    </div>
-    
-    <div style="height: 20px;"></div>         <button id="supportButton" onclick="openSupportChat()">
-        <span role="img" aria-label="Support">💬</span> Связаться с поддержкой
-    </button>
-     
+    <div class="wheel-container">
+        <div id="wheel" class="wheel">
+            </div>
+        <div class="pointer"></div> 
+        <div id="spinButton" class="center-button">
+            <span class="center-text-go">ВРАЩАТЬ</span>
+        </div>
+    </div>
+    
+    <div style="height: 50px;"></div> 
 
-    <div id="welcomeModal" class="modal" onclick="closeModal(true, 'welcomeModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <span class="close-modal-btn" onclick="closeModal(true, 'welcomeModal')">&times;</span> 
-            <span class="modal-emoji">👋</span>
-            
-            <p style="font-size: 18px; font-weight: bold; margin-bottom: 5px; color: var(--color-black);">Добро пожаловать в Meet Рулетку!</p>
-            <p style="margin-top: 0; margin-bottom: 25px; color: var(--color-black);">
-                Вращайте колесо ежедневно, чтобы получить дополнительные скидки, промокоды, Meet-бонусы и другие ценные призы. Удачи!
-            </p>
-            
-            <button onclick="closeModal(true, 'welcomeModal')">
-                Начать игру!
-            </button>
-        </div>
-    </div>
+    <div id="welcomeModal" class="modal" onclick="closeModal(true, 'welcomeModal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-modal-btn" onclick="closeModal(true, 'welcomeModal')">&times;</span> 
+            <span class="modal-emoji">👋</span>
+            
+            <p style="font-size: 18px; font-weight: bold; margin-bottom: 5px; color: var(--color-black);">Добро пожаловать в Meet Рулетку!</p>
+            <p style="margin-top: 0; margin-bottom: 25px; color: var(--color-black);">
+                Вращайте колесо ежедневно, чтобы получить дополнительные скидки, промокоды, Meet-бонусы и другие ценные призы. Удачи!
+            </p>
+            
+            <button onclick="closeModal(true, 'welcomeModal')">
+                Начать игру!
+            </button>
+        </div>
+    </div>
 
-    <div id="resultModal" class="modal" onclick="closeModal(true, 'resultModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <span class="close-modal-btn" onclick="closeModal(true, 'resultModal')">&times;</span> 
-            <span class="modal-emoji">🎉</span> <h2>ПОЗДРАВЛЯЕМ!</h2>
-            <p id="prizeText" style="font-weight: bold; font-size: 18px; margin-bottom: 5px;">[Текст приза здесь]</p>
-            <p>Ваше кодовое слово 'Рулетка' - отправьте его в чат-поддержки после нажатия 'Получить приз' 😊</p>
-            
-            <button onclick="handlePrizeClaim()">Получить приз</button>
-            
-            </div>
-    </div>
+    <div id="resultModal" class="modal" onclick="closeModal(true, 'resultModal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-modal-btn" onclick="closeModal(true, 'resultModal')">&times;</span> 
+            <span class="modal-emoji">🎉</span> <h2>ПОЗДРАВЛЯЕМ!</h2>
+            <p id="prizeText" style="font-weight: bold; font-size: 18px; margin-bottom: 5px;">[Текст приза здесь]</p>
+            <p>Ваше кодовое слово 'Рулетка' - отправьте его в чат-поддержки после нажатия 'Получить приз' 😊</p>
+            
+            <button onclick="handlePrizeClaim()">Получить приз</button>
+            
+            </div>
+    </div>
 
 </div>
 
@@ -446,9 +410,9 @@
 // ВАЖНО: КОНФИГУРАЦИЯ И ЛОГИКА ОСТАЮТСЯ БЕЗ ИЗМЕНЕНИЙ
 // -----------------------------------------------------
 const PRIZES = [
-    "6000 meet-бонусов", "5000 meet-бонусов", "4000 meet-бонусов", "3000 meet-бонусов",
-    "2000 meet-бонусов", "1000 meet-бонусов", "Промокод на бесплатную доставку", 
-    "Скидка 10%", "Скидка 15%", "SoleFresh к заказу"
+    "6000 meet-бонусов", "5000 meet-бонусов", "4000 meet-бонусов", "3000 meet-бонусов",
+    "2000 meet-бонусов", "1000 meet-бонусов", "Промокод на бесплатную доставку", 
+    "Скидка 10%", "Скидка 15%", "SoleFresh к заказу"
 ];
 const NUM_SECTORS = PRIZES.length; // = 10
 const SECTOR_ANGLE = 360 / NUM_SECTORS; // = 36 градусов
@@ -460,7 +424,6 @@ const API_BASE_URL = 'https://meetslot-api-backend-production.up.railway.app/api
 const UNLIMITED_USERNAMES = ['tlrtri']; // Никнеймы без символа @
 const UNLIMITED_USER_PRIZE_INDEX = 0; // Приз (индекс) для неограниченного пользователя
 // --- НАСТРОЙКИ ЧАТА ---
-// ОБНОВЛЕНО: Используем новую ссылку для кнопки "Связаться с поддержкой"
 const MANAGER_CHAT_LINK = 'https://t.me/helpmeetmarket';
 // -----------------------------------------------------
 
@@ -468,107 +431,95 @@ const MANAGER_CHAT_LINK = 'https://t.me/helpmeetmarket';
 // -----------------------------------------------------
 
 const wheel = document.getElementById('wheel');
-const spinButton = document.getElementById('spinButton'); 
+const spinButton = document.getElementById('spinButton'); 
 const errorText = document.getElementById('errorText');
 // Элементы модального окна обновлены
-const resultModal = document.getElementById('resultModal'); 
+const resultModal = document.getElementById('resultModal'); 
 const welcomeModal = document.getElementById('welcomeModal'); // НОВЫЙ ЭЛЕМЕНТ
-const prizeTextElement = document.getElementById('prizeText'); 
+const prizeTextElement = document.getElementById('prizeText'); 
 
 let isSpinning = false;
-let currentPrizeIndex = null; 
+let currentPrizeIndex = null; 
 
 // -----------------------------------------------------
 // 3. ФУНКЦИИ UI / ВЗАИМОДЕЙСТВИЯ
 // -----------------------------------------------------
 
 function showAppMessage(message) {
-    if (errorText) {
-        errorText.textContent = message;
-        errorText.style.display = 'block';
-        
-        if (!message.includes('крутили сегодня') && !message.includes('крутите завтра')) {
-            setTimeout(() => {
-                errorText.style.display = 'none';
-                errorText.textContent = '';
-            }, 5000);
-        }
-    } else {
-        console.error("ОШИБКА: Не могу показать сообщение, элемент #errorText отсутствует.");
-    }
+    if (errorText) {
+        errorText.textContent = message;
+        errorText.style.display = 'block';
+        
+        if (!message.includes('крутили сегодня') && !message.includes('крутите завтра')) {
+            setTimeout(() => {
+                errorText.style.display = 'none';
+                errorText.textContent = '';
+            }, 5000);
+        }
+    } else {
+        console.error("ОШИБКА: Не могу показать сообщение, элемент #errorText отсутствует.");
+    }
 }
 
 // ФУНКЦИЯ ОБНОВЛЕНА: принимает ID модального окна
 function showModal(prize, modalId = 'resultModal') {
-    const targetModal = document.getElementById(modalId);
-    if (targetModal) {
-        if (modalId === 'resultModal' && prizeTextElement) {
-            prizeTextElement.textContent = prize; 
-        }
-        targetModal.style.display = 'flex'; 
-        targetModal.style.alignItems = 'center';
-        targetModal.style.justifyContent = 'center';
-    }
+    const targetModal = document.getElementById(modalId);
+    if (targetModal) {
+        if (modalId === 'resultModal' && prizeTextElement) {
+            prizeTextElement.textContent = prize; 
+        }
+        targetModal.style.display = 'flex'; 
+        targetModal.style.alignItems = 'center';
+        targetModal.style.justifyContent = 'center';
+    }
 }
 
 // ФУНКЦИЯ ОБНОВЛЕНА: принимает ID модального окна
 function closeModal(shouldResetWheel, modalId = 'resultModal') {
-    const targetModal = document.getElementById(modalId);
-    if (targetModal) {
-        targetModal.style.display = 'none'; // Скрываем модальное окно
-    }
+    const targetModal = document.getElementById(modalId);
+    if (targetModal) {
+        targetModal.style.display = 'none'; // Скрываем модальное окно
+    }
 
-    // Сброс рулетки только после закрытия окна с РЕЗУЛЬТАТОМ
-    if (shouldResetWheel && wheel && modalId === 'resultModal') {
-        wheel.style.transition = 'transform 0.5s ease-out';
-        wheel.style.transform = `rotate(0deg)`;
-        
-        if (spinButton) {
-            spinButton.classList.remove('disabled');
-        }
-    }
-}
-
-// Новая функция для кнопки "Связаться с поддержкой"
-function openSupportChat() {
-    const supportLink = 'https://t.me/helpmeetmarket';
-    if (window.Telegram && window.Telegram.WebApp) {
-        // Используем TWA API для открытия внешней ссылки
-        window.Telegram.WebApp.openTelegramLink(supportLink);
-    } else {
-        // Открываем ссылку напрямую в браузере
-        window.open(supportLink, '_blank');
-    }
+    // Сброс рулетки только после закрытия окна с РЕЗУЛЬТАТОМ
+    if (shouldResetWheel && wheel && modalId === 'resultModal') {
+        wheel.style.transition = 'transform 0.5s ease-out';
+        wheel.style.transform = `rotate(0deg)`;
+        
+        if (spinButton) {
+            spinButton.classList.remove('disabled');
+        }
+    }
 }
 
 
 function handlePrizeClaim() {
-    if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.openTelegramLink(MANAGER_CHAT_LINK);
-    } else {
-        window.location.href = MANAGER_CHAT_LINK;
-    }
-    // Сбрасываем рулетку и закрываем модальное окно результата
-    closeModal(true, 'resultModal'); 
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.openTelegramLink(MANAGER_CHAT_LINK);
+    } else {
+        window.location.href = MANAGER_CHAT_LINK;
+    }
+    // Сбрасываем рулетку и закрываем модальное окно результата
+    closeModal(true, 'resultModal'); 
 }
 
 
 function initTelegramApp() {
-    try {
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            const Button = window.Telegram.WebApp.MainButton;
-            Button.setText("Закрыть мини-приложение");
-            Button.onClick(() => window.Telegram.WebApp.close());
-            Button.show();
-        }
-    } catch (e) {
-        console.error("Ошибка инициализации Telegram WebApp. Запущено не в Telegram.", e);
-    }
-    if (errorText) errorText.style.display = 'none';
-    
-    // Показать приветственное сообщение при запуске
-    showModal(null, 'welcomeModal');
+    try {
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            const Button = window.Telegram.WebApp.MainButton;
+            Button.setText("Закрыть мини-приложение");
+            Button.onClick(() => window.Telegram.WebApp.close());
+            Button.show();
+        }
+    } catch (e) {
+        console.error("Ошибка инициализации Telegram WebApp. Запущено не в Telegram.", e);
+    }
+    if (errorText) errorText.style.display = 'none';
+    
+    // Показать приветственное сообщение при запуске
+    showModal(null, 'welcomeModal');
 }
 
 
@@ -577,106 +528,106 @@ function initTelegramApp() {
 // -----------------------------------------------------
 
 async function getSpinResultFromBackend() {
-    console.log(`Запрос результата на бэкенд: ${API_BASE_URL}/spin_check`);
+    console.log(`Запрос результата на бэкенд: ${API_BASE_URL}/spin_check`);
 
-    if (!window.Telegram || !window.Telegram.WebApp || !window.Telegram.WebApp.initData) {
-        showAppMessage("Ошибка: Запуск не в Telegram WebApp или данные пользователя недоступны.");
-        return null;
-    }
+    if (!window.Telegram || !window.Telegram.WebApp || !window.Telegram.WebApp.initData) {
+        showAppMessage("Ошибка: Запуск не в Telegram WebApp или данные пользователя недоступны.");
+        return null;
+    }
 
-    const initData = window.Telegram.WebApp.initData;
-    let userId = null;
-    let username = null; 
+    const initData = window.Telegram.WebApp.initData;
+    let userId = null;
+    let username = null; 
 
-    try {
-        const urlParams = new URLSearchParams(initData);
-        const userParam = urlParams.get('user');
-        
-        if (userParam) {
-            const decodedUser = decodeURIComponent(userParam);
-            const userData = JSON.parse(decodedUser);
-            userId = userData.id; 
-            username = userData.username ? userData.username.toLowerCase() : null; 
-        }
-    } catch(e) {
-        console.error("Не удалось разобрать данные пользователя:", e);
-        showAppMessage("Ошибка аутентификации пользователя.");
-        return null;
-    }
-    
-    if (!userId) {
-        showAppMessage("Ошибка: ID пользователя не найден в данных Telegram.");
-        return null;
-    }
-    
-    // --- ПРОВЕРКА НА НЕОГРАНИЧЕННЫЙ ДОСТУП (@tlrtri) ---
-    const UNLIMITED_USERNAMES = ['tlrtri']; // Никнеймы без символа @
-    const UNLIMITED_USER_PRIZE_INDEX = 0; // Приз (индекс) для неограниченного пользователя
+    try {
+        const urlParams = new URLSearchParams(initData);
+        const userParam = urlParams.get('user');
+        
+        if (userParam) {
+            const decodedUser = decodeURIComponent(userParam);
+            const userData = JSON.parse(decodedUser);
+            userId = userData.id; 
+            username = userData.username ? userData.username.toLowerCase() : null; 
+        }
+    } catch(e) {
+        console.error("Не удалось разобрать данные пользователя:", e);
+        showAppMessage("Ошибка аутентификации пользователя.");
+        return null;
+    }
+    
+    if (!userId) {
+        showAppMessage("Ошибка: ID пользователя не найден в данных Telegram.");
+        return null;
+    }
+    
+    // --- ПРОВЕРКА НА НЕОГРАНИЧЕННЫЙ ДОСТУП (@tlrtri) ---
+    const UNLIMITED_USERNAMES = ['tlrtri']; // Никнеймы без символа @
+    const UNLIMITED_USER_PRIZE_INDEX = 0; // Приз (индекс) для неограниченного пользователя
 
-    if (username && UNLIMITED_USERNAMES.includes(username)) {
-        console.log(`Пользователь ${username} имеет неограниченный доступ. Обход API.`);
-        await new Promise(resolve => setTimeout(resolve, 500)); 
-        return UNLIMITED_USER_PRIZE_INDEX; 
-    }
-    // --- КОНЕЦ ПРОВЕРКИ ---
+    if (username && UNLIMITED_USERNAMES.includes(username)) {
+        console.log(`Пользователь ${username} имеет неограниченный доступ. Обход API.`);
+        await new Promise(resolve => setTimeout(resolve, 500)); 
+        return UNLIMITED_USER_PRIZE_INDEX; 
+    }
+    // --- КОНЕЦ ПРОВЕРКИ ---
 
 
-    try {
-        const response = await fetch(`${API_BASE_URL}/spin_check`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ user_id: userId })
-        });
+    try {
+        const response = await fetch(`${API_BASE_URL}/spin_check`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ user_id: userId })
+        });
 
-        if (!response.ok) {
-            let errorData = {};
-            try {
-                errorData = await response.json(); 
-            } catch(e) {
-                console.error(`Сервер вернул не-JSON ответ (HTTP ${response.status}):`, await response.text());
-                showAppMessage(`Ошибка: Сервер вернул неожиданный ответ (HTTP ${response.status}).`);
-                return null;
-            }
+        if (!response.ok) {
+            let errorData = {};
+            try {
+                errorData = await response.json(); 
+            } catch(e) {
+                console.error(`Сервер вернул не-JSON ответ (HTTP ${response.status}):`, await response.text());
+                showAppMessage(`Ошибка: Сервер вернул неожиданный ответ (HTTP ${response.status}).`);
+                return null;
+            }
 
-            if (response.status === 403) {
-                if (errorData && errorData.next_spin_timestamp) {
-                    const nextSpinTimestamp = errorData.next_spin_timestamp;
-                    const nextSpinDate = new Date(nextSpinTimestamp * 1000);
-                    const timeRemaining = nextSpinDate - new Date();
-                    
-                    if (timeRemaining > 0) {
-                        const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
-                        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-                        showAppMessage(`Попытки на сегодня закончились. Возвращайтесь через ${hours} ч. ${minutes} м.`);
-                        return null; 
-                    }
-                }
-            }
+            if (response.status === 403) {
+                if (errorData && errorData.next_spin_timestamp) {
+                    const nextSpinTimestamp = errorData.next_spin_timestamp;
+                    const nextSpinDate = new Date(nextSpinTimestamp * 1000);
+                    const timeRemaining = nextSpinDate - new Date();
+                    
+                    if (timeRemaining > 0) {
+                        const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+                        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                        showAppMessage(`Попытки на сегодня закончились. Возвращайтесь через ${hours} ч. ${minutes} м.`);
+                        return null; 
+                    }
+                }
+            }
 
-            showAppMessage(`Ошибка: ${errorData.message || 'Неизвестная ошибка сервера'}`);
-            console.error(`API Error (${response.status}):`, errorData);
-            return null;
-        }
+            showAppMessage(`Ошибка: ${errorData.message || 'Неизвестная ошибка сервера'}`);
+            console.error(`API Error (${response.status}):`, errorData);
+            return null;
+        }
 
-        const data = await response.json(); 
+        const data = await response.json(); 
 
-        if (typeof data.prize_index === 'number') {
-            return data.prize_index; 
-        } else {
-            showAppMessage('Ошибка: Бэкенд вернул статус 200, но не вернул индекс приза.');
-            return null;
-        }
-    } catch (e) {
-        if (e.message.includes('Failed to fetch')) {
-             showAppMessage("Ошибка подключения: Проверьте, запущен ли ваш бэкенд и корректен ли публичный URL.");
-        } else {
-             showAppMessage(`Критическая ошибка: ${e.message}. Проверьте консоль.`);
-        }
-        console.error("Критическая ошибка при выполнении запроса fetch:", e);
-        return null;
-    }
+        if (typeof data.prize_index === 'number') {
+            return data.prize_index; 
+        } else {
+            showAppMessage('Ошибка: Бэкенд вернул статус 200, но не вернул индекс приза.');
+            return null;
+        }
+    } catch (e) {
+        if (e.message.includes('Failed to fetch')) {
+             showAppMessage("Ошибка подключения: Проверьте, запущен ли ваш бэкенд и корректен ли публичный URL.");
+        } else {
+             showAppMessage(`Критическая ошибка: ${e.message}. Проверьте консоль.`);
+        }
+        console.error("Критическая ошибка при выполнении запроса fetch:", e);
+        return null;
+    }
 }
 
 // -----------------------------------------------------
@@ -684,63 +635,63 @@ async function getSpinResultFromBackend() {
 // -----------------------------------------------------
 
 async function handleSpinClick() {
-    
-    if (isSpinning) return;
-    isSpinning = true;
-    if (spinButton) {
-        spinButton.classList.add('disabled');
-    }
-    
-    if (errorText) {
-        errorText.style.display = 'none';
-    }
+    
+    if (isSpinning) return;
+    isSpinning = true;
+    if (spinButton) {
+        spinButton.classList.add('disabled');
+    }
+    
+    if (errorText) {
+        errorText.style.display = 'none';
+    }
 
-    const winningIndex = await getSpinResultFromBackend();
+    const winningIndex = await getSpinResultFromBackend();
 
-    if (winningIndex === null) {
-        isSpinning = false;
-        
-        if (errorText && !errorText.textContent.includes('крутили сегодня')) {
-            spinButton.classList.remove('disabled');
-        } else if (spinButton) {
-            spinButton.classList.remove('disabled');
-        }
-        
-        return;
-    }
+    if (winningIndex === null) {
+        isSpinning = false;
+        
+        if (errorText && !errorText.textContent.includes('крутили сегодня')) {
+            spinButton.classList.remove('disabled');
+        } else if (spinButton) {
+            spinButton.classList.remove('disabled');
+        }
+        
+        return;
+    }
 
-    currentPrizeIndex = winningIndex; 
+    currentPrizeIndex = winningIndex; 
 
-    const baseRotations = 5; 
-    const degreesToWin = (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE;
+    const baseRotations = 5; 
+    const degreesToWin = (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE;
 
-    const finalRotation = (baseRotations * 360) + degreesToWin;
+    const finalRotation = (baseRotations * 360) + degreesToWin;
 
-    if (wheel) {
-        wheel.style.transition = 'none';
-        wheel.style.transform = 'rotate(0deg)'; 
-        
-        setTimeout(() => {
-            wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
-            wheel.style.transform = `rotate(${finalRotation}deg)`;
-            
-            // Ждем завершения анимации
-            setTimeout(() => {
-                const prize = PRIZES[currentPrizeIndex];
-                showModal(prize, 'resultModal'); // Передаем ID модального окна результата
-                isSpinning = false;
-            }, 5500); 
-        }, 50); 
-    } else {
-        const prize = PRIZES[currentPrizeIndex];
-        showModal(prize, 'resultModal');
-        isSpinning = false;
-    }
+    if (wheel) {
+        wheel.style.transition = 'none';
+        wheel.style.transform = 'rotate(0deg)'; 
+        
+        setTimeout(() => {
+            wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            wheel.style.transform = `rotate(${finalRotation}deg)`;
+            
+            // Ждем завершения анимации
+            setTimeout(() => {
+                const prize = PRIZES[currentPrizeIndex];
+                showModal(prize, 'resultModal'); // Передаем ID модального окна результата
+                isSpinning = false;
+            }, 5500); 
+        }, 50); 
+    } else {
+        const prize = PRIZES[currentPrizeIndex];
+        showModal(prize, 'resultModal');
+        isSpinning = false;
+    }
 }
 
 // Привязка обработчика к кнопке (центральному кругу)
 if (spinButton) {
-    spinButton.addEventListener('click', handleSpinClick);
+    spinButton.addEventListener('click', handleSpinClick);
 }
 
 // Запускаем инициализацию и показ приветствия при загрузке
