@@ -71,7 +71,7 @@
         .subtitle {
             font-size: 18px;
             color: var(--color-white);
-            margin-bottom: 30px;
+            margin-bottom: 20px; /* Уменьшено для кнопки ниже */
             font-weight: 500;
         }
 
@@ -102,7 +102,7 @@
             height: 272px; 
             margin: 0 auto 42.5px; 
             filter: drop-shadow(0 0 8.5px rgba(0, 0, 0, 0.4)); 
-            transform: translateY(17px); 
+            /* transform: translateY(17px); <--- УДАЛЕНО */
         }
 
         .wheel {
@@ -237,7 +237,7 @@
             pointer-events: none;
         }
 
-        /* --- НОВАЯ КНОПКА "МОИ ПРИЗЫ" --- */
+        /* --- КНОПКА "МОИ ПРИЗЫ" --- */
         #prizesButton {
             background: var(--color-white); 
             color: var(--color-blue-bg); 
@@ -251,7 +251,7 @@
             max-width: 350px;
             box-shadow: 0 4px 0 0 #A8A8A8; 
             transition: all 0.1s ease;
-            margin: 20px 0 30px 0; 
+            margin: 0px 0 30px 0; /* Изменено, чтобы встала под подзаголовок */
         }
         
         #prizesButton:active {
@@ -419,6 +419,7 @@
 
     <p class="subtitle">Вращайте рулетку и выигрывайте призы каждый день!</p>
 
+    <button id="prizesButton">Мои призы</button>
 
     <div id="errorText" style="display: none;"></div> 
 
@@ -430,8 +431,6 @@
             <span class="center-text-go">ВРАЩАТЬ</span>
         </div>
     </div>
-    
-    <button id="prizesButton">Мои призы</button>
     
     <div style="height: 50px;"></div> 
 
