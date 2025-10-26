@@ -60,7 +60,32 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative; /* Добавлено для позиционирования иконок */
         }
+        
+        /* --- НОВЫЙ БЛОК: КОНТЕЙНЕР ДЛЯ ИКОНОК --- */
+        .icon-container {
+            position: absolute;
+            top: 20px; /* Позиционирование по вертикали */
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 20; /* Поверх всего */
+        }
+
+        .icon-btn {
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            /* Используем 'currentColor' для SVG, чтобы он принял 'color: var(--color-white)' */
+            color: var(--color-white); 
+            transition: opacity 0.1s;
+        }
+        
+        .icon-btn:hover {
+            opacity: 0.8;
+        }
+        /* --- КОНЕЦ НОВОГО БЛОКА --- */
 
         h1 {
             font-family: 'TT Hoves Pro Trial Bold', 'Arial Black', Gadget, sans-serif;
@@ -103,7 +128,8 @@
             position: relative;
             width: 272px; 
             height: 272px; 
-            margin: 0 auto 42.5px; 
+            /* ИЗМЕНЕНИЕ: Смещено вниз для освобождения места иконок */
+            margin: 20px auto 42.5px; 
             filter: drop-shadow(0 0 8.5px rgba(0, 0, 0, 0.4)); 
             transform: translateY(17px); 
         }
@@ -148,7 +174,7 @@
             mask-image: radial-gradient(
                 circle at center, 
                 transparent 0%, transparent 60%,  
-                black 60%, black 98%,             
+                black 60%, black 98%,            
                 transparent 98%, transparent 100%
             );
             -webkit-mask-image: radial-gradient(
@@ -357,7 +383,16 @@
 <body>
 
 <div class="app-container">
-
+    
+    <div class="icon-container">
+        <svg id="siteButton" class="icon-btn" onclick="openMeetMarketSite()" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-1.04.2-2.03.58-2.93l6.57 6.57c.9.38 1.89.58 2.93.58 1.04 0 2.03-.2 2.93-.58l-6.57-6.57c-.38-.9-.58-1.89-.58-2.93 0-1.04.2-2.03.58-2.93l6.57 6.57c-.9.38-1.89.58-2.93.58-1.04 0-2.03-.2-2.93-.58l-6.57-6.57c-.38.9-.58 1.89-.58 2.93 0 4.41 3.59 8 8 8zm6.57-11.43l-6.57-6.57c-.9-.38-1.89-.58-2.93-.58-1.04 0-2.03.2-2.93.58l6.57 6.57c.38.9.58 1.89.58 2.93 0 1.04-.2 2.03-.58 2.93l6.57-6.57c.38-.9.58-1.89.58-2.93 0-1.04-.2-2.03-.58-2.93z" />
+        </svg>
+        
+        <svg id="supportButton" class="icon-btn" onclick="openSupportChat()" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12l-3-3h3V6H6v7l3-3h2l3 3h4v4z" />
+        </svg>
+    </div>
     <h1>MEET РУЛЕТКА</h1>
 
     <p class="subtitle">Вращайте рулетку и выигрывайте призы каждый день!</p>
@@ -423,8 +458,9 @@ const API_BASE_URL = 'https://meetslot-api-backend-production.up.railway.app/api
 // --- НАСТРОЙКА ИСКЛЮЧЕНИЯ ДЛЯ НЕОГРАНИЧЕННОГО ДОСТУПА (@tlrtri) ---
 const UNLIMITED_USERNAMES = ['tlrtri']; // Никнеймы без символа @
 const UNLIMITED_USER_PRIZE_INDEX = 0; // Приз (индекс) для неограниченного пользователя
-// --- НАСТРОЙКИ ЧАТА ---
+// --- НАСТРОЙКИ ЧАТА / САЙТА ---
 const MANAGER_CHAT_LINK = 'https://t.me/helpmeetmarket';
+const MAIN_SITE_LINK = 'https://meet-market.ru/';
 // -----------------------------------------------------
 
 // 2. ИНИЦИАЛИЗАЦИЯ И ЭЛЕМЕНТЫ
@@ -503,6 +539,26 @@ function handlePrizeClaim() {
     closeModal(true, 'resultModal'); 
 }
 
+// --- НОВЫЕ ФУНКЦИИ: ОБРАБОТЧИКИ ИКОНОК ---
+function openSupportChat() {
+    if (window.Telegram && window.Telegram.WebApp) {
+        // Предпочтительно использовать openTelegramLink для открытия чата
+        window.Telegram.WebApp.openTelegramLink(MANAGER_CHAT_LINK);
+    } else {
+        window.open(MANAGER_CHAT_LINK, '_blank');
+    }
+}
+
+function openMeetMarketSite() {
+    if (window.Telegram && window.Telegram.WebApp) {
+        // Для перехода на внешний сайт лучше использовать openLink
+        window.Telegram.WebApp.openLink(MAIN_SITE_LINK);
+    } else {
+        window.open(MAIN_SITE_LINK, '_blank');
+    }
+}
+// --- КОНЕЦ НОВЫХ ФУНКЦИЙ ---
+
 
 function initTelegramApp() {
     try {
@@ -561,13 +617,13 @@ async function getSpinResultFromBackend() {
     }
     
     // --- ПРОВЕРКА НА НЕОГРАНИЧЕННЫЙ ДОСТУП (@tlrtri) ---
-    const UNLIMITED_USERNAMES = ['tlrtri']; // Никнеймы без символа @
-    const UNLIMITED_USER_PRIZE_INDEX = 0; // Приз (индекс) для неограниченного пользователя
+    const UNLIMITED_USERNAMES_LOCAL = ['tlrtri']; // Никнеймы без символа @
+    const UNLIMITED_USER_PRIZE_INDEX_LOCAL = 0; // Приз (индекс) для неограниченного пользователя
 
-    if (username && UNLIMITED_USERNAMES.includes(username)) {
+    if (username && UNLIMITED_USERNAMES_LOCAL.includes(username)) {
         console.log(`Пользователь ${username} имеет неограниченный доступ. Обход API.`);
         await new Promise(resolve => setTimeout(resolve, 500)); 
-        return UNLIMITED_USER_PRIZE_INDEX; 
+        return UNLIMITED_USER_PRIZE_INDEX_LOCAL; 
     }
     // --- КОНЕЦ ПРОВЕРКИ ---
 
@@ -623,7 +679,7 @@ async function getSpinResultFromBackend() {
         if (e.message.includes('Failed to fetch')) {
              showAppMessage("Ошибка подключения: Проверьте, запущен ли ваш бэкенд и корректен ли публичный URL.");
         } else {
-             showAppMessage(`Критическая ошибка: ${e.message}. Проверьте консоль.`);
+            showAppMessage(`Критическая ошибка: ${e.message}. Проверьте консоль.`);
         }
         console.error("Критическая ошибка при выполнении запроса fetch:", e);
         return null;
