@@ -1,17 +1,3 @@
-<div class="icon-container">
-        <img id="siteButton" class="custom-icon-btn" onclick="openMeetMarketSite()" 
-             src="https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/web.svg" 
-             alt="Сайт">
-        
-        <img id="supportButton" class="custom-icon-btn" onclick="openSupportChat()" 
-             src="https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/chat.svg" 
-             alt="Поддержка">
-    </div>
-    ```
-
-### Полный обновленный HTML-код:
-
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -74,18 +60,20 @@
             position: relative; 
         }
         
-        /* --- НОВЫЙ БЛОК: КОНТЕЙНЕР ДЛЯ ИКОНОК --- */
+        /* --- БЛОК: КОНТЕЙНЕР ДЛЯ ИКОНОК --- */
         .icon-container {
             position: absolute;
             top: 35px; 
             right: 20px;
             display: flex;
+            /* ИЗМЕНЕНИЕ: Увеличенное расстояние между иконками */
             gap: 25px; 
             z-index: 20; 
+            /* ИЗМЕНЕНИЕ: Пространство под блоком иконок */
             margin-bottom: 30px; 
         }
 
-        /* ИЗМЕНЕНИЕ: Стиль для новых кастомных иконок-картинок */
+        /* Стиль для новых кастомных иконок-картинок */
         .custom-icon-btn {
             cursor: pointer;
             width: 24px;
@@ -96,12 +84,13 @@
         .custom-icon-btn:hover {
             opacity: 0.8;
         }
-        /* --- КОНЕЦ НОВОГО БЛОКА --- */
+        /* --- КОНЕЦ БЛОКА ИКОНОК --- */
 
         h1 {
             font-family: 'TT Hoves Pro Trial Bold', 'Arial Black', Gadget, sans-serif;
             color: var(--color-white); 
             font-size: 30px; 
+            /* ИЗМЕНЕНИЕ: Отступ сверху, чтобы создать пространство между иконками и заголовком */
             margin-top: 50px; 
             margin-bottom: 5px;
             text-shadow: 0 4px 5px rgba(0, 0, 0, 0.2); 
@@ -140,6 +129,7 @@
             position: relative;
             width: 272px; 
             height: 272px; 
+            /* Отступ рулетки */
             margin: 30px auto 42.5px; 
             filter: drop-shadow(0 0 8.5px rgba(0, 0, 0, 0.4)); 
             transform: translateY(17px); 
@@ -547,7 +537,7 @@ function handlePrizeClaim() {
     closeModal(true, 'resultModal'); 
 }
 
-// --- НОВЫЕ ФУНКЦИИ: ОБРАБОТЧИКИ ИКОНОК ---
+// --- ФУНКЦИИ: ОБРАБОТЧИКИ ИКОНОК ---
 function openSupportChat() {
     if (window.Telegram && window.Telegram.WebApp) {
         // Предпочтительно использовать openTelegramLink для открытия чата
@@ -565,7 +555,7 @@ function openMeetMarketSite() {
         window.open(MAIN_SITE_LINK, '_blank');
     }
 }
-// --- КОНЕЦ НОВЫХ ФУНКЦИЙ ---
+// --- КОНЕЦ ФУНКЦИЙ ИКОНОК ---
 
 
 function initTelegramApp() {
