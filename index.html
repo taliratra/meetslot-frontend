@@ -66,6 +66,7 @@
             top: 35px; 
             right: 20px;
             display: flex;
+            /* ИЗМЕНЕНИЕ: Увеличенное расстояние между иконками */
             gap: 25px; 
             z-index: 20; 
             margin-bottom: 30px; 
@@ -362,6 +363,50 @@
             margin-bottom: 10px;
             display: block; 
         }
+
+        /* --- СТИЛИ КАТАЛОГА ПРИЗОВ --- */
+        #prizesModal .modal-content {
+            max-height: 80vh; 
+            overflow-y: auto; 
+            padding-bottom: 10px; 
+        }
+        
+        .prizes-list {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0 0 0;
+            text-align: left;
+        }
+        
+        .prize-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .prize-item:last-child {
+            border-bottom: none;
+        }
+
+        .prize-icon {
+            font-size: 18px;
+            margin-right: 10px;
+            line-height: 1;
+        }
+
+        .prize-text {
+            color: var(--color-black);
+            font-weight: 500;
+            flex-grow: 1;
+        }
+        
+        .prize-chance {
+            color: #666;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        /* --- КОНЕЦ СТИЛЕЙ КАТАЛОГА ПРИЗОВ --- */
         
         @keyframes fadeIn {
             from {opacity: 0; transform: scale(0.9);}
@@ -377,6 +422,12 @@
 <div class="app-container">
     
     <div class="icon-container">
+        <img id="prizesButton" 
+             class="custom-icon-btn" 
+             onclick="showPrizesModal()" 
+             src="https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/prize.svg" 
+             alt="Призы">
+             
         <img id="siteButton" 
              class="custom-icon-btn" 
              onclick="openMeetMarketSite()" 
@@ -407,6 +458,15 @@
     
     <div style="height: 50px;"></div> 
 
+    <div id="prizesModal" class="modal" onclick="closeModal(true, 'prizesModal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-modal-btn" onclick="closeModal(true, 'prizesModal')">&times;</span> 
+            <span class="modal-emoji">🎁</span> <h2>Витрина призов</h2>
+            <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">Шанс выигрыша каждого приза составляет **10%**.</p>
+            <ul id="prizesList" class="prizes-list">
+                </ul>
+        </div>
+    </div>
     <div id="welcomeModal" class="modal" onclick="closeModal(true, 'welcomeModal')">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-modal-btn" onclick="closeModal(true, 'welcomeModal')">&times;</span> 
@@ -438,7 +498,8 @@
 </div>
 
 <script>
-// ВАЖНО: КОНФИГУРАЦИЯ И ЛОГИКА ОСТАЮТСЯ БЕЗ ИЗМЕНЕНИЙ
+// -----------------------------------------------------
+// 1. КОНФИГУРАЦИЯ
 // -----------------------------------------------------
 const PRIZES = [
     "6000 meet-бонусов", "5000 meet-бонусов", "4000 meet-бонусов", "3000 meet-бонусов",
@@ -465,9 +526,11 @@ const MAIN_SITE_LINK = 'https://meet-market.ru/';
 const wheel = document.getElementById('wheel');
 const spinButton = document.getElementById('spinButton'); 
 const errorText = document.getElementById('errorText');
-// Элементы модального окна обновлены
+// Элементы модального окна
 const resultModal = document.getElementById('resultModal'); 
-const welcomeModal = document.getElementById('welcomeModal'); // НОВЫЙ ЭЛЕМЕНТ
+const welcomeModal = document.getElementById('welcomeModal'); 
+const prizesModal = document.getElementById('prizesModal'); // НОВЫЙ ЭЛЕМЕНТ
+const prizesList = document.getElementById('prizesList');   // НОВЫЙ ЭЛЕМЕНТ
 const prizeTextElement = document.getElementById('prizeText'); 
 
 let isSpinning = false;
@@ -493,8 +556,8 @@ function showAppMessage(message) {
     }
 }
 
-// ФУНКЦИЯ ОБНОВЛЕНА: принимает ID модального окна
-function showModal(prize, modalId = 'resultModal') {
+// УНИВЕРСАЛЬНАЯ ФУНКЦИЯ: принимает ID модального окна
+function showModal(prize, modalId) {
     const targetModal = document.getElementById(modalId);
     if (targetModal) {
         if (modalId === 'resultModal' && prizeTextElement) {
@@ -506,8 +569,8 @@ function showModal(prize, modalId = 'resultModal') {
     }
 }
 
-// ФУНКЦИЯ ОБНОВЛЕНА: принимает ID модального окна
-function closeModal(shouldResetWheel, modalId = 'resultModal') {
+// УНИВЕРСАЛЬНАЯ ФУНКЦИЯ: принимает ID модального окна
+function closeModal(shouldResetWheel, modalId) {
     const targetModal = document.getElementById(modalId);
     if (targetModal) {
         targetModal.style.display = 'none'; // Скрываем модальное окно
@@ -524,6 +587,38 @@ function closeModal(shouldResetWheel, modalId = 'resultModal') {
     }
 }
 
+// НОВАЯ ФУНКЦИЯ: Заполнение и показ витрины призов
+function populatePrizesModal() {
+    if (!prizesList) return;
+    
+    prizesList.innerHTML = ''; // Очистка
+    const chance = (100 / NUM_SECTORS).toFixed(0); // Шанс (100 / 10 = 10%)
+
+    PRIZES.forEach(prize => {
+        const li = document.createElement('li');
+        li.classList.add('prize-item');
+        
+        // Используем эмодзи для красоты
+        let icon = '⭐️';
+        if (prize.includes('бонусов')) icon = '💰';
+        else if (prize.includes('доставку')) icon = '🚚';
+        else if (prize.includes('Скидка')) icon = '🏷️';
+        else if (prize.includes('SoleFresh')) icon = '🧴';
+
+        li.innerHTML = `
+            <span class="prize-icon">${icon}</span>
+            <span class="prize-text">${prize}</span>
+            <span class="prize-chance">${chance}% шанс</span>
+        `;
+        prizesList.appendChild(li);
+    });
+}
+
+function showPrizesModal() {
+    populatePrizesModal(); // Обновляем список перед показом
+    showModal(null, 'prizesModal');
+}
+
 
 function handlePrizeClaim() {
     if (window.Telegram && window.Telegram.WebApp) {
@@ -538,7 +633,6 @@ function handlePrizeClaim() {
 // --- ФУНКЦИИ: ОБРАБОТЧИКИ ИКОНОК ---
 function openSupportChat() {
     if (window.Telegram && window.Telegram.WebApp) {
-        // Предпочтительно использовать openTelegramLink для открытия чата
         window.Telegram.WebApp.openTelegramLink(MANAGER_CHAT_LINK);
     } else {
         window.open(MANAGER_CHAT_LINK, '_blank');
@@ -547,7 +641,6 @@ function openSupportChat() {
 
 function openMeetMarketSite() {
     if (window.Telegram && window.Telegram.WebApp) {
-        // Для перехода на внешний сайт лучше использовать openLink
         window.Telegram.WebApp.openLink(MAIN_SITE_LINK);
     } else {
         window.open(MAIN_SITE_LINK, '_blank');
@@ -613,8 +706,8 @@ async function getSpinResultFromBackend() {
     }
     
     // --- ПРОВЕРКА НА НЕОГРАНИЧЕННЫЙ ДОСТУП (@tlrtri) ---
-    const UNLIMITED_USERNAMES_LOCAL = ['tlrtri']; // Никнеймы без символа @
-    const UNLIMITED_USER_PRIZE_INDEX_LOCAL = 0; // Приз (индекс) для неограниченного пользователя
+    const UNLIMITED_USERNAMES_LOCAL = ['tlrtri']; 
+    const UNLIMITED_USER_PRIZE_INDEX_LOCAL = 0; 
 
     if (username && UNLIMITED_USERNAMES_LOCAL.includes(username)) {
         console.log(`Пользователь ${username} имеет неограниченный доступ. Обход API.`);
