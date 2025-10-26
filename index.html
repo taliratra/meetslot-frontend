@@ -1,3 +1,17 @@
+<div class="icon-container">
+        <img id="siteButton" class="custom-icon-btn" onclick="openMeetMarketSite()" 
+             src="https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/web.svg" 
+             alt="Сайт">
+        
+        <img id="supportButton" class="custom-icon-btn" onclick="openSupportChat()" 
+             src="https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/chat.svg" 
+             alt="Поддержка">
+    </div>
+    ```
+
+### Полный обновленный HTML-код:
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -66,21 +80,20 @@
             top: 35px; 
             right: 20px;
             display: flex;
-            /* ИЗМЕНЕНИЕ: Увеличение расстояния между иконками с 15px до 25px */
             gap: 25px; 
             z-index: 20; 
             margin-bottom: 30px; 
         }
 
-        .icon-btn {
+        /* ИЗМЕНЕНИЕ: Стиль для новых кастомных иконок-картинок */
+        .custom-icon-btn {
             cursor: pointer;
             width: 24px;
             height: 24px;
-            color: var(--color-white); 
             transition: opacity 0.1s;
         }
         
-        .icon-btn:hover {
+        .custom-icon-btn:hover {
             opacity: 0.8;
         }
         /* --- КОНЕЦ НОВОГО БЛОКА --- */
@@ -89,7 +102,6 @@
             font-family: 'TT Hoves Pro Trial Bold', 'Arial Black', Gadget, sans-serif;
             color: var(--color-white); 
             font-size: 30px; 
-            /* Отступ сверху, чтобы создать пространство между иконками и заголовком */
             margin-top: 50px; 
             margin-bottom: 5px;
             text-shadow: 0 4px 5px rgba(0, 0, 0, 0.2); 
@@ -128,7 +140,6 @@
             position: relative;
             width: 272px; 
             height: 272px; 
-            /* Отступ рулетки */
             margin: 30px auto 42.5px; 
             filter: drop-shadow(0 0 8.5px rgba(0, 0, 0, 0.4)); 
             transform: translateY(17px); 
@@ -378,13 +389,17 @@
 <div class="app-container">
     
     <div class="icon-container">
-        <svg id="siteButton" class="icon-btn" onclick="openMeetMarketSite()" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-1.04.2-2.03.58-2.93l6.57 6.57c.9.38 1.89.58 2.93.58 1.04 0 2.03-.2 2.93-.58l-6.57-6.57c-.38-.9-.58-1.89-.58-2.93 0-1.04.2-2.03.58-2.93l6.57 6.57c-.9.38-1.89.58-2.93.58-1.04 0-2.03-.2-2.93-.58l-6.57-6.57c-.38.9-.58 1.89-.58 2.93 0 4.41 3.59 8 8 8zm6.57-11.43l-6.57-6.57c-.9-.38-1.89-.58-2.93-.58-1.04 0-2.03.2-2.93.58l6.57 6.57c.38.9.58 1.89.58 2.93 0 1.04-.2 2.03-.58 2.93l6.57-6.57c.38-.9.58-1.89.58-2.93 0-1.04-.2-2.03-.58-2.93z" />
-        </svg>
+        <img id="siteButton" 
+             class="custom-icon-btn" 
+             onclick="openMeetMarketSite()" 
+             src="https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/web.svg" 
+             alt="Сайт">
         
-        <svg id="supportButton" class="icon-btn" onclick="openSupportChat()" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12l-3-3h3V6H6v7l3-3h2l3 3h4v4z" />
-        </svg>
+        <img id="supportButton" 
+             class="custom-icon-btn" 
+             onclick="openSupportChat()" 
+             src="https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/chat.svg" 
+             alt="Поддержка">
     </div>
     <h1>MEET РУЛЕТКА</h1>
 
