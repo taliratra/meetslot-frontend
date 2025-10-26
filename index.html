@@ -458,6 +458,12 @@
     
     <div style="height: 50px;"></div> 
 
+    <audio id="spinSound" loop preload="auto">
+        <source src="https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/audio/spin.mp3" type="audio/mp3">
+    </audio>
+    <audio id="winSound" preload="auto">
+        <source src="https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/audio/win.mp3" type="audio/mp3">
+    </audio>
     <div id="prizesModal" class="modal" onclick="closeModal(true, 'prizesModal')">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-modal-btn" onclick="closeModal(true, 'prizesModal')">&times;</span> 
@@ -466,6 +472,7 @@
                 </ul>
         </div>
     </div>
+    
     <div id="welcomeModal" class="modal" onclick="closeModal(true, 'welcomeModal')">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-modal-btn" onclick="closeModal(true, 'welcomeModal')">&times;</span> 
@@ -532,11 +539,45 @@ const prizesModal = document.getElementById('prizesModal');
 const prizesList = document.getElementById('prizesList');   
 const prizeTextElement = document.getElementById('prizeText'); 
 
+// --- ИНИЦИАЛИЗАЦИЯ АУДИО ЭЛЕМЕНТОВ ---
+const spinSound = document.getElementById('spinSound');
+const winSound = document.getElementById('winSound');
+// -------------------------------------
+
 let isSpinning = false;
 let currentPrizeIndex = null; 
 
 // -----------------------------------------------------
-// 3. ФУНКЦИИ UI / ВЗАИМОДЕЙСТВИЯ
+// 3. ФУНКЦИИ УПРАВЛЕНИЯ ЗВУКОМ
+// -----------------------------------------------------
+
+function playSpinSound() {
+    if (spinSound) {
+        // Убедимся, что начинаем с начала и громкость установлена
+        spinSound.currentTime = 0; 
+        spinSound.volume = 0.5; // Немного тише, чтобы не оглушать
+        spinSound.play().catch(e => console.log("Ошибка воспроизведения звука вращения:", e));
+    }
+}
+
+function stopSpinSound() {
+    if (spinSound) {
+        spinSound.pause();
+        spinSound.currentTime = 0;
+    }
+}
+
+function playWinSound() {
+    if (winSound) {
+        winSound.currentTime = 0;
+        winSound.volume = 0.8; 
+        winSound.play().catch(e => console.log("Ошибка воспроизведения звука выигрыша:", e));
+    }
+}
+
+
+// -----------------------------------------------------
+// 4. ФУНКЦИИ UI / ВЗАИМОДЕЙСТВИЯ (Остальные функции)
 // -----------------------------------------------------
 
 function showAppMessage(message) {
@@ -666,7 +707,7 @@ function initTelegramApp() {
 
 
 // -----------------------------------------------------
-// 4. ЛОГИКА API (С ПРОВЕРКОЙ НИКНЕЙМА)
+// 5. ЛОГИКА API (С ПРОВЕРКОЙ НИКНЕЙМА)
 // -----------------------------------------------------
 
 async function getSpinResultFromBackend() {
@@ -773,7 +814,7 @@ async function getSpinResultFromBackend() {
 }
 
 // -----------------------------------------------------
-// 5. ЛОГИКА РУЛЕТКИ
+// 6. ЛОГИКА РУЛЕТКИ (Обновлена для звуков)
 // -----------------------------------------------------
 
 async function handleSpinClick() {
@@ -787,12 +828,14 @@ async function handleSpinClick() {
     if (errorText) {
         errorText.style.display = 'none';
     }
-
+    
+    // 1. ПОЛУЧЕНИЕ РЕЗУЛЬТАТА (асинхронно)
     const winningIndex = await getSpinResultFromBackend();
 
     if (winningIndex === null) {
         isSpinning = false;
         
+        // В случае ошибки, снять блокировку кнопки, если это не таймаут
         if (errorText && !errorText.textContent.includes('крутили сегодня')) {
             spinButton.classList.remove('disabled');
         } else if (spinButton) {
@@ -805,26 +848,33 @@ async function handleSpinClick() {
     currentPrizeIndex = winningIndex; 
 
     const baseRotations = 5; 
-    const degreesToWin = (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE;
-
+    // Центрирование сектора: (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE
+    const degreesToWin = (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE; 
     const finalRotation = (baseRotations * 360) + degreesToWin;
 
     if (wheel) {
         wheel.style.transition = 'none';
         wheel.style.transform = 'rotate(0deg)'; 
         
+        // 2. ЗАПУСК АНИМАЦИИ и ЗВУКА
         setTimeout(() => {
+            playSpinSound(); // <--- ЗВУК ВРАЩЕНИЯ
+            
             wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
             wheel.style.transform = `rotate(${finalRotation}deg)`;
             
-            // Ждем завершения анимации
+            // 3. ЗАВЕРШЕНИЕ
             setTimeout(() => {
+                stopSpinSound(); // <--- ОСТАНОВКА ЗВУКА ВРАЩЕНИЯ
+                playWinSound();  // <--- ЗВУК ВЫИГРЫША
+                
                 const prize = PRIZES[currentPrizeIndex];
-                showModal(prize, 'resultModal'); // Передаем ID модального окна результата
+                showModal(prize, 'resultModal'); 
                 isSpinning = false;
-            }, 5500); 
+            }, 5500); // 500ms запас после 5s анимации
         }, 50); 
     } else {
+        // Fallback для устройств без CSS-анимации
         const prize = PRIZES[currentPrizeIndex];
         showModal(prize, 'resultModal');
         isSpinning = false;
