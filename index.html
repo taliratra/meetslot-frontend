@@ -45,39 +45,37 @@
             min-height: 100vh;
             text-align: center;
             box-sizing: border-box;
-            /* УДАЛЕНЫ: position: relative; и overflow: hidden; */
         }
         
-        /* УДАЛЕН body::before */
-
         .app-container {
             width: 100%;
             max-width: 400px;
             background: transparent; 
-            padding: 20px 10px;
+            /* ИЗМЕНЕНИЕ: Увеличенный padding-top для свободного пространства */
+            padding: 20px 10px 20px 10px; 
             margin-top: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative; /* Добавлено для позиционирования иконок */
+            position: relative; 
         }
         
         /* --- НОВЫЙ БЛОК: КОНТЕЙНЕР ДЛЯ ИКОНОК --- */
         .icon-container {
             position: absolute;
-            top: 20px; /* Позиционирование по вертикали */
+            /* ИЗМЕНЕНИЕ: Увеличенное расстояние сверху */
+            top: 35px; 
             right: 20px;
             display: flex;
             gap: 15px;
-            z-index: 20; /* Поверх всего */
+            z-index: 20; 
         }
 
         .icon-btn {
             cursor: pointer;
             width: 24px;
             height: 24px;
-            /* Используем 'currentColor' для SVG, чтобы он принял 'color: var(--color-white)' */
             color: var(--color-white); 
             transition: opacity 0.1s;
         }
@@ -91,6 +89,8 @@
             font-family: 'TT Hoves Pro Trial Bold', 'Arial Black', Gadget, sans-serif;
             color: var(--color-white); 
             font-size: 30px; 
+            /* ИЗМЕНЕНИЕ: Дополнительный отступ сверху для смещения вниз */
+            margin-top: 30px; 
             margin-bottom: 5px;
             text-shadow: 0 4px 5px rgba(0, 0, 0, 0.2); 
             white-space: nowrap; 
@@ -128,8 +128,8 @@
             position: relative;
             width: 272px; 
             height: 272px; 
-            /* ИЗМЕНЕНИЕ: Смещено вниз для освобождения места иконок */
-            margin: 20px auto 42.5px; 
+            /* ИЗМЕНЕНИЕ: Увеличенное смещение вниз */
+            margin: 30px auto 42.5px; 
             filter: drop-shadow(0 0 8.5px rgba(0, 0, 0, 0.4)); 
             transform: translateY(17px); 
         }
@@ -138,7 +138,6 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            /* СОХРАНЕНЫ: Несколько радиальных градиентов для чётких бликов */
             background: 
                 radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%),
                 radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 60%),
@@ -146,10 +145,10 @@
                 radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 70%),
                 var(--color-blue-bg); 
             
-            border: 4.25px solid rgba(255, 255, 255, 0.15); /* Чуть более заметный ободок */
+            border: 4.25px solid rgba(255, 255, 255, 0.15); 
             box-shadow: 
-                inset 0 0 20px rgba(0, 0, 0, 0.4), /* Усиленная внутренняя тень */
-                0 0 15px rgba(0, 0, 0, 0.3); /* Усиленная внешняя тень */
+                inset 0 0 20px rgba(0, 0, 0, 0.4), 
+                0 0 15px rgba(0, 0, 0, 0.3); 
             position: relative; 
             transition: transform 0s;
             overflow: hidden; 
@@ -187,8 +186,6 @@
             filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.4)) brightness(1.1); 
         }
         
-        /* .wheel::after (анимированный блик) удален */
-
         .sector {
             display: none;
         }
@@ -212,10 +209,10 @@
             font-size: 32.3px; 
             font-weight: bold;
             box-shadow: 
-                0 0 0 8.5px rgba(255, 255, 255, 0.4), /* Чуть более яркий внешний свет */
-                inset 0 0 15px rgba(0, 0, 0, 0.6), /* Усиленная внутренняя тень */
-                inset 0 0 25px rgba(255, 255, 255, 0.5); /* Усиленный внутренний свет */
-            filter: brightness(1.1); /* Немного ярче */
+                0 0 0 8.5px rgba(255, 255, 255, 0.4), 
+                inset 0 0 15px rgba(0, 0, 0, 0.6), 
+                inset 0 0 25px rgba(255, 255, 255, 0.5); 
+            filter: brightness(1.1); 
             cursor: pointer; 
             z-index: 5;
             transition: transform 0.1s;
@@ -241,7 +238,7 @@
             transform: translateX(-50%);
             width: 21.25px; 
             height: 34px; 
-            background: linear-gradient(to bottom, var(--color-white), #C0D8F0); /* Чуть светлее */
+            background: linear-gradient(to bottom, var(--color-white), #C0D8F0); 
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             box-shadow: 0 4.25px 8.5px rgba(0, 0, 0, 0.3); 
             border: 2.55px solid var(--color-blue-bg); 
@@ -284,7 +281,6 @@
         }
 
         .modal-content {
-            /* ИЗМЕНЕНИЕ: Полупрозрачный белый фон */
             background-color: rgba(255, 255, 255, 0.9); 
             margin: 10vh auto 0; 
             padding: 20px; 
@@ -297,7 +293,6 @@
             position: relative; 
         }
         
-        /* Крестик (Кнопка закрытия) */
         .close-modal-btn {
             position: absolute;
             top: 10px;
@@ -373,8 +368,6 @@
             from {opacity: 0; transform: scale(0.9);}
             to {opacity: 1; transform: scale(1);}
         }
-
-        /* @keyframes background-shine удален */
 
     </style>
 
