@@ -18,13 +18,13 @@
 
         /* --- ЦВЕТОВАЯ СХЕМА: ОБНОВЛЕННЫЙ СИНИЙ (Звездная рулетка) --- */
         :root {
-            --color-blue-bg: #2d4aff; /* Глубокий синий фон (верхняя точка градиента) */
-            --color-blue-dark: #243bcc; /* Для контуров/теней */
-            --color-blue-light-segment: #D5DAE6; /* Светлый синий/серый для сегментов звезды */
-            --color-blue-dark-segment: #657df5; /* Темный синий для сегментов звезды */
+            --color-blue-bg: #2d4aff; 
+            --color-blue-dark: #243bcc; 
+            --color-blue-light-segment: #D5DAE6; 
+            --color-blue-dark-segment: #657df5; 
             
             --color-white: #FFFFFF;
-            --color-black: #000000; /* Добавлен для удобства */
+            --color-black: #000000; 
         }
 
         /* Общие стили и шрифт */
@@ -33,7 +33,7 @@
             background: 
                 url('https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/fonts/eqwq.png') no-repeat right 20px bottom 20px / 96% auto, 
                 linear-gradient(to bottom, var(--color-blue-bg), #1a32a0); 
-            background-blend-mode: soft-light; /* Режим смешивания */
+            background-blend-mode: soft-light; 
             
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -60,7 +60,7 @@
             position: relative; 
         }
         
-        /* --- НОВЫЙ БЛОК: КОНТЕЙНЕР ДЛЯ ИКОНКИ СЛЕВА (Призы) --- */
+        /* --- БЛОК ИКОНОК --- */
         .icon-left {
             position: absolute;
             top: 35px; 
@@ -68,7 +68,6 @@
             z-index: 20; 
         }
 
-        /* --- СУЩЕСТВУЮЩИЙ БЛОК: КОНТЕЙНЕР ДЛЯ ИКОНОК СПРАВА (Сайт, Чат) --- */
         .icon-container {
             position: absolute;
             top: 35px; 
@@ -78,7 +77,6 @@
             z-index: 20; 
         }
 
-        /* Стиль для кастомных иконок-картинок */
         .custom-icon-btn {
             cursor: pointer;
             width: 24px;
@@ -107,7 +105,6 @@
             margin-bottom: 30px;
             font-weight: 500;
         }
-
 
         /* --- СТИЛЬ БЛОКА ОШИБКИ (УВЕДОМЛЕНИЕ О ТАЙМАУТЕ) --- */
         #errorText {
@@ -440,6 +437,7 @@
              src="https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/chat.svg" 
              alt="Поддержка">
     </div>
+
     <h1>MEET РУЛЕТКА</h1>
 
     <p class="subtitle">Вращайте рулетку и выигрывайте призы каждый день!</p>
@@ -458,7 +456,7 @@
     
     <div style="height: 50px;"></div> 
 
-    <audio id="spinSound" loop preload="auto">
+    <audio id="spinSound" preload="auto">
         <source src="https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/audio/spin.mp3" type="audio/mp3">
     </audio>
     <audio id="winSound" preload="auto">
@@ -483,7 +481,7 @@
                 Вращайте колесо ежедневно, чтобы получить дополнительные скидки, промокоды, Meet-бонусы и другие ценные призы. Удачи!
             </p>
             
-            <button onclick="closeModal(true, 'welcomeModal')">
+            <button onclick="unlockAudio(); closeModal(true, 'welcomeModal');">
                 Начать игру!
             </button>
         </div>
@@ -512,16 +510,13 @@ const PRIZES = [
     "2000 meet-бонусов", "1000 meet-бонусов", "Промокод на бесплатную доставку", 
     "Скидка 10%", "Скидка 15%", "SoleFresh к заказу"
 ];
-const NUM_SECTORS = PRIZES.length; // = 10
-const SECTOR_ANGLE = 360 / NUM_SECTORS; // = 36 градусов
+const NUM_SECTORS = PRIZES.length; 
+const SECTOR_ANGLE = 360 / NUM_SECTORS; 
 
-// --- КОРРЕКТНЫЙ ПУБЛИЧНЫЙ URL ВАШЕГО БЭКЕНДА ---
 const API_BASE_URL = 'https://meetslot-api-backend-production.up.railway.app/api';
 
-// --- НАСТРОЙКА ИСКЛЮЧЕНИЯ ДЛЯ НЕОГРАНИЧЕННОГО ДОСТУПА (@tlrtri) ---
-const UNLIMITED_USERNAMES = ['tlrtri']; // Никнеймы без символа @
-const UNLIMITED_USER_PRIZE_INDEX = 0; // Приз (индекс) для неограниченного пользователя
-// --- НАСТРОЙКИ ЧАТА / САЙТА ---
+const UNLIMITED_USERNAMES = ['tlrtri']; 
+const UNLIMITED_USER_PRIZE_INDEX = 0; 
 const MANAGER_CHAT_LINK = 'https://t.me/helpmeetmarket';
 const MAIN_SITE_LINK = 'https://meet-market.ru/';
 // -----------------------------------------------------
@@ -532,35 +527,75 @@ const MAIN_SITE_LINK = 'https://meet-market.ru/';
 const wheel = document.getElementById('wheel');
 const spinButton = document.getElementById('spinButton'); 
 const errorText = document.getElementById('errorText');
-// Элементы модального окна
-const resultModal = document.getElementById('resultModal'); 
-const welcomeModal = document.getElementById('welcomeModal'); 
-const prizesModal = document.getElementById('prizesModal'); 
-const prizesList = document.getElementById('prizesList');   
+
 const prizeTextElement = document.getElementById('prizeText'); 
 
-// --- ИНИЦИАЛИЗАЦИЯ АУДИО ЭЛЕМЕНТОВ ---
 const spinSound = document.getElementById('spinSound');
 const winSound = document.getElementById('winSound');
-// -------------------------------------
 
 let isSpinning = false;
 let currentPrizeIndex = null; 
+let spinInterval = null; // Для ручного цикла звука
+let audioUnlocked = false; // Флаг для политики Autoplay
 
 // -----------------------------------------------------
-// 3. ФУНКЦИИ УПРАВЛЕНИЯ ЗВУКОМ
+// 3. ФУНКЦИИ УПРАВЛЕНИЯ ЗВУКОМ (ОБНОВЛЕНО)
 // -----------------------------------------------------
 
-function playSpinSound() {
+/**
+ * Пытается принудительно разблокировать аудио, проигрывая короткий, 
+ * бесшумный звук при первом клике пользователя.
+ */
+function unlockAudio() {
+    if (audioUnlocked) return;
+    
+    // Временно меняем громкость на 0 и проигрываем, чтобы разблокировать
     if (spinSound) {
-        // Убедимся, что начинаем с начала и громкость установлена
-        spinSound.currentTime = 0; 
-        spinSound.volume = 0.5; // Немного тише, чтобы не оглушать
-        spinSound.play().catch(e => console.log("Ошибка воспроизведения звука вращения:", e));
+        spinSound.volume = 0.0;
+        spinSound.play().then(() => {
+            spinSound.pause();
+            spinSound.currentTime = 0;
+            spinSound.volume = 0.5; // Возвращаем рабочую громкость
+            audioUnlocked = true;
+            console.log("Аудио разблокировано.");
+        }).catch(e => {
+            console.warn("Не удалось разблокировать аудио:", e);
+        });
+    }
+}
+
+/**
+ * Запуск звука вращения в цикле с помощью setInterval.
+ */
+function playSpinSound() {
+    stopSpinSound(); // Очищаем предыдущий интервал на всякий случай
+    if (!audioUnlocked) return; // Не пытаемся, если не разблокировано
+    
+    if (spinSound) {
+        spinSound.volume = 0.5; 
+        
+        // Воспроизводим один раз, затем запускаем интервал для повтора
+        const playLoop = () => {
+            spinSound.currentTime = 0; 
+            spinSound.play().catch(e => {
+                console.warn("Ошибка в цикле playSpinSound:", e);
+                stopSpinSound(); // Останавливаем цикл при ошибке
+            });
+        };
+        
+        // Длительность звукового файла spin.mp3, чтобы зациклить точно
+        const SPIN_DURATION_MS = 920; 
+        
+        playLoop(); // Первый запуск
+        spinInterval = setInterval(playLoop, SPIN_DURATION_MS); // Зацикливаем
     }
 }
 
 function stopSpinSound() {
+    if (spinInterval) {
+        clearInterval(spinInterval);
+        spinInterval = null;
+    }
     if (spinSound) {
         spinSound.pause();
         spinSound.currentTime = 0;
@@ -568,6 +603,7 @@ function stopSpinSound() {
 }
 
 function playWinSound() {
+    if (!audioUnlocked) return;
     if (winSound) {
         winSound.currentTime = 0;
         winSound.volume = 0.8; 
@@ -577,7 +613,7 @@ function playWinSound() {
 
 
 // -----------------------------------------------------
-// 4. ФУНКЦИИ UI / ВЗАИМОДЕЙСТВИЯ (Остальные функции)
+// 4. ФУНКЦИИ UI / ВЗАИМОДЕЙСТВИЯ
 // -----------------------------------------------------
 
 function showAppMessage(message) {
@@ -596,7 +632,6 @@ function showAppMessage(message) {
     }
 }
 
-// УНИВЕРСАЛЬНАЯ ФУНКЦИЯ: принимает ID модального окна
 function showModal(prize, modalId) {
     const targetModal = document.getElementById(modalId);
     if (targetModal) {
@@ -609,14 +644,12 @@ function showModal(prize, modalId) {
     }
 }
 
-// УНИВЕРСАЛЬНАЯ ФУНКЦИЯ: принимает ID модального окна
 function closeModal(shouldResetWheel, modalId) {
     const targetModal = document.getElementById(modalId);
     if (targetModal) {
-        targetModal.style.display = 'none'; // Скрываем модальное окно
+        targetModal.style.display = 'none'; 
     }
 
-    // Сброс рулетки только после закрытия окна с РЕЗУЛЬТАТОМ
     if (shouldResetWheel && wheel && modalId === 'resultModal') {
         wheel.style.transition = 'transform 0.5s ease-out';
         wheel.style.transform = `rotate(0deg)`;
@@ -627,17 +660,16 @@ function closeModal(shouldResetWheel, modalId) {
     }
 }
 
-// НОВАЯ ФУНКЦИЯ: Заполнение и показ витрины призов
 function populatePrizesModal() {
+    // ... (Функция не изменена) ...
     if (!prizesList) return;
     
-    prizesList.innerHTML = ''; // Очистка
+    prizesList.innerHTML = ''; 
 
     PRIZES.forEach(prize => {
         const li = document.createElement('li');
         li.classList.add('prize-item');
         
-        // Используем эмодзи для красоты
         let icon = '⭐️';
         if (prize.includes('бонусов')) icon = '💰';
         else if (prize.includes('доставку')) icon = '🚚';
@@ -647,13 +679,13 @@ function populatePrizesModal() {
         li.innerHTML = `
             <span class="prize-icon">${icon}</span>
             <span class="prize-text">${prize}</span>
-            `;
+        `;
         prizesList.appendChild(li);
     });
 }
 
 function showPrizesModal() {
-    populatePrizesModal(); // Обновляем список перед показом
+    populatePrizesModal(); 
     showModal(null, 'prizesModal');
 }
 
@@ -664,11 +696,9 @@ function handlePrizeClaim() {
     } else {
         window.location.href = MANAGER_CHAT_LINK;
     }
-    // Сбрасываем рулетку и закрываем модальное окно результата
     closeModal(true, 'resultModal'); 
 }
 
-// --- ФУНКЦИИ: ОБРАБОТЧИКИ ИКОНОК ---
 function openSupportChat() {
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.openTelegramLink(MANAGER_CHAT_LINK);
@@ -684,7 +714,6 @@ function openMeetMarketSite() {
         window.open(MAIN_SITE_LINK, '_blank');
     }
 }
-// --- КОНЕЦ ФУНКЦИЙ ИКОНОК ---
 
 
 function initTelegramApp() {
@@ -701,16 +730,16 @@ function initTelegramApp() {
     }
     if (errorText) errorText.style.display = 'none';
     
-    // Показать приветственное сообщение при запуске
     showModal(null, 'welcomeModal');
 }
 
 
 // -----------------------------------------------------
-// 5. ЛОГИКА API (С ПРОВЕРКОЙ НИКНЕЙМА)
+// 5. ЛОГИКА API 
 // -----------------------------------------------------
 
 async function getSpinResultFromBackend() {
+    // ... (Функция не изменена) ...
     console.log(`Запрос результата на бэкенд: ${API_BASE_URL}/spin_check`);
 
     if (!window.Telegram || !window.Telegram.WebApp || !window.Telegram.WebApp.initData) {
@@ -743,7 +772,6 @@ async function getSpinResultFromBackend() {
         return null;
     }
     
-    // --- ПРОВЕРКА НА НЕОГРАНИЧЕННЫЙ ДОСТУП (@tlrtri) ---
     const UNLIMITED_USERNAMES_LOCAL = ['tlrtri']; 
     const UNLIMITED_USER_PRIZE_INDEX_LOCAL = 0; 
 
@@ -752,8 +780,6 @@ async function getSpinResultFromBackend() {
         await new Promise(resolve => setTimeout(resolve, 500)); 
         return UNLIMITED_USER_PRIZE_INDEX_LOCAL; 
     }
-    // --- КОНЕЦ ПРОВЕРКИ ---
-
 
     try {
         const response = await fetch(`${API_BASE_URL}/spin_check`, {
@@ -814,7 +840,7 @@ async function getSpinResultFromBackend() {
 }
 
 // -----------------------------------------------------
-// 6. ЛОГИКА РУЛЕТКИ (Обновлена для звуков)
+// 6. ЛОГИКА РУЛЕТКИ (ОБНОВЛЕНО)
 // -----------------------------------------------------
 
 async function handleSpinClick() {
@@ -829,26 +855,26 @@ async function handleSpinClick() {
         errorText.style.display = 'none';
     }
     
-    // 1. ПОЛУЧЕНИЕ РЕЗУЛЬТАТА (асинхронно)
+    // Если аудио не разблокировано, пробуем разблокировать немедленно
+    if (!audioUnlocked) {
+        unlockAudio();
+    }
+    
     const winningIndex = await getSpinResultFromBackend();
 
     if (winningIndex === null) {
         isSpinning = false;
-        
-        // В случае ошибки, снять блокировку кнопки, если это не таймаут
         if (errorText && !errorText.textContent.includes('крутили сегодня')) {
             spinButton.classList.remove('disabled');
         } else if (spinButton) {
             spinButton.classList.remove('disabled');
         }
-        
         return;
     }
 
     currentPrizeIndex = winningIndex; 
 
     const baseRotations = 5; 
-    // Центрирование сектора: (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE
     const degreesToWin = (NUM_SECTORS - winningIndex - 0.5) * SECTOR_ANGLE; 
     const finalRotation = (baseRotations * 360) + degreesToWin;
 
@@ -856,25 +882,22 @@ async function handleSpinClick() {
         wheel.style.transition = 'none';
         wheel.style.transform = 'rotate(0deg)'; 
         
-        // 2. ЗАПУСК АНИМАЦИИ и ЗВУКА
         setTimeout(() => {
-            playSpinSound(); // <--- ЗВУК ВРАЩЕНИЯ
+            playSpinSound(); // <--- ЗВУК ВРАЩЕНИЯ (теперь через setInterval)
             
             wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)';
             wheel.style.transform = `rotate(${finalRotation}deg)`;
             
-            // 3. ЗАВЕРШЕНИЕ
             setTimeout(() => {
-                stopSpinSound(); // <--- ОСТАНОВКА ЗВУКА ВРАЩЕНИЯ
+                stopSpinSound(); // <--- ОСТАНОВКА ЦИКЛА
                 playWinSound();  // <--- ЗВУК ВЫИГРЫША
                 
                 const prize = PRIZES[currentPrizeIndex];
                 showModal(prize, 'resultModal'); 
                 isSpinning = false;
-            }, 5500); // 500ms запас после 5s анимации
+            }, 5500); 
         }, 50); 
     } else {
-        // Fallback для устройств без CSS-анимации
         const prize = PRIZES[currentPrizeIndex];
         showModal(prize, 'resultModal');
         isSpinning = false;
