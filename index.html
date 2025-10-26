@@ -60,7 +60,15 @@
             position: relative; 
         }
         
-        /* --- БЛОК: КОНТЕЙНЕР ДЛЯ ИКОНОК --- */
+        /* --- НОВЫЙ БЛОК: КОНТЕЙНЕР ДЛЯ ИКОНКИ СЛЕВА (Призы) --- */
+        .icon-left {
+            position: absolute;
+            top: 35px; 
+            left: 20px;
+            z-index: 20; 
+        }
+
+        /* --- СУЩЕСТВУЮЩИЙ БЛОК: КОНТЕЙНЕР ДЛЯ ИКОНОК СПРАВА (Сайт, Чат) --- */
         .icon-container {
             position: absolute;
             top: 35px; 
@@ -68,10 +76,9 @@
             display: flex;
             gap: 25px; 
             z-index: 20; 
-            margin-bottom: 30px; 
         }
 
-        /* Стиль для новых кастомных иконок-картинок */
+        /* Стиль для кастомных иконок-картинок */
         .custom-icon-btn {
             cursor: pointer;
             width: 24px;
@@ -82,7 +89,7 @@
         .custom-icon-btn:hover {
             opacity: 0.8;
         }
-        /* --- КОНЕЦ БЛОКА ИКОНОК --- */
+        /* --- КОНЕЦ БЛОКОВ ИКОНОК --- */
 
         h1 {
             font-family: 'TT Hoves Pro Trial Bold', 'Arial Black', Gadget, sans-serif;
@@ -399,8 +406,6 @@
             flex-grow: 1;
         }
         
-        /* Удален .prize-chance */
-        
         @keyframes fadeIn {
             from {opacity: 0; transform: scale(0.9);}
             to {opacity: 1; transform: scale(1);}
@@ -414,13 +419,15 @@
 
 <div class="app-container">
     
-    <div class="icon-container">
+    <div class="icon-left">
         <img id="prizesButton" 
              class="custom-icon-btn" 
              onclick="showPrizesModal()" 
              src="https://48bd5d92-c981-4516-acca-462f987c943f.selstorage.ru/000000/prize.svg" 
              alt="Призы">
-             
+    </div>
+
+    <div class="icon-container">
         <img id="siteButton" 
              class="custom-icon-btn" 
              onclick="openMeetMarketSite()" 
