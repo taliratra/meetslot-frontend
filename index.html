@@ -1,3 +1,14 @@
+</div>
+    
+    <button id="prizesButton">Мои призы</button>
+    
+    <div style="height: 50px;"></div> 
+
+    ```
+
+### 💾 Полный, Исправленный HTML-код
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -71,7 +82,7 @@
         .subtitle {
             font-size: 18px;
             color: var(--color-white);
-            margin-bottom: 20px; /* Уменьшено для кнопки ниже */
+            margin-bottom: 30px; /* Вернули исходный отступ */
             font-weight: 500;
         }
 
@@ -102,7 +113,7 @@
             height: 272px; 
             margin: 0 auto 42.5px; 
             filter: drop-shadow(0 0 8.5px rgba(0, 0, 0, 0.4)); 
-            /* transform: translateY(17px); <--- УДАЛЕНО */
+            /* transform: translateY(17px); <-- Снова удалено для центрирования */
         }
 
         .wheel {
@@ -251,7 +262,7 @@
             max-width: 350px;
             box-shadow: 0 4px 0 0 #A8A8A8; 
             transition: all 0.1s ease;
-            margin: 0px 0 30px 0; /* Изменено, чтобы встала под подзаголовок */
+            margin: 20px 0 30px 0; /* Добавлены отступы для размещения под колесом */
         }
         
         #prizesButton:active {
@@ -419,8 +430,6 @@
 
     <p class="subtitle">Вращайте рулетку и выигрывайте призы каждый день!</p>
 
-    <button id="prizesButton">Мои призы</button>
-
     <div id="errorText" style="display: none;"></div> 
 
     <div class="wheel-container">
@@ -431,6 +440,8 @@
             <span class="center-text-go">ВРАЩАТЬ</span>
         </div>
     </div>
+    
+    <button id="prizesButton">Мои призы</button>
     
     <div style="height: 50px;"></div> 
 
