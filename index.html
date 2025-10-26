@@ -66,7 +66,6 @@
             top: 35px; 
             right: 20px;
             display: flex;
-            /* ИЗМЕНЕНИЕ: Увеличенное расстояние между иконками */
             gap: 25px; 
             z-index: 20; 
             margin-bottom: 30px; 
@@ -89,7 +88,6 @@
             font-family: 'TT Hoves Pro Trial Bold', 'Arial Black', Gadget, sans-serif;
             color: var(--color-white); 
             font-size: 30px; 
-            /* ИЗМЕНЕНИЕ: Увеличен отступ сверху до 75px */
             margin-top: 75px; 
             margin-bottom: 5px;
             text-shadow: 0 4px 5px rgba(0, 0, 0, 0.2); 
@@ -401,12 +399,7 @@
             flex-grow: 1;
         }
         
-        .prize-chance {
-            color: #666;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-        /* --- КОНЕЦ СТИЛЕЙ КАТАЛОГА ПРИЗОВ --- */
+        /* Удален .prize-chance */
         
         @keyframes fadeIn {
             from {opacity: 0; transform: scale(0.9);}
@@ -462,7 +455,6 @@
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-modal-btn" onclick="closeModal(true, 'prizesModal')">&times;</span> 
             <span class="modal-emoji">🎁</span> <h2>Витрина призов</h2>
-            <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">Шанс выигрыша каждого приза составляет **10%**.</p>
             <ul id="prizesList" class="prizes-list">
                 </ul>
         </div>
@@ -529,8 +521,8 @@ const errorText = document.getElementById('errorText');
 // Элементы модального окна
 const resultModal = document.getElementById('resultModal'); 
 const welcomeModal = document.getElementById('welcomeModal'); 
-const prizesModal = document.getElementById('prizesModal'); // НОВЫЙ ЭЛЕМЕНТ
-const prizesList = document.getElementById('prizesList');   // НОВЫЙ ЭЛЕМЕНТ
+const prizesModal = document.getElementById('prizesModal'); 
+const prizesList = document.getElementById('prizesList');   
 const prizeTextElement = document.getElementById('prizeText'); 
 
 let isSpinning = false;
@@ -587,12 +579,11 @@ function closeModal(shouldResetWheel, modalId) {
     }
 }
 
-// НОВАЯ ФУНКЦИЯ: Заполнение и показ витрины призов
+// НОВАЯ ФУНКЦИЯ: Заполнение и показ витрины призов (ШАНС УДАЛЕН)
 function populatePrizesModal() {
     if (!prizesList) return;
     
     prizesList.innerHTML = ''; // Очистка
-    const chance = (100 / NUM_SECTORS).toFixed(0); // Шанс (100 / 10 = 10%)
 
     PRIZES.forEach(prize => {
         const li = document.createElement('li');
@@ -608,8 +599,7 @@ function populatePrizesModal() {
         li.innerHTML = `
             <span class="prize-icon">${icon}</span>
             <span class="prize-text">${prize}</span>
-            <span class="prize-chance">${chance}% шанс</span>
-        `;
+            `;
         prizesList.appendChild(li);
     });
 }
