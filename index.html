@@ -174,17 +174,17 @@
                 var(--color-blue-dark-segment) 36deg 72deg 
             );
             
-            /* ИЗМЕНЕНИЕ ЗДЕСЬ: Маска для отображения секторов (сильное стягивание к центру) */
+            /* ВОССТАНОВЛЕННЫЙ РАЗМЕР МАСКИ */
             mask-image: radial-gradient(
                 circle at center, 
-                transparent 0%, transparent 80%,  /* Увеличено с 70% до 80% */
-                black 80%, black 98%,            /* Увеличено с 70% до 80% */
+                transparent 0%, transparent 60%,  
+                black 60%, black 98%,            
                 transparent 98%, transparent 100%
             );
             -webkit-mask-image: radial-gradient(
                 circle at center, 
-                transparent 0%, transparent 80%, /* Увеличено с 70% до 80% */
-                black 80%, black 98%, 
+                transparent 0%, transparent 60%, 
+                black 60%, black 98%, 
                 transparent 98%, transparent 100%
             );
             z-index: 1; 
@@ -196,14 +196,14 @@
         }
 
 
-        /* --- ЦЕНТРАЛЬНАЯ КНОПКА (ВРАЩАТЬ) (Восстановлена до исходного размера) --- */
+        /* --- ЦЕНТРАЛЬНАЯ КНОПКА (ВРАЩАТЬ) (Восстановлен исходный размер) --- */
         .center-button {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 153px; /* Восстановлено */
-            height: 153px; /* Восстановлено */
+            width: 153px; 
+            height: 153px; 
             background: var(--color-blue-bg); 
             border-radius: 50%;
             display: flex;
